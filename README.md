@@ -15,8 +15,8 @@ This tool depends on the following software
 Download Prolog: http://www.swi-prolog.org/download/stable
 Donwload Prolog Connector: https://sewiki.iai.uni-bonn.de/research/pdt/connector/library
 Donwload Hermit OWL Reasoner: http://www.hermit-reasoner.com/download.html
-Donwload OWL API: https://sourceforge.net/projects/owlapi/
-Donwload Eclipse groovy plugin: https://github.com/groovy/groovy-eclipse/wiki
+Donwload OWL API: https://sourceforge.net/projects/owlapi/                     
+Donwload Eclipse groovy plugin: https://github.com/groovy/groovy-eclipse/wiki           
 Makes sure to download plugin according to your ide version.
 
 ## IDE support 
@@ -42,7 +42,7 @@ give path to groovy script :
 		script.evaluate(new File("src/main/java/edu/umd/cs/example/OntologyAlignment.groovy"));
 
 
-To run the examples please create a file config.ttl in the main directory of the project. An example is show below:
+To run the AML examples please create a file config.ttl in the main directory of the project. An example is show below:
 ```
 @prefix aml:     <https://w3id.org/i40/aml#> .
 @prefix owl:     <http://www.w3.org/2002/07/owl#> .
