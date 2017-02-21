@@ -12,10 +12,10 @@ This tool depends on the following software
 * OWL API
 * Eclipse plugin for Groovy
 
-Download Prolog: http://www.swi-prolog.org/download/stable
-Donwload Prolog Connector: https://sewiki.iai.uni-bonn.de/research/pdt/connector/library
-Donwload Hermit OWL Reasoner: http://www.hermit-reasoner.com/download.html
-Donwload OWL API: https://sourceforge.net/projects/owlapi/                     
+Download Prolog: http://www.swi-prolog.org/download/stable                                  
+Donwload Prolog Connector: https://sewiki.iai.uni-bonn.de/research/pdt/connector/library                 
+Donwload Hermit OWL Reasoner: http://www.hermit-reasoner.com/download.html                    
+Donwload OWL API: https://sourceforge.net/projects/owlapi/                                                     
 Donwload Eclipse groovy plugin: https://github.com/groovy/groovy-eclipse/wiki           
 Makes sure to download plugin according to your ide version.
 
