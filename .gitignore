@@ -1,3 +1,21 @@
+*.class
+config.ttl
+resources/files/edb.txt
+resources/files/output.txt
+edb.txt
+output.txt
+target/
+.project
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.war
+*.ear
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
 # System files #
 ################
 .DS_Store
