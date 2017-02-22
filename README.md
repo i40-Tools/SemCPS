@@ -19,7 +19,7 @@ Donwload OWL API: https://sourceforge.net/projects/owlapi/
 Donwload Eclipse groovy plugin: https://github.com/groovy/groovy-eclipse/wiki           
 Makes sure to download plugin according to your ide version.
 
-## IDE support 
+## IDE support Running Project in Eclipse
 The quick and easy way to start compiling, running and coding **Rules4AMLIntegrator** we provide a java project in Eclipse and we a Prolog Connector. Thus, you need to install tools:
 * Eclipse IDE: https://www.eclipse.org/downloads/
 
@@ -27,9 +27,14 @@ In windows you need to add the following entries system PATH
 
     $ C:\Program Files\swipl\bin; C:\Program Files\swipl\lib\jpl.jar; C:\PrologConnectorJarFolder\org.cs3.prolog.connector_3.1.2.201504300958.jar;
 
-Import the project in eclipse and click build. The maven dependancies will be downloaded automatically.                              
-Donwload Eclipse groovy plugin: https://github.com/groovy/groovy-eclipse/wiki           
-Make sure you download correct version of plugin according to your eclipse otherwise it wont compile.
+Donwload Eclipse groovy plugin: https://github.com/groovy/groovy-eclipse/wiki                                   
+Make sure you download correct version of plugin according to your eclipse otherwise it wont compile.                        
+
+Import the project in eclipse and click build. The maven dependancies will be downloaded automatically.                      
+
+Add config.ttl                 
+
+Run alligatorMain.java                   
 
 ## Install and build from the source code  
 To obtain the latest version of the project please clone the github repository
