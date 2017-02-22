@@ -27,7 +27,7 @@ In windows you need to add the following entries system PATH
 
     $ C:\Program Files\swipl\bin; C:\Program Files\swipl\lib\jpl.jar; C:\PrologConnectorJarFolder\org.cs3.prolog.connector_3.1.2.201504300958.jar;
 
-Import the project in eclipse and click build. The maven dependancies will be downloaded automatically.
+Import the project in eclipse and click build. The maven dependancies will be downloaded automatically.                              
 Donwload Eclipse groovy plugin: https://github.com/groovy/groovy-eclipse/wiki           
 Make sure you download correct version of plugin according to your eclipse otherwise it wont compile.
 
