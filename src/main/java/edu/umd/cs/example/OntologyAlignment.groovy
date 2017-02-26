@@ -19,17 +19,6 @@ package edu.umd.cs.example;
 
 import java.text.DecimalFormat;
 
-import edu.umd.cs.psl.groovy.*;
-import edu.umd.cs.psl.ui.functions.textsimilarity.*;
-import edu.umd.cs.psl.ui.loading.InserterUtils;
-import edu.umd.cs.psl.util.database.Queries;
-import edu.umd.cs.psl.model.argument.ArgumentType;
-import edu.umd.cs.psl.model.argument.GroundTerm;
-import edu.umd.cs.psl.model.predicate.Predicate;
-import edu.umd.cs.psl.model.argument.type.*;
-import edu.umd.cs.psl.model.atom.GroundAtom;
-import edu.umd.cs.psl.model.atom.RandomVariableAtom;
-import edu.umd.cs.psl.model.predicate.type.*;
 import edu.umd.cs.psl.application.inference.MPEInference;
 import edu.umd.cs.psl.application.learning.weight.maxlikelihood.MaxLikelihoodMPE;
 import edu.umd.cs.psl.config.*;
@@ -39,6 +28,17 @@ import edu.umd.cs.psl.database.Partition;
 import edu.umd.cs.psl.database.rdbms.RDBMSDataStore;
 import edu.umd.cs.psl.database.rdbms.driver.H2DatabaseDriver;
 import edu.umd.cs.psl.database.rdbms.driver.H2DatabaseDriver.Type;
+import edu.umd.cs.psl.groovy.*;
+import edu.umd.cs.psl.model.argument.ArgumentType;
+import edu.umd.cs.psl.model.argument.GroundTerm;
+import edu.umd.cs.psl.model.argument.type.*;
+import edu.umd.cs.psl.model.atom.GroundAtom;
+import edu.umd.cs.psl.model.atom.RandomVariableAtom
+import edu.umd.cs.psl.model.predicate.Predicate;
+import edu.umd.cs.psl.model.predicate.type.*;
+import edu.umd.cs.psl.ui.functions.textsimilarity.*;
+import edu.umd.cs.psl.ui.loading.InserterUtils;
+import edu.umd.cs.psl.util.database.Queries;
 
 ////////////////////////// initial setup ////////////////////////
 ConfigManager cm = ConfigManager.getManager()
@@ -51,45 +51,101 @@ PSLModel m = new PSLModel(this, data);
 
 ////////////////////////// predicate declaration ////////////////////////
 
-m.add predicate: "name"        , types: [ArgumentType.UniqueID, ArgumentType.String]
-m.add predicate: "subclass"    , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
-m.add predicate: "fromOntology", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
-m.add predicate: "domainOf"    , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
-m.add predicate: "rangeOf"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
-m.add predicate: "hasType"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
+m.add predicate: "name"        , types: [
+	ArgumentType.UniqueID,
+	ArgumentType.String
+]
+m.add predicate: "subclass"    , types: [
+	ArgumentType.UniqueID,
+	ArgumentType.UniqueID
+]
+m.add predicate: "fromOntology", types: [
+	ArgumentType.UniqueID,
+	ArgumentType.UniqueID
+]
+m.add predicate: "domainOf"    , types: [
+	ArgumentType.UniqueID,
+	ArgumentType.String
+]
+m.add predicate: "rangeOf"     , types: [
+	ArgumentType.UniqueID,
+	ArgumentType.String
+]
+m.add predicate: "hasType"     , types: [
+	ArgumentType.UniqueID,
+	ArgumentType.UniqueID
+]
+
+m.add predicate: "hasObject"     , types: [
+	ArgumentType.UniqueID,
+	ArgumentType.UniqueID
+]
+
+m.add predicate: "hasValue"     , types: [
+	ArgumentType.UniqueID,
+	ArgumentType.String
+]
+
 
 //target predicate
-m.add predicate: "similar"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
+m.add predicate: "similar"     , types: [
+	ArgumentType.UniqueID,
+	ArgumentType.UniqueID
+]
+m.add predicate: "similartype"     , types: [
+	ArgumentType.String,
+	ArgumentType.String
+]
 
-m.add function: "similarName"  , implementation: new LevenshteinSimilarity();
+
+m.add function: "similarName"  , implementation: new MyStringSimilarity();
+m.add function: "similarValue"  , implementation: new MyStringSimilarity();
+
+// if u want 0 or 1 result use this
+//m.add function: "similarValue"  , implementation: new MyStringSimilarity();
 
 
 ///////////////////////////// rules ////////////////////////////////////
 
 /* (O1-O2) means that O1 and O2 are not equal */
+// Refsemantic is equal if its value is equal
 
-m.add rule : ( name(A,X) & name(B,Y) & similarName(X,Y) & hasType(A,T) & hasType(B,T) 
-	& fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B), weight : 8;
+m.add rule : (hasValue(X,Z) & hasValue(Y,W) & similarValue(Z,W) & fromOntology(X,O1) & fromOntology(Y,O2) & (O1-O2)) >> similar(X,Y), weight : 1;
 
-m.add rule : ( similar(A,B) & name(A,X) & name(B,Y)
-	& fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similarName(X,Y), weight : 1;
 
-m.add rule : (domainOf(R,A) & domainOf(T,B) & similar(A,B)
-	& fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(R,T), weight : 2;
+// Attribute is equal if its Refsemantic is equal
+m.add rule : ( name(A,X) & name(B,Y)
+& fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B), weight : 1;
 
-m.add rule : (rangeOf(R,A)  & rangeOf(T,B)  & similar(A,B)
-	& fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(R,T), weight : 2;
 
-m.add rule : (domainOf(R,A) & domainOf(T,B) & similar(R,T)
-	& fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B), weight : 2;
+m.add rule : ( similar(A,B) & hasObject(A,X) & hasObject(B,Y)  & hasValue(X,Z) & hasValue(Y,W)
+& fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similarValue(Z,W), weight : 1000;
 
-m.add rule : (rangeOf(R,A)  & rangeOf(T,B)  & similar(R,T)
-	& fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B), weight : 2;
+
+
+
+
+/*
+ m.add rule : ( name(A,X) & name(B,Y) & similarName(X,Y) & hasType(A,T) & hasType(B,T)
+ & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B), weight : 8;
+ m.add rule : ( similar(A,B) & name(A,X) & name(B,Y)
+ & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similarName(X,Y), weight : 1;
+ m.add rule : (domainOf(R,A) & domainOf(T,B) & similar(A,B)
+ & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(R,T), weight : 2;
+ m.add rule : (rangeOf(R,A)  & rangeOf(T,B)  & similar(A,B)
+ & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(R,T), weight : 2;
+ m.add rule : (domainOf(R,A) & domainOf(T,B) & similar(R,T)
+ & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B), weight : 2;
+ m.add rule : (rangeOf(R,A)  & rangeOf(T,B)  & similar(R,T)
+ & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B), weight : 2;
+ GroundTerm classID = data.getUniqueID("class");
+ m.add rule : (similar(A,B) & hasType(A, classID) & hasType(B, classID)
+ & subclass(A, S1) & subclass(B, S2)
+ & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(S1, S2), weight: 3;
+ */
+
 
 GroundTerm classID = data.getUniqueID("class");
-m.add rule : (similar(A,B) & hasType(A, classID) & hasType(B, classID)
-	& subclass(A, S1) & subclass(B, S2)
-	& fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(S1, S2), weight: 3;
 
 // constraints
 m.add PredicateConstraint.PartialFunctional , on : similar;
@@ -109,16 +165,33 @@ Partition trainObservations = new Partition(0);
 Partition trainPredictions = new Partition(1);
 Partition truth = new Partition(2);
 
-for (Predicate p : [domainOf,fromOntology,name,hasType,rangeOf,subclass])
+for (Predicate p : [
+	domainOf,
+	fromOntology,
+	name,
+	hasType,
+	rangeOf,
+	subclass,
+	hasObject,
+	hasValue
+])
 {
-    insert = data.getInserter(p, trainObservations)
+	insert = data.getInserter(p, trainObservations)
 	InserterUtils.loadDelimitedData(insert, trainDir+p.getName().toLowerCase()+".txt");
 }
 
 insert = data.getInserter(similar, truth)
 InserterUtils.loadDelimitedDataTruth(insert, trainDir+"similar.txt");
 
-Database trainDB = data.getDatabase(trainPredictions, [name, subclass, fromOntology, domainOf, rangeOf, hasType] as Set, trainObservations);
+Database trainDB = data.getDatabase(trainPredictions, [
+	name,
+	subclass,
+	fromOntology,
+	domainOf,
+	rangeOf,
+	hasObject,
+	hasValue,
+	hasType] as Set, trainObservations);
 populateSimilar(trainDB);
 
 Database truthDB = data.getDatabase(truth, [similar] as Set);
@@ -139,13 +212,31 @@ println m
 def testDir = dir+'test'+java.io.File.separator;
 Partition testObservations = new Partition(3);
 Partition testPredictions = new Partition(4);
-for (Predicate p : [domainOf,fromOntology,name,hasType,rangeOf,subclass]) 
+for (Predicate p : [
+	domainOf,
+	fromOntology,
+	name,
+	hasType,
+	rangeOf,
+	subclass,
+	hasObject,
+	hasValue
+])
 {
 	insert = data.getInserter(p, testObservations);
 	InserterUtils.loadDelimitedData(insert, testDir+p.getName().toLowerCase()+".txt");
+
 }
 
-Database testDB = data.getDatabase(testPredictions, [name, subclass, fromOntology, domainOf, rangeOf, hasType] as Set, testObservations);
+Database testDB = data.getDatabase(testPredictions, [
+	name,
+	subclass,
+	fromOntology,
+	domainOf,
+	rangeOf,
+	hasObject,
+	hasValue,
+	hasType] as Set, testObservations);
 populateSimilar(testDB);
 
 /////////////////////////// test inference //////////////////////////////////
@@ -156,10 +247,20 @@ inference.mpeInference();
 inference.close();
 
 println "INFERENCE DONE";
-
+def file1 = new File('data/ontology/test/similar.txt')
+file1.write('')
 DecimalFormat formatter = new DecimalFormat("#.##");
-for (GroundAtom atom : Queries.getAllAtoms(testDB, similar))
+for (GroundAtom atom : Queries.getAllAtoms(testDB, similar)){
 	println atom.toString() + ": " + formatter.format(atom.getValue());
+	// only writes if its equal to 1 or u can set the threshold
+	if(formatter.format(atom.getValue())>="0.5"){
+		println 'matches threshold writing to similar.txt'
+
+		file1.append('\n'+atom.toString())
+	}
+
+}
+
 
 /**
  * Populates all the similiar atoms between the concepts of two ontologies using
@@ -173,12 +274,12 @@ void populateSimilar(Database db) {
 	Set<GroundTerm> o1 = new HashSet<GroundTerm>();
 	Set<GroundTerm> o2 = new HashSet<GroundTerm>();
 	for (GroundAtom atom : concepts) {
-		if (atom.getArguments()[1].toString().equals("o1"))
+		if (atom.getArguments()[1].toString().equals("aml"))
 			o1.add(atom.getArguments()[0]);
 		else
 			o2.add(atom.getArguments()[0]);
 	}
-	
+
 	/* Populates manually (as opposed to using DatabasePopulator) */
 	for (GroundTerm o1Concept : o1) {
 		for (GroundTerm o2Concept : o2) {
@@ -186,5 +287,6 @@ void populateSimilar(Database db) {
 			((RandomVariableAtom) db.getAtom(similar, o2Concept, o1Concept)).commitToDB();
 		}
 	}
+
 }
 

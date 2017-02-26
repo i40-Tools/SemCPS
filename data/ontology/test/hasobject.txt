@@ -1,0 +1,3 @@
+aml:Attribute1	aml:RefSemantic1
+
+opcua:UAVariable4	opcua:RefSemantic1
