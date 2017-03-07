@@ -15,3 +15,15 @@ opcua:UAObject	opcua
 aml:InternalLink	aml
 
 opcua:InternalLink	opcua
+
+aml:eClassClassificationClass1	aml
+
+opcua:eClassClassificationClass1	opcua
+
+aml:eClassIRDI1	aml
+
+opcua:eClassIRDI1	opcua
+
+aml:eClassVersion1	aml
+
+opcua:eClassVersion1	opcua

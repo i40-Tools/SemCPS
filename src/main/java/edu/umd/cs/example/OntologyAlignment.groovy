@@ -53,52 +53,62 @@ PSLModel m = new PSLModel(this, data);
 
 m.add predicate: "name"        , types: [
 	ArgumentType.UniqueID,
-	ArgumentType.String
-]
-m.add predicate: "subclass"    , types: [
-	ArgumentType.UniqueID,
 	ArgumentType.UniqueID
 ]
+
 m.add predicate: "fromOntology", types: [
 	ArgumentType.UniqueID,
 	ArgumentType.UniqueID
 ]
-m.add predicate: "domainOf"    , types: [
-	ArgumentType.UniqueID,
-	ArgumentType.String
-]
-m.add predicate: "rangeOf"     , types: [
-	ArgumentType.UniqueID,
-	ArgumentType.String
-]
-m.add predicate: "hasType"     , types: [
-	ArgumentType.UniqueID,
-	ArgumentType.UniqueID
-]
+
 
 m.add predicate: "hasObject"     , types: [
 	ArgumentType.UniqueID,
 	ArgumentType.UniqueID
 ]
 
-m.add predicate: "hasValue"     , types: [
+
+m.add predicate: "hasRefSemantic"     , types: [
 	ArgumentType.UniqueID,
 	ArgumentType.String
 ]
 
+m.add predicate: "hasID"     , types: [
+	ArgumentType.UniqueID,
+	ArgumentType.String
+]
+
+m.add predicate: "hasInternalLink"     , types: [
+	ArgumentType.UniqueID,
+	ArgumentType.String
+]
+
+m.add predicate: "hasEClassVersion"     , types: [
+	ArgumentType.UniqueID,
+	ArgumentType.String
+]
+
+m.add predicate: "hasEClassClassificationClass"     , types: [
+	ArgumentType.UniqueID,
+	ArgumentType.String
+]
+m.add predicate: "hasEClassIRDI"     , types: [
+	ArgumentType.UniqueID,
+	ArgumentType.String
+]
 
 //target predicate
 m.add predicate: "similar"     , types: [
 	ArgumentType.UniqueID,
 	ArgumentType.UniqueID
 ]
-m.add predicate: "similartype"     , types: [
-	ArgumentType.String,
-	ArgumentType.String
+
+m.add predicate: "similarType"     , types: [
+	ArgumentType.UniqueID,
+	ArgumentType.UniqueID
 ]
 
 
-m.add function: "similarName"  , implementation: new MyStringSimilarity();
 m.add function: "similarValue"  , implementation: new MyStringSimilarity();
 
 // if u want 0 or 1 result use this
@@ -108,20 +118,45 @@ m.add function: "similarValue"  , implementation: new MyStringSimilarity();
 ///////////////////////////// rules ////////////////////////////////////
 
 /* (O1-O2) means that O1 and O2 are not equal */
-// Refsemantic is equal if its value is equal
-
-m.add rule : (hasValue(X,Z) & hasValue(Y,W) & similarValue(Z,W) & fromOntology(X,O1) & fromOntology(Y,O2) & (O1-O2)) >> similar(X,Y), weight : 1;
 
 
-// Attribute is same if it has ID or RefSemantic Same
-m.add rule : (hasObject(A,X) & hasObject(B,Y)  & hasValue(X,Z) & hasValue(Y,W) & similarValue(Z,W)
+
+//// Refsemantic is equal if its value is equal
+//
+//m.add rule : (hasRefSemantic(X,Z) & hasRefSemantic(Y,W) & similarValue(Z,W) & fromOntology(X,O1) & fromOntology(Y,O2) & (O1-O2)) >> similar(X,Y), weight : 1000;
+//
+//// ID is equal if its value is equal
+//
+//m.add rule : (hasID(X,Z) & hasID(Y,W) & similarValue(Z,W) & fromOntology(X,O1) & fromOntology(Y,O2) & (O1-O2)) >> similar(X,Y), weight : 1000;
+
+
+// Attribute is same if its RefSemantic is Same
+m.add rule : (hasObject(A,X) & hasObject(B,Y)  & hasRefSemantic(X,Z) & hasRefSemantic(Y,W) & similarValue(Z,W)
+& fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B) , weight : 1000;
+
+// Attribute is same if its ID is Same
+m.add rule : (hasObject(A,X) & hasObject(B,Y)  & hasID(X,Z) & hasID(Y,W) & similarValue(Z,W)
 & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B) , weight : 1000;
 
 
 
+// Attribute is same if its eclass,IRDI and classifcation class is Same
+m.add rule :( hasObject(E,X) & hasObject(U,Y)  & hasEClassIRDI(X,Z) & hasEClassIRDI(Y,W) & similarValue(Z,W)
+& hasObject(E,Q) & hasObject(U,T)  & hasEClassVersion(Q,M) & hasEClassVersion(T,N) & similarValue(M,N)
+& hasObject(E,D) & hasObject(U,K)  & hasEClassVersion(D,O) & hasEClassVersion(K,L) & similarValue(O,L)
+& fromOntology(E,O1) & fromOntology(U,O2) & (O1-O2)) >> similar(E,U) , weight : 1000;
+
+
+// InternalElement is same if its InternalLink is Same
+m.add rule : (hasObject(A,X) & hasObject(B,Y)  & hasInternalLink(X,Z) & hasInternalLink(Y,W) & similarValue(Z,W)
+& fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B) , weight : 1000;
+
 
 
 /*
+ //// Attribute is same if it has ID or RefSemantic Same
+ //m.add rule : (hasObject(A,X) & hasObject(B,Y)  & hasValue(X,Z) & hasValue(Y,W) & similarValue(Z,W)
+ //& fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B) , weight : 1000;
  // Attribute is equal if its Refsemantic is equal
  m.add rule : ( name(A,X) & name(B,Y)
  & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B), weight : 1;
@@ -165,14 +200,15 @@ Partition trainPredictions = new Partition(1);
 Partition truth = new Partition(2);
 
 for (Predicate p : [
-	domainOf,
 	fromOntology,
 	name,
-	hasType,
-	rangeOf,
-	subclass,
 	hasObject,
-	hasValue
+	hasRefSemantic,
+	hasID,
+	hasInternalLink,
+	hasEClassVersion,
+	hasEClassClassificationClass,
+	hasEClassIRDI
 ])
 {
 	insert = data.getInserter(p, trainObservations)
@@ -184,13 +220,14 @@ InserterUtils.loadDelimitedDataTruth(insert, trainDir+"similar.txt");
 
 Database trainDB = data.getDatabase(trainPredictions, [
 	name,
-	subclass,
 	fromOntology,
-	domainOf,
-	rangeOf,
 	hasObject,
-	hasValue,
-	hasType] as Set, trainObservations);
+	hasRefSemantic,
+	hasInternalLink,
+	hasID,
+	hasEClassVersion,
+	hasEClassClassificationClass,
+	hasEClassIRDI] as Set, trainObservations);
 populateSimilar(trainDB);
 
 Database truthDB = data.getDatabase(truth, [similar] as Set);
@@ -212,14 +249,15 @@ def testDir = dir+'test'+java.io.File.separator;
 Partition testObservations = new Partition(3);
 Partition testPredictions = new Partition(4);
 for (Predicate p : [
-	domainOf,
 	fromOntology,
 	name,
-	hasType,
-	rangeOf,
-	subclass,
 	hasObject,
-	hasValue
+	hasRefSemantic,
+	hasID,
+	hasInternalLink,
+	hasEClassVersion,
+	hasEClassClassificationClass,
+	hasEClassIRDI
 ])
 {
 	insert = data.getInserter(p, testObservations);
@@ -229,13 +267,14 @@ for (Predicate p : [
 
 Database testDB = data.getDatabase(testPredictions, [
 	name,
-	subclass,
 	fromOntology,
-	domainOf,
-	rangeOf,
 	hasObject,
-	hasValue,
-	hasType] as Set, testObservations);
+	hasRefSemantic,
+	hasID,
+	hasInternalLink,
+	hasEClassVersion,
+	hasEClassClassificationClass,
+	hasEClassIRDI] as Set, testObservations);
 populateSimilar(testDB);
 
 /////////////////////////// test inference //////////////////////////////////

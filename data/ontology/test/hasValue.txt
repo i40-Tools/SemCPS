@@ -1,9 +1,0 @@
-aml:RefSemantic1	ad
-opcua:RefSemantic1	ad
-
-aml:ID	ade
-opcua:ID	ade
-
-aml:InternalElement1	www
-
-opcua:UAObject	wwwe

@@ -1,0 +1,4 @@
+aml:eClassClassificationClass1	www
+opcua:eClassClassificationClass1	www
+
+

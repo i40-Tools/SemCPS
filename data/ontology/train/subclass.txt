@@ -1,5 +1,0 @@
-o1hardware	o1service&products
-o2hardware	o2products&services
-
-
-
