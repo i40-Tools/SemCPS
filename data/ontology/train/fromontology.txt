@@ -4,3 +4,14 @@ opcua:UAVariable4	opcua
 
 opcua:RefSemantic1	opcua
 aml:RefSemantic1	aml
+
+opcua:ID	opcua
+aml:ID	aml
+
+aml:InternalElement1	aml
+
+opcua:UAObject	opcua
+
+aml:InternalLink	aml
+
+opcua:InternalLink	opcua

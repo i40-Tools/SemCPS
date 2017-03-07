@@ -113,19 +113,18 @@ m.add function: "similarValue"  , implementation: new MyStringSimilarity();
 m.add rule : (hasValue(X,Z) & hasValue(Y,W) & similarValue(Z,W) & fromOntology(X,O1) & fromOntology(Y,O2) & (O1-O2)) >> similar(X,Y), weight : 1;
 
 
-// Attribute is equal if its Refsemantic is equal
-m.add rule : ( name(A,X) & name(B,Y)
-& fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B), weight : 1;
-
-
-m.add rule : ( similar(A,B) & hasObject(A,X) & hasObject(B,Y)  & hasValue(X,Z) & hasValue(Y,W)
-& fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similarValue(Z,W), weight : 1000;
+// Attribute is same if it has ID or RefSemantic Same
+m.add rule : (hasObject(A,X) & hasObject(B,Y)  & hasValue(X,Z) & hasValue(Y,W) & similarValue(Z,W)
+& fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B) , weight : 1000;
 
 
 
 
 
 /*
+ // Attribute is equal if its Refsemantic is equal
+ m.add rule : ( name(A,X) & name(B,Y)
+ & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B), weight : 1;
  m.add rule : ( name(A,X) & name(B,Y) & similarName(X,Y) & hasType(A,T) & hasType(B,T)
  & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B), weight : 8;
  m.add rule : ( similar(A,B) & name(A,X) & name(B,Y)

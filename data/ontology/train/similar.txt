@@ -6,3 +6,13 @@ opcua:UAVariable4	aml:Attribute1	1.0
 
 aml:RefSemantic1	opcua:RefSemantic1	1.0
 opcua:RefSemantic1	aml:RefSemantic1	1.0
+
+aml:ID	opcua:ID	1.0
+opcua:ID	aml:ID	1.0
+
+
+aml:InternalElement1	opcua:UAObject	1.0
+opcua:UAObject	aml:InternalElement1	1.0
+
+aml:InternalLink	opcua:InternalLink	1.0
+opcua:InternalLink	aml:InternalLink	1.0

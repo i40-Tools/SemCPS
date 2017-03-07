@@ -1,3 +1,6 @@
 aml:Attribute1	Attribute1
 opcua:UAVariable4	UAVariable4
 
+aml:InternalElement1	aml:InternalLink
+
+opcua:UAObject	opcua:InternalLink

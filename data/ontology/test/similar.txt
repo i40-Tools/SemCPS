@@ -1,5 +1,7 @@
 
 SIMILAR(opcua:UAVariable4, aml:Attribute1)
 SIMILAR(opcua:RefSemantic1, aml:RefSemantic1)
+SIMILAR(opcua:ID, aml:ID)
+SIMILAR(aml:ID, opcua:ID)
 SIMILAR(aml:RefSemantic1, opcua:RefSemantic1)
 SIMILAR(aml:Attribute1, opcua:UAVariable4)
