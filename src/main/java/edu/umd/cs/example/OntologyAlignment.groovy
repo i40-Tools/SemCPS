@@ -62,7 +62,12 @@ m.add predicate: "fromOntology", types: [
 ]
 
 
-m.add predicate: "hasObject"     , types: [
+m.add predicate: "Attribute"     , types: [
+	ArgumentType.UniqueID,
+	ArgumentType.UniqueID
+]
+
+m.add predicate: "InternalElement"     , types: [
 	ArgumentType.UniqueID,
 	ArgumentType.UniqueID
 ]
@@ -131,31 +136,31 @@ m.add function: "similarValue"  , implementation: new MyStringSimilarity();
 
 
 // Attribute is same if its RefSemantic is Same
-m.add rule : (hasObject(A,X) & hasObject(B,Y)  & hasRefSemantic(X,Z) & hasRefSemantic(Y,W) & similarValue(Z,W)
+m.add rule : (Attribute(A,X) & Attribute(B,Y)  & hasRefSemantic(X,Z) & hasRefSemantic(Y,W) & similarValue(Z,W)
 & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B) , weight : 1000;
 
 // Attribute is same if its ID is Same
-m.add rule : (hasObject(A,X) & hasObject(B,Y)  & hasID(X,Z) & hasID(Y,W) & similarValue(Z,W)
+m.add rule : (Attribute(A,X) & Attribute(B,Y)  & hasID(X,Z) & hasID(Y,W) & similarValue(Z,W)
 & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B) , weight : 1000;
 
 
 
 // Attribute is same if its eclass,IRDI and classifcation class is Same
-m.add rule :( hasObject(E,X) & hasObject(U,Y)  & hasEClassIRDI(X,Z) & hasEClassIRDI(Y,W) & similarValue(Z,W)
-& hasObject(E,Q) & hasObject(U,T)  & hasEClassVersion(Q,M) & hasEClassVersion(T,N) & similarValue(M,N)
-& hasObject(E,D) & hasObject(U,K)  & hasEClassVersion(D,O) & hasEClassVersion(K,L) & similarValue(O,L)
+m.add rule :( Attribute(E,X) & Attribute(U,Y)  & hasEClassIRDI(X,Z) & hasEClassIRDI(Y,W) & similarValue(Z,W)
+& Attribute(E,Q) & Attribute(U,T)  & hasEClassVersion(Q,M) & hasEClassVersion(T,N) & similarValue(M,N)
+& Attribute(E,D) & Attribute(U,K)  & hasEClassVersion(D,O) & hasEClassVersion(K,L) & similarValue(O,L)
 & fromOntology(E,O1) & fromOntology(U,O2) & (O1-O2)) >> similar(E,U) , weight : 1000;
 
 
 // InternalElement is same if its InternalLink is Same
-m.add rule : (hasObject(A,X) & hasObject(B,Y)  & hasInternalLink(X,Z) & hasInternalLink(Y,W) & similarValue(Z,W)
+m.add rule : (InternalElement(A,X) & InternalElement(B,Y)  & hasInternalLink(X,Z) & hasInternalLink(Y,W) & similarValue(Z,W)
 & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B) , weight : 1000;
 
 
 
 /*
  //// Attribute is same if it has ID or RefSemantic Same
- //m.add rule : (hasObject(A,X) & hasObject(B,Y)  & hasValue(X,Z) & hasValue(Y,W) & similarValue(Z,W)
+ //m.add rule : (Attribute(A,X) & Attribute(B,Y)  & hasValue(X,Z) & hasValue(Y,W) & similarValue(Z,W)
  //& fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B) , weight : 1000;
  // Attribute is equal if its Refsemantic is equal
  m.add rule : ( name(A,X) & name(B,Y)
@@ -202,13 +207,14 @@ Partition truth = new Partition(2);
 for (Predicate p : [
 	fromOntology,
 	name,
-	hasObject,
+	Attribute,
 	hasRefSemantic,
 	hasID,
 	hasInternalLink,
 	hasEClassVersion,
 	hasEClassClassificationClass,
-	hasEClassIRDI
+	hasEClassIRDI,
+	InternalElement
 ])
 {
 	insert = data.getInserter(p, trainObservations)
@@ -221,13 +227,15 @@ InserterUtils.loadDelimitedDataTruth(insert, trainDir+"similar.txt");
 Database trainDB = data.getDatabase(trainPredictions, [
 	name,
 	fromOntology,
-	hasObject,
+	Attribute,
 	hasRefSemantic,
 	hasInternalLink,
 	hasID,
 	hasEClassVersion,
 	hasEClassClassificationClass,
-	hasEClassIRDI] as Set, trainObservations);
+	hasEClassIRDI,
+	InternalElement] as Set, trainObservations);
+
 populateSimilar(trainDB);
 
 Database truthDB = data.getDatabase(truth, [similar] as Set);
@@ -251,13 +259,14 @@ Partition testPredictions = new Partition(4);
 for (Predicate p : [
 	fromOntology,
 	name,
-	hasObject,
+	Attribute,
 	hasRefSemantic,
 	hasID,
 	hasInternalLink,
 	hasEClassVersion,
 	hasEClassClassificationClass,
-	hasEClassIRDI
+	hasEClassIRDI,
+	InternalElement
 ])
 {
 	insert = data.getInserter(p, testObservations);
@@ -268,13 +277,15 @@ for (Predicate p : [
 Database testDB = data.getDatabase(testPredictions, [
 	name,
 	fromOntology,
-	hasObject,
+	Attribute,
 	hasRefSemantic,
 	hasID,
 	hasInternalLink,
 	hasEClassVersion,
 	hasEClassClassificationClass,
-	hasEClassIRDI] as Set, testObservations);
+	hasEClassIRDI,
+	InternalElement] as Set, testObservations);
+
 populateSimilar(testDB);
 
 /////////////////////////// test inference //////////////////////////////////
