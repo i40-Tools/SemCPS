@@ -2,16 +2,11 @@ package main;
 
 import integration.Integration;
 import integration.XSDValidator;
-
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import org.codehaus.groovy.control.CompilationFailedException;
-
 import Test.ModelRepair;
 import util.ConfigManager;
-import groovy.lang.Binding;
 import groovy.lang.Script;
 
 /**
@@ -26,7 +21,7 @@ public class AlligatorMain {
 
 	// integrating files
 	private Integration integration;
-	private Files2Facts filesAMLInRDF;
+	private Files2Facts standardFiles;
 
 	public static void main(String[] args) throws Throwable {
 		try {
@@ -46,12 +41,11 @@ public class AlligatorMain {
 	 * TODO create more specific exceptions
 	 */
 	public void readConvertStandardFiles() throws Exception{
-		filesAMLInRDF = new Files2Facts();
-		filesAMLInRDF.prologFilePath();
-		filesAMLInRDF.readFiles(ConfigManager.getFilePath(), ".aml",
+		standardFiles = new Files2Facts();
+		standardFiles.readFiles(ConfigManager.getFilePath(), ".aml",
 				".opcua", ".xml");
-		filesAMLInRDF.convertRdf();
-		filesAMLInRDF.readFiles(ConfigManager.getFilePath(), ".ttl",
+		standardFiles.convert2RDF();
+		standardFiles.readFiles(ConfigManager.getFilePath(), ".ttl",
 				".rdf", ".owl");
 	}
 
@@ -78,7 +72,8 @@ public class AlligatorMain {
 	 * TODO create more specific exceptions
 	 */
 	public void executeDatalogApproach() throws Throwable {
-		filesAMLInRDF.generateExtensionalDB(ConfigManager.getFilePath());
+		standardFiles.prologFilePath();
+		standardFiles.generateExtensionalDB(ConfigManager.getFilePath());
 		DeductiveDB deductiveDB = new DeductiveDB();
 		// // formats the output.txt in java objects
 		deductiveDB.readWorkingDirectory();
@@ -96,7 +91,7 @@ public class AlligatorMain {
 	public void integrate() throws Throwable{
 		integration = new Integration();
 		integration.integrate();
-		// check for validty
+		// check for validity
 		File file = new File(ConfigManager.getFilePath() +
 				"integration/integration.aml");
 		if (file.exists()) {
@@ -108,6 +103,5 @@ public class AlligatorMain {
 				System.out.println("Schema Validated");
 			}
 		}
-
 	}
 }

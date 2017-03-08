@@ -37,7 +37,7 @@ public class Files2Facts {
 	 * @param input
 	 * @param output
 	 */
-	public void convertRdf() {
+	public void convert2RDF() {
 		int i = 0;
 		for (File file : files) {
 			if (file.getName().endsWith(".aml")) {
