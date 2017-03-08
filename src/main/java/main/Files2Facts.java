@@ -8,6 +8,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
+import org.h2.constant.SysProperties;
+
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.RDFNode;
@@ -21,7 +23,7 @@ import util.ConfigManager;
 import util.StringUtil;
 
 /**
- * Reads the RDF files and convert them to Datalog facts
+ * Reads the RDF files and convert them to Datalog or PSL facts
  * 
  * @author Irlan 28.06.2016
  */
@@ -42,6 +44,7 @@ public class Files2Facts {
 		for (File file : files) {
 			if (file.getName().endsWith(".aml")) {
 				Krextor krextor = new Krextor();
+				System.out.println(ConfigManager.getFilePath());
 				krextor.convertRdf(file.getAbsolutePath(), "aml", "turtle",
 						ConfigManager.getFilePath() + "plfile" + i + ".ttl");
 			} else {
@@ -65,6 +68,7 @@ public class Files2Facts {
 	public ArrayList<File> readFiles(String path, String type, String type2, String type3) throws Exception {
 		files = new ArrayList<File>();
 		File originalFilesFolder = new File(path);
+		System.out.println(path);
 		if (originalFilesFolder.isDirectory()) {
 			for (File amlFile : originalFilesFolder.listFiles()) {
 				if (amlFile.isFile() && (amlFile.getName().endsWith(type) || amlFile.getName().endsWith(type2)
@@ -151,6 +155,63 @@ public class Files2Facts {
 			}
 
 			buf.append("),true).");
+			buf.append(System.getProperty("line.separator"));
+
+		}
+
+		return buf.toString();
+	}
+	
+	/**
+	 * Reads the turtle format RDF files and extract the contents for PSL conversion.
+	 * 
+	 * @param file
+	 * @param number
+	 * @return
+	 * @throws Exception
+	 */
+	public String facts2PSL(File file, int number) throws Exception {
+
+		StringBuilder buf = new StringBuilder();
+
+		InputStream inputStream = FileManager.get().open(file.getAbsolutePath());
+
+		Model model = null;
+		model = ModelFactory.createDefaultModel();
+
+		// parses in turtle format
+		model.read(new InputStreamReader(inputStream), null, "TURTLE");
+
+		StmtIterator iterator = model.listStatements();
+
+		while (iterator.hasNext()) {
+			Statement stmt = iterator.nextStatement();
+			subject = stmt.getSubject();
+			predicate = stmt.getPredicate();
+			object = stmt.getObject();
+
+			buf.append("(").append(StringUtil.lowerCaseFirstChar(predicate.asNode().getLocalName())).append("(")
+					.append(StringUtil.lowerCaseFirstChar(subject.asNode().getLocalName()) + number).append(",");
+			if (object.isURIResource()) {
+				object = model.getResource(object.as(Resource.class).getURI());
+				String objectStr = object.asNode().getLocalName();
+				if (predicate.asNode().getLocalName().toString().equals("type")) {
+					buf.append(StringUtil.lowerCaseFirstChar(objectStr));
+				} else {
+					buf.append(StringUtil.lowerCaseFirstChar(objectStr) + number);
+				}
+
+			} else {
+				if (object.isLiteral()) {
+					buf.append("'" + object.asLiteral().getLexicalForm() + "'");
+
+				} else {
+					buf.append(object);
+
+				}
+			}
+
+			buf.append(")");
 			buf.append(System.getProperty("line.separator"));
 
 		}

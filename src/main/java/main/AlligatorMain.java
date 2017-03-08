@@ -2,6 +2,7 @@ package main;
 
 import java.io.File;
 
+import util.ConfigManager;
 import groovy.lang.Binding;
 import groovy.lang.Script;
 
@@ -17,13 +18,9 @@ public class AlligatorMain {
 	public static void main(String[] args) throws Throwable {
 
 		// PSL rules part
-		Binding binding = new Binding();
-		binding.setVariable("foo", new Integer(2));
 		Script script = new Script() {
-
 			@Override
 			public Object run() {
-				// TODO Auto-generated method stub
 				return null;
 			}
 		};
@@ -35,12 +32,12 @@ public class AlligatorMain {
 		Files2Facts filesAMLInRDF = new Files2Facts();
 		try {
 
-			// filesAMLInRDF.prologFilePath();
-			// filesAMLInRDF.readFiles(ConfigManager.getFilePath(), ".aml",
-			// ".opcua", ".xml");
-			// filesAMLInRDF.convertRdf();
-			// filesAMLInRDF.readFiles(ConfigManager.getFilePath(), ".ttl",
-			// ".rdf", ".owl");
+			//filesAMLInRDF.prologFilePath();
+			filesAMLInRDF.readFiles(ConfigManager.getFilePath(), ".aml",
+			 ".opcua", ".xml");
+			 filesAMLInRDF.convertRdf();
+			 filesAMLInRDF.readFiles(ConfigManager.getFilePath(), ".ttl",
+			 ".rdf", ".owl");
 			// filesAMLInRDF.generateExtensionalDB(ConfigManager.getFilePath());
 			//
 			// DeductiveDB deductiveDB = new DeductiveDB();
@@ -72,7 +69,6 @@ public class AlligatorMain {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-
 		}
 
 	}
