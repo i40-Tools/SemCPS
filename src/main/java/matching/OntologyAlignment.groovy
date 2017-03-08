@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.umd.cs.example;
+package matching;
 
 import java.text.DecimalFormat;
 
@@ -124,64 +124,25 @@ m.add function: "similarValue"  , implementation: new MyStringSimilarity();
 
 /* (O1-O2) means that O1 and O2 are not equal */
 
-
-
-//// Refsemantic is equal if its value is equal
-//
-//m.add rule : (hasRefSemantic(X,Z) & hasRefSemantic(Y,W) & similarValue(Z,W) & fromOntology(X,O1) & fromOntology(Y,O2) & (O1-O2)) >> similar(X,Y), weight : 1000;
-//
-//// ID is equal if its value is equal
-//
-//m.add rule : (hasID(X,Z) & hasID(Y,W) & similarValue(Z,W) & fromOntology(X,O1) & fromOntology(Y,O2) & (O1-O2)) >> similar(X,Y), weight : 1000;
-
-
-// Attribute is same if its RefSemantic is Same
-m.add rule : (Attribute(A,X) & Attribute(B,Y)  & hasRefSemantic(X,Z) & hasRefSemantic(Y,W) & similarValue(Z,W)
+// Two AML Attributes are the same if its RefSemantic are the same
+m.add rule : (Attribute(A,X) & Attribute(B,Y) & hasRefSemantic(X,Z) & hasRefSemantic(Y,W) & similarValue(Z,W)
 & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B) , weight : 1000;
 
-// Attribute is same if its ID is Same
+// Two AMl Attributes are the same if they share the same ID
 m.add rule : (Attribute(A,X) & Attribute(B,Y)  & hasID(X,Z) & hasID(Y,W) & similarValue(Z,W)
 & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B) , weight : 1000;
 
-
-
-// Attribute is same if its eclass,IRDI and classifcation class is Same
+// Two AML Attributes are semantically the same if its eclass,IRDI and classification class are the same
 m.add rule :( Attribute(E,X) & Attribute(U,Y)  & hasEClassIRDI(X,Z) & hasEClassIRDI(Y,W) & similarValue(Z,W)
 & Attribute(E,Q) & Attribute(U,T)  & hasEClassVersion(Q,M) & hasEClassVersion(T,N) & similarValue(M,N)
 & Attribute(E,D) & Attribute(U,K)  & hasEClassVersion(D,O) & hasEClassVersion(K,L) & similarValue(O,L)
 & fromOntology(E,O1) & fromOntology(U,O2) & (O1-O2)) >> similar(E,U) , weight : 1000;
 
 
-// InternalElement is same if its InternalLink is Same
+// Two InternalElement are the same if its InternalLink is the same
 m.add rule : (InternalElement(A,X) & InternalElement(B,Y)  & hasInternalLink(X,Z) & hasInternalLink(Y,W) & similarValue(Z,W)
 & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B) , weight : 1000;
 
-
-
-/*
- //// Attribute is same if it has ID or RefSemantic Same
- //m.add rule : (Attribute(A,X) & Attribute(B,Y)  & hasValue(X,Z) & hasValue(Y,W) & similarValue(Z,W)
- //& fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B) , weight : 1000;
- // Attribute is equal if its Refsemantic is equal
- m.add rule : ( name(A,X) & name(B,Y)
- & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B), weight : 1;
- m.add rule : ( name(A,X) & name(B,Y) & similarName(X,Y) & hasType(A,T) & hasType(B,T)
- & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B), weight : 8;
- m.add rule : ( similar(A,B) & name(A,X) & name(B,Y)
- & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similarName(X,Y), weight : 1;
- m.add rule : (domainOf(R,A) & domainOf(T,B) & similar(A,B)
- & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(R,T), weight : 2;
- m.add rule : (rangeOf(R,A)  & rangeOf(T,B)  & similar(A,B)
- & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(R,T), weight : 2;
- m.add rule : (domainOf(R,A) & domainOf(T,B) & similar(R,T)
- & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B), weight : 2;
- m.add rule : (rangeOf(R,A)  & rangeOf(T,B)  & similar(R,T)
- & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B), weight : 2;
- GroundTerm classID = data.getUniqueID("class");
- m.add rule : (similar(A,B) & hasType(A, classID) & hasType(B, classID)
- & subclass(A, S1) & subclass(B, S2)
- & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(S1, S2), weight: 3;
- */
 
 
 GroundTerm classID = data.getUniqueID("class");
