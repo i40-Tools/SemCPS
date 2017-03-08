@@ -28,7 +28,7 @@ public class AlligatorMain {
 			}
 		};
 
-		script.evaluate(new File("src/main/java/edu/umd/cs/example/OntologyAlignment.groovy"));
+		script.evaluate(new File("src/main/java/matching/OntologyAlignment.groovy"));
 
 		// Automation ML Rules part
 
