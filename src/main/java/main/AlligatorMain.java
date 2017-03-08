@@ -1,7 +1,16 @@
 package main;
 
-import java.io.File;
+import integration.Integration;
+import integration.XSDValidator;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import org.codehaus.groovy.control.CompilationFailedException;
+
+import Test.ModelRepair;
+import util.ConfigManager;
 import groovy.lang.Binding;
 import groovy.lang.Script;
 
@@ -11,70 +20,94 @@ import groovy.lang.Script;
  * 
  * @author Irlan
  * @author Omar
+ * 
  */
 public class AlligatorMain {
 
+	// integrating files
+	private Integration integration;
+	private Files2Facts filesAMLInRDF;
+
 	public static void main(String[] args) throws Throwable {
+		try {
+			AlligatorMain main = new AlligatorMain();
+			main.readConvertStandardFiles();
+			//main.executeDatalogApproach();
+			main.executePSLAproach();
 
-		// PSL rules part
-		Binding binding = new Binding();
-		binding.setVariable("foo", new Integer(2));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Method that read standard files and convert then to RDF
+	 * @throws Exception 
+	 * TODO create more specific exceptions
+	 */
+	public void readConvertStandardFiles() throws Exception{
+		filesAMLInRDF = new Files2Facts();
+		filesAMLInRDF.prologFilePath();
+		filesAMLInRDF.readFiles(ConfigManager.getFilePath(), ".aml",
+				".opcua", ".xml");
+		filesAMLInRDF.convertRdf();
+		filesAMLInRDF.readFiles(ConfigManager.getFilePath(), ".ttl",
+				".rdf", ".owl");
+	}
+
+	/**
+	 * General method to execute the PSL-based approach
+	 * @throws CompilationFailedException
+	 * @throws IOException
+	 */
+	public void executePSLAproach() throws CompilationFailedException, IOException{
+		// Needed to run the PSL rules part
 		Script script = new Script() {
-
 			@Override
 			public Object run() {
 				// TODO Auto-generated method stub
 				return null;
 			}
 		};
-
 		script.evaluate(new File("src/main/java/matching/OntologyAlignment.groovy"));
+	}
 
-		// Automation ML Rules part
+	/**
+	 * General method to execute the Datalog-based approach
+	 * @throws Throwable
+	 * TODO create more specific exceptions
+	 */
+	public void executeDatalogApproach() throws Throwable {
+		filesAMLInRDF.generateExtensionalDB(ConfigManager.getFilePath());
+		DeductiveDB deductiveDB = new DeductiveDB();
+		// // formats the output.txt in java objects
+		deductiveDB.readWorkingDirectory();
+		deductiveDB.executeKB();
+		// formats the output.txt in java objects
+		deductiveDB.readOutput();
+		deductiveDB.consultKB();
+	}
 
-		Files2Facts filesAMLInRDF = new Files2Facts();
-		try {
-
-			// filesAMLInRDF.prologFilePath();
-			// filesAMLInRDF.readFiles(ConfigManager.getFilePath(), ".aml",
-			// ".opcua", ".xml");
-			// filesAMLInRDF.convertRdf();
-			// filesAMLInRDF.readFiles(ConfigManager.getFilePath(), ".ttl",
-			// ".rdf", ".owl");
-			// filesAMLInRDF.generateExtensionalDB(ConfigManager.getFilePath());
-			//
-			// DeductiveDB deductiveDB = new DeductiveDB();
-			// // formats the output.txt in java objects
-			// deductiveDB.readWorkingDirectory();
-			//
-			// deductiveDB.executeKB();
-			// // formats the output.txt in java objects
-			// deductiveDB.readOutput();
-			// deductiveDB.consultKB();
-			//
-			// // integrating files
-			// Integration integ = new Integration();
-			// integ.integrate();
-			//
-			// // chec valdty
-			// File file = new File(ConfigManager.getFilePath() +
-			// "integration/integration.aml");
-			// if (file.exists()) {
-			// if (!new XSDValidator(ConfigManager.getFilePath() +
-			// "integration/integration.aml").schemaValidate()) {
-			// System.out.println("Repairing Structure");
-			// ModelRepair.testRoundTrip(ConfigManager.getFilePath() +
-			// "integration/integration.aml");
-			// System.out.println("Schema Validated");
-			//
-			// }
-			// }
-
-		} catch (Exception e) {
-			e.printStackTrace();
-
+	/**
+	 * Method used to integrate the documents taking the results from the inference
+	 * @throws Throwable
+	 * TODO create more specific exceptions
+	 */
+	public void integrate() throws Throwable{
+		integration = new Integration();
+		integration.integrate();
+		// check for validty
+		File file = new File(ConfigManager.getFilePath() +
+				"integration/integration.aml");
+		if (file.exists()) {
+			if (!new XSDValidator(ConfigManager.getFilePath() +
+					"integration/integration.aml").schemaValidate()) {
+				System.out.println("Repairing Structure");
+				ModelRepair.testRoundTrip(ConfigManager.getFilePath() +
+						"integration/integration.aml");
+				System.out.println("Schema Validated");
+			}
 		}
 
 	}
-
 }
