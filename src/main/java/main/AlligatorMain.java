@@ -32,7 +32,7 @@ public class AlligatorMain {
 			
 			//main.executeDatalogApproach();
 			main.generatePSLDataModel();
-			//main.executePSLAproach();
+			main.executePSLAproach();
 
 		} catch (Exception e) {
 			e.printStackTrace();
