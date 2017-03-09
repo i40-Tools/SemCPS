@@ -1,2 +1,4 @@
 aml:RefSemantic1	wewew
 opcua:RefSemantic1	wewew
+aml:RefSemantic7	abc
+opcua:RefSemantic7	abc
