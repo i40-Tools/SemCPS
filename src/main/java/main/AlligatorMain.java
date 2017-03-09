@@ -2,9 +2,12 @@ package main;
 
 import integration.Integration;
 import integration.XSDValidator;
+
 import java.io.File;
 import java.io.IOException;
+
 import org.codehaus.groovy.control.CompilationFailedException;
+
 import Test.ModelRepair;
 import util.ConfigManager;
 import groovy.lang.Script;
@@ -19,16 +22,17 @@ import groovy.lang.Script;
  */
 public class AlligatorMain {
 
-	// integrating files
 	private Integration integration;
-	private Files2Facts standardFiles;
+	private Files2Facts standardFiles = new Files2Facts();
 
 	public static void main(String[] args) throws Throwable {
 		try {
 			AlligatorMain main = new AlligatorMain();
 			main.readConvertStandardFiles();
+			
 			//main.executeDatalogApproach();
-			main.executePSLAproach();
+			main.generatePSLDataModel();
+			//main.executePSLAproach();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -41,12 +45,20 @@ public class AlligatorMain {
 	 * TODO create more specific exceptions
 	 */
 	public void readConvertStandardFiles() throws Exception{
-		standardFiles = new Files2Facts();
+		
 		standardFiles.readFiles(ConfigManager.getFilePath(), ".aml",
 				".opcua", ".xml");
 		standardFiles.convert2RDF();
 		standardFiles.readFiles(ConfigManager.getFilePath(), ".ttl",
 				".rdf", ".owl");
+	}
+	
+	/**
+	 * Generate the PSL datamodel out of the existing standard documents
+	 * @throws Exception 
+	 */
+	public void generatePSLDataModel() throws Exception{
+		standardFiles.generatePSLPredicates(ConfigManager.getFilePath());
 	}
 
 	/**
@@ -59,7 +71,6 @@ public class AlligatorMain {
 		Script script = new Script() {
 			@Override
 			public Object run() {
-				// TODO Auto-generated method stub
 				return null;
 			}
 		};
@@ -75,7 +86,7 @@ public class AlligatorMain {
 		standardFiles.prologFilePath();
 		standardFiles.generateExtensionalDB(ConfigManager.getFilePath());
 		DeductiveDB deductiveDB = new DeductiveDB();
-		// // formats the output.txt in java objects
+		// formats the output.txt in java objects
 		deductiveDB.readWorkingDirectory();
 		deductiveDB.executeKB();
 		// formats the output.txt in java objects

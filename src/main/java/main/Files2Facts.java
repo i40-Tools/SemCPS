@@ -48,9 +48,7 @@ public class Files2Facts {
 				Krextor krextor = new Krextor();
 				krextor.convertRdf(file.getAbsolutePath(), "opcua", "turtle",
 						ConfigManager.getFilePath() + "plfile" + i + ".ttl");
-
 			}
-
 			i++;
 		}
 	}
@@ -130,7 +128,7 @@ public class Files2Facts {
 			object = stmt.getObject();
 
 			buf.append("clause1(").append(StringUtil.lowerCaseFirstChar(predicate.asNode().getLocalName())).append("(")
-					.append(StringUtil.lowerCaseFirstChar(subject.asNode().getLocalName()) + number).append(",");
+			.append(StringUtil.lowerCaseFirstChar(subject.asNode().getLocalName()) + number).append(",");
 			if (object.isURIResource()) {
 				object = model.getResource(object.as(Resource.class).getURI());
 				String objectStr = object.asNode().getLocalName();
@@ -159,6 +157,42 @@ public class Files2Facts {
 	}
 
 	/**
+	 * Reads the turtle format RDF files and extract the contents for data log
+	 * conversion.
+	 * 
+	 * @param file
+	 * @param number
+	 * @return
+	 * @throws Exception
+	 */
+	public String createPSLPredicate(File file, int number) throws Exception {
+
+		StringBuilder buf = new StringBuilder();
+		InputStream inputStream = FileManager.get().open(file.getAbsolutePath());
+
+		Model model = null;
+		model = ModelFactory.createDefaultModel();
+		model.read(new InputStreamReader(inputStream), null, "TURTLE");
+		StmtIterator iterator = model.listStatements();
+
+		while (iterator.hasNext()) {
+			Statement stmt = iterator.nextStatement();
+			subject = stmt.getSubject();
+			predicate = stmt.getPredicate();
+			object = stmt.getObject();
+
+			System.out.println(subject.asNode().getLocalName() + "     subject");
+			System.out.println(predicate.asNode().getLocalName() + "     pred");
+			if (object.isLiteral()) {
+				System.out.println(object.asLiteral().getLexicalForm());
+			} else {
+				System.out.println(object);
+			}
+		}
+		return "";
+	}
+
+	/**
 	 * Generate all the files of a given folder
 	 * 
 	 * @throws Exception
@@ -172,6 +206,19 @@ public class Files2Facts {
 		PrintWriter prologWriter = new PrintWriter(new File(path + "edb.pl"));
 		prologWriter.println(buf);
 		prologWriter.close();
+	}
+
+	/**
+	 * Generate PSL predicates
+	 * @param path
+	 * @throws Exception
+	 */
+	public void generatePSLPredicates(String path) throws Exception{
+		int i = 1;
+		StringBuilder buf = new StringBuilder();
+		for (File file : files) {
+			buf.append(createPSLPredicate(file, i++));
+		}
 	}
 
 	/**
