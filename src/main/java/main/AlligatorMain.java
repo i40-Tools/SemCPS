@@ -31,10 +31,10 @@ public class AlligatorMain {
 			AlligatorMain main = new AlligatorMain();
 			main.readConvertStandardFiles();
 			
-			main.executeDatalogApproach();
-			//main.generatePSLDataModel();
-			//main.executePSLAproach();
-			main.integrate();
+			//main.executeDatalogApproach();
+			main.generatePSLDataModel();
+			main.executePSLAproach();
+			//main.integrate();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -76,7 +76,7 @@ public class AlligatorMain {
 				return null;
 			}
 		};
-		script.evaluate(new File("src/main/java/matching/DocumentAlignment.groovy"));
+		script.evaluate(new File("src/main/java/pslApproach/DocumentAlignment.groovy"));
 	}
 
 	/**
