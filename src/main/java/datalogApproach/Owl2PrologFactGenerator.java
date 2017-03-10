@@ -1,4 +1,4 @@
-package main;
+package datalogApproach;
 
 import java.io.FileWriter;
 import java.io.PrintWriter;

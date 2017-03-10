@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import org.codehaus.groovy.control.CompilationFailedException;
 
+import datalogApproach.DeductiveDB;
 import Test.ModelRepair;
 import util.ConfigManager;
 import groovy.lang.Script;
@@ -30,9 +31,10 @@ public class AlligatorMain {
 			AlligatorMain main = new AlligatorMain();
 			main.readConvertStandardFiles();
 			
-			//main.executeDatalogApproach();
-			main.generatePSLDataModel();
-			main.executePSLAproach();
+			main.executeDatalogApproach();
+			//main.generatePSLDataModel();
+			//main.executePSLAproach();
+			main.integrate();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -74,7 +76,7 @@ public class AlligatorMain {
 				return null;
 			}
 		};
-		script.evaluate(new File("src/main/java/matching/OntologyAlignment.groovy"));
+		script.evaluate(new File("src/main/java/matching/DocumentAlignment.groovy"));
 	}
 
 	/**
