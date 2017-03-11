@@ -126,7 +126,7 @@ m.add function: "similarValue"  , implementation: new MyStringSimilarity();
 
 
 
-//// Refsemantic is equal if its value is equal
+//// Refsemantic is equal if its value is equal // skipping for now we can add if we want
 //
 //m.add rule : (hasRefSemantic(X,Z) & hasRefSemantic(Y,W) & similarValue(Z,W) & fromOntology(X,O1) & fromOntology(Y,O2) & (O1-O2)) >> similar(X,Y), weight : 1000;
 //

@@ -1,5 +1,5 @@
 
-SIMILAR(opcua:UAVariable4, aml:Attribute1)
-SIMILAR(aml:InternalElement1, opcua:UAObject)
-SIMILAR(opcua:UAObject, aml:InternalElement1)
 SIMILAR(aml:Attribute1, opcua:UAVariable4)
+SIMILAR(opcua:UAObject, aml:InternalElement1)
+SIMILAR(aml:InternalElement1, opcua:UAObject)
+SIMILAR(opcua:UAVariable4, aml:Attribute1)
