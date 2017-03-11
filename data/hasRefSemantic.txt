@@ -1,2 +1,0 @@
-aml:RefSemantic1	NE 150 v1.0 Annex 1.1.5
-opcua:UAVariable6	NE 150 v1.0 Annex 1.1.5
