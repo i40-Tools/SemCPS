@@ -1,8 +1,16 @@
 package main;
 
-import java.io.File;
+import integration.Integration;
+import integration.XSDValidator;
 
-import groovy.lang.Binding;
+import java.io.File;
+import java.io.IOException;
+
+import org.codehaus.groovy.control.CompilationFailedException;
+
+import datalogApproach.DeductiveDB;
+import Test.ModelRepair;
+import util.ConfigManager;
 import groovy.lang.Script;
 
 /**
@@ -11,70 +19,102 @@ import groovy.lang.Script;
  * 
  * @author Irlan
  * @author Omar
+ * 
  */
 public class AlligatorMain {
 
+	private Integration integration;
+	private Files2Facts standardFiles = new Files2Facts();
+
 	public static void main(String[] args) throws Throwable {
-
-		// PSL rules part
-		Binding binding = new Binding();
-		binding.setVariable("foo", new Integer(2));
-		Script script = new Script() {
-
-			@Override
-			public Object run() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-		};
-
-		script.evaluate(new File("src/main/java/edu/umd/cs/example/OntologyAlignment.groovy"));
-
-		// Automation ML Rules part
-
-		Files2Facts filesAMLInRDF = new Files2Facts();
 		try {
-
-			// filesAMLInRDF.prologFilePath();
-			// filesAMLInRDF.readFiles(ConfigManager.getFilePath(), ".aml",
-			// ".opcua", ".xml");
-			// filesAMLInRDF.convertRdf();
-			// filesAMLInRDF.readFiles(ConfigManager.getFilePath(), ".ttl",
-			// ".rdf", ".owl");
-			// filesAMLInRDF.generateExtensionalDB(ConfigManager.getFilePath());
-			//
-			// DeductiveDB deductiveDB = new DeductiveDB();
-			// // formats the output.txt in java objects
-			// deductiveDB.readWorkingDirectory();
-			//
-			// deductiveDB.executeKB();
-			// // formats the output.txt in java objects
-			// deductiveDB.readOutput();
-			// deductiveDB.consultKB();
-			//
-			// // integrating files
-			// Integration integ = new Integration();
-			// integ.integrate();
-			//
-			// // chec valdty
-			// File file = new File(ConfigManager.getFilePath() +
-			// "integration/integration.aml");
-			// if (file.exists()) {
-			// if (!new XSDValidator(ConfigManager.getFilePath() +
-			// "integration/integration.aml").schemaValidate()) {
-			// System.out.println("Repairing Structure");
-			// ModelRepair.testRoundTrip(ConfigManager.getFilePath() +
-			// "integration/integration.aml");
-			// System.out.println("Schema Validated");
-			//
-			// }
-			// }
+			AlligatorMain main = new AlligatorMain();
+			main.readConvertStandardFiles();
+			
+			//main.executeDatalogApproach();
+			main.generatePSLDataModel();
+			main.executePSLAproach();
+			//main.integrate();
 
 		} catch (Exception e) {
 			e.printStackTrace();
-
 		}
-
 	}
 
+	/**
+	 * Method that read standard files and convert then to RDF
+	 * @throws Exception 
+	 * TODO create more specific exceptions
+	 */
+	public void readConvertStandardFiles() throws Exception{
+		
+		standardFiles.readFiles(ConfigManager.getFilePath(), ".aml",
+				".opcua", ".xml");
+		standardFiles.convert2RDF();
+		standardFiles.readFiles(ConfigManager.getFilePath(), ".ttl",
+				".rdf", ".owl");
+	}
+	
+	/**
+	 * Generate the PSL datamodel out of the existing standard documents
+	 * @throws Exception 
+	 */
+	public void generatePSLDataModel() throws Exception{
+		standardFiles.generatePSLPredicates(ConfigManager.getFilePath());
+	}
+
+	/**
+	 * General method to execute the PSL-based approach
+	 * @throws CompilationFailedException
+	 * @throws IOException
+	 */
+	public void executePSLAproach() throws CompilationFailedException, IOException{
+		// Needed to run the PSL rules part
+		Script script = new Script() {
+			@Override
+			public Object run() {
+				return null;
+			}
+		};
+		script.evaluate(new File("src/main/java/pslApproach/DocumentAlignment.groovy"));
+	}
+
+	/**
+	 * General method to execute the Datalog-based approach
+	 * @throws Throwable
+	 * TODO create more specific exceptions
+	 */
+	public void executeDatalogApproach() throws Throwable {
+		standardFiles.prologFilePath();
+		standardFiles.generateExtensionalDB(ConfigManager.getFilePath());
+		DeductiveDB deductiveDB = new DeductiveDB();
+		// formats the output.txt in java objects
+		deductiveDB.readWorkingDirectory();
+		deductiveDB.executeKB();
+		// formats the output.txt in java objects
+		deductiveDB.readOutput();
+		deductiveDB.consultKB();
+	}
+
+	/**
+	 * Method used to integrate the documents taking the results from the inference
+	 * @throws Throwable
+	 * TODO create more specific exceptions
+	 */
+	public void integrate() throws Throwable{
+		integration = new Integration();
+		integration.integrate();
+		// check for validity
+		File file = new File(ConfigManager.getFilePath() +
+				"integration/integration.aml");
+		if (file.exists()) {
+			if (!new XSDValidator(ConfigManager.getFilePath() +
+					"integration/integration.aml").schemaValidate()) {
+				System.out.println("Repairing Structure");
+				ModelRepair.testRoundTrip(ConfigManager.getFilePath() +
+						"integration/integration.aml");
+				System.out.println("Schema Validated");
+			}
+		}
+	}
 }

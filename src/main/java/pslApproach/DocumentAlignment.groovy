@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.umd.cs.example;
+package pslApproach;
 
 import java.text.DecimalFormat;
 
@@ -25,6 +25,7 @@ import edu.umd.cs.psl.config.*;
 import edu.umd.cs.psl.database.DataStore;
 import edu.umd.cs.psl.database.Database;
 import edu.umd.cs.psl.database.Partition;
+import edu.umd.cs.psl.database.ReadOnlyDatabase;
 import edu.umd.cs.psl.database.rdbms.RDBMSDataStore;
 import edu.umd.cs.psl.database.rdbms.driver.H2DatabaseDriver;
 import edu.umd.cs.psl.database.rdbms.driver.H2DatabaseDriver.Type;
@@ -34,6 +35,7 @@ import edu.umd.cs.psl.model.argument.GroundTerm;
 import edu.umd.cs.psl.model.argument.type.*;
 import edu.umd.cs.psl.model.atom.GroundAtom;
 import edu.umd.cs.psl.model.atom.RandomVariableAtom
+import edu.umd.cs.psl.model.function.ExternalFunction;
 import edu.umd.cs.psl.model.predicate.Predicate;
 import edu.umd.cs.psl.model.predicate.type.*;
 import edu.umd.cs.psl.ui.functions.textsimilarity.*;
@@ -56,7 +58,7 @@ m.add predicate: "name"        , types: [
 	ArgumentType.UniqueID
 ]
 
-m.add predicate: "fromOntology", types: [
+m.add predicate: "fromDocument", types: [
 	ArgumentType.UniqueID,
 	ArgumentType.UniqueID
 ]
@@ -119,13 +121,19 @@ m.add function: "similarValue"  , implementation: new MyStringSimilarity();
 // if u want 0 or 1 result use this
 //m.add function: "similarValue"  , implementation: new MyStringSimilarity();
 
-
 ///////////////////////////// rules ////////////////////////////////////
 
 /* (O1-O2) means that O1 and O2 are not equal */
 
+// Two AML Attributes are the same if its RefSemantic are the same
+m.add rule : (Attribute(A,X) & Attribute(B,Y) & hasRefSemantic(X,Z) & hasRefSemantic(Y,W) & similarValue(Z,W) & 
+	          fromDocument(A,O1) & fromDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 10;
 
+// Two AMl Attributes are the same if they share the same ID
+m.add rule : (Attribute(A,X) & Attribute(B,Y) & hasID(X,Z) & hasID(Y,W) & similarValue(Z,W) & 
+	          fromDocument(A,O1) & fromDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 5;
 
+<<<<<<< HEAD:src/main/java/edu/umd/cs/example/OntologyAlignment.groovy
 //// Refsemantic is equal if its value is equal // skipping for now we can add if we want
 //
 //m.add rule : (hasRefSemantic(X,Z) & hasRefSemantic(Y,W) & similarValue(Z,W) & fromOntology(X,O1) & fromOntology(Y,O2) & (O1-O2)) >> similar(X,Y), weight : 1000;
@@ -144,44 +152,19 @@ m.add rule : (Attribute(A,X) & Attribute(B,Y)  & hasID(X,Z) & hasID(Y,W) & simil
 & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B) , weight : 1000;
 
 
+=======
+// Two AML Attributes are semantically the same if its eclass,IRDI and classification class are the same
+/*m.add rule :( Attribute(E,X) & Attribute(U,Y)  & hasEClassIRDI(X,Z) & hasEClassIRDI(Y,W) & similarValue(Z,W)
+			& Attribute(E,Q) & Attribute(U,T) & hasEClassVersion(Q,M) & hasEClassVersion(T,N) & similarValue(M,N)
+			& Attribute(E,D) & Attribute(U,K) & hasEClassVersion(D,O) & hasEClassVersion(K,L) & similarValue(O,L)
+			& fromDocument(E,O1) & fromDocument(U,O2) & (O1-O2)) >> similar(E,U) , weight : 12;
+*/
+>>>>>>> 008899efaccef398ccfc54853db8f3fe612badee:src/main/java/pslApproach/DocumentAlignment.groovy
 
-// Attribute is same if its eclass,IRDI and classifcation class is Same
-m.add rule :( Attribute(E,X) & Attribute(U,Y)  & hasEClassIRDI(X,Z) & hasEClassIRDI(Y,W) & similarValue(Z,W)
-& Attribute(E,Q) & Attribute(U,T)  & hasEClassVersion(Q,M) & hasEClassVersion(T,N) & similarValue(M,N)
-& Attribute(E,D) & Attribute(U,K)  & hasEClassVersion(D,O) & hasEClassVersion(K,L) & similarValue(O,L)
-& fromOntology(E,O1) & fromOntology(U,O2) & (O1-O2)) >> similar(E,U) , weight : 1000;
+// Two InternalElement are the same if its InternalLink is the same
+m.add rule : (InternalElement(A,X) & InternalElement(B,Y)  & hasInternalLink(X,Z) & hasInternalLink(Y,W) & 
+	          similarValue(Z,W) & fromDocument(A,O1) & fromDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 12;
 
-
-// InternalElement is same if its InternalLink is Same
-m.add rule : (InternalElement(A,X) & InternalElement(B,Y)  & hasInternalLink(X,Z) & hasInternalLink(Y,W) & similarValue(Z,W)
-& fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B) , weight : 1000;
-
-
-
-/*
- //// Attribute is same if it has ID or RefSemantic Same
- //m.add rule : (Attribute(A,X) & Attribute(B,Y)  & hasValue(X,Z) & hasValue(Y,W) & similarValue(Z,W)
- //& fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B) , weight : 1000;
- // Attribute is equal if its Refsemantic is equal
- m.add rule : ( name(A,X) & name(B,Y)
- & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B), weight : 1;
- m.add rule : ( name(A,X) & name(B,Y) & similarName(X,Y) & hasType(A,T) & hasType(B,T)
- & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B), weight : 8;
- m.add rule : ( similar(A,B) & name(A,X) & name(B,Y)
- & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similarName(X,Y), weight : 1;
- m.add rule : (domainOf(R,A) & domainOf(T,B) & similar(A,B)
- & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(R,T), weight : 2;
- m.add rule : (rangeOf(R,A)  & rangeOf(T,B)  & similar(A,B)
- & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(R,T), weight : 2;
- m.add rule : (domainOf(R,A) & domainOf(T,B) & similar(R,T)
- & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B), weight : 2;
- m.add rule : (rangeOf(R,A)  & rangeOf(T,B)  & similar(R,T)
- & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B), weight : 2;
- GroundTerm classID = data.getUniqueID("class");
- m.add rule : (similar(A,B) & hasType(A, classID) & hasType(B, classID)
- & subclass(A, S1) & subclass(B, S2)
- & fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(S1, S2), weight: 3;
- */
 
 
 GroundTerm classID = data.getUniqueID("class");
@@ -197,67 +180,15 @@ m.add rule : ~similar(A,B), weight: 1;
 //////////////////////////// data setup ///////////////////////////
 
 /* Loads data */
-def dir = 'data'+java.io.File.separator+'ontology'+java.io.File.separator;
-def trainDir = dir+'train'+java.io.File.separator;
-
-Partition trainObservations = new Partition(0);
-Partition trainPredictions = new Partition(1);
-Partition truth = new Partition(2);
-
-for (Predicate p : [
-	fromOntology,
-	name,
-	Attribute,
-	hasRefSemantic,
-	hasID,
-	hasInternalLink,
-	hasEClassVersion,
-	hasEClassClassificationClass,
-	hasEClassIRDI,
-	InternalElement
-])
-{
-	insert = data.getInserter(p, trainObservations)
-	InserterUtils.loadDelimitedData(insert, trainDir+p.getName().toLowerCase()+".txt");
-}
-
-insert = data.getInserter(similar, truth)
-InserterUtils.loadDelimitedDataTruth(insert, trainDir+"similar.txt");
-
-Database trainDB = data.getDatabase(trainPredictions, [
-	name,
-	fromOntology,
-	Attribute,
-	hasRefSemantic,
-	hasInternalLink,
-	hasID,
-	hasEClassVersion,
-	hasEClassClassificationClass,
-	hasEClassIRDI,
-	InternalElement] as Set, trainObservations);
-
-populateSimilar(trainDB);
-
-Database truthDB = data.getDatabase(truth, [similar] as Set);
-
-//////////////////////////// weight learning ///////////////////////////
-println "LEARNING WEIGHTS...";
-
-MaxLikelihoodMPE weightLearning = new MaxLikelihoodMPE(m, trainDB, truthDB, config);
-weightLearning.learn();
-weightLearning.close();
-
-println "LEARNING WEIGHTS DONE";
-
-println m
+def dir = 'data' + java.io.File.separator + 'ontology' + java.io.File.separator;
 
 /////////////////////////// test setup //////////////////////////////////
 
-def testDir = dir+'test'+java.io.File.separator;
+def testDir = dir + 'test' + java.io.File.separator;
 Partition testObservations = new Partition(3);
 Partition testPredictions = new Partition(4);
 for (Predicate p : [
-	fromOntology,
+	fromDocument,
 	name,
 	Attribute,
 	hasRefSemantic,
@@ -270,13 +201,13 @@ for (Predicate p : [
 ])
 {
 	insert = data.getInserter(p, testObservations);
-	InserterUtils.loadDelimitedData(insert, testDir+p.getName().toLowerCase()+".txt");
+	InserterUtils.loadDelimitedData(insert, testDir + p.getName().toLowerCase() + ".txt");
 
 }
 
 Database testDB = data.getDatabase(testPredictions, [
 	name,
-	fromOntology,
+	fromDocument,
 	Attribute,
 	hasRefSemantic,
 	hasID,
@@ -304,22 +235,20 @@ for (GroundAtom atom : Queries.getAllAtoms(testDB, similar)){
 	// only writes if its equal to 1 or u can set the threshold
 	if(formatter.format(atom.getValue())>="0.5"){
 		println 'matches threshold writing to similar.txt'
-
-		file1.append('\n'+atom.toString())
+		file1.append('\n' + atom.toString())
 	}
-
 }
 
 
 /**
- * Populates all the similiar atoms between the concepts of two ontologies using
+ * Populates all the similar atoms between the concepts of two ontologies using
  * the fromOntology predicate.
  * 
  * @param db  The database to populate. It should contain the fromOntology atoms
  */
 void populateSimilar(Database db) {
 	/* Collects the ontology concepts */
-	Set<GroundAtom> concepts = Queries.getAllAtoms(db, fromOntology);
+	Set<GroundAtom> concepts = Queries.getAllAtoms(db, fromDocument);
 	Set<GroundTerm> o1 = new HashSet<GroundTerm>();
 	Set<GroundTerm> o2 = new HashSet<GroundTerm>();
 	for (GroundAtom atom : concepts) {

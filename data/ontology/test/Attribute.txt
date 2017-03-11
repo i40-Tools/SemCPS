@@ -2,6 +2,10 @@ aml:Attribute1	aml:RefSemantic1
 
 opcua:UAVariable4	opcua:RefSemantic1
 
+aml:Attribute7	aml:RefSemantic7
+
+opcua:UAVariable7	opcua:RefSemantic7
+
 aml:Attribute1	aml:ID
 
 opcua:UAVariable4	opcua:ID
