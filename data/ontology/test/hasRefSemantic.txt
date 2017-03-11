@@ -1,4 +1,4 @@
-aml:RefSemantic1	wewew
-opcua:RefSemantic1	wewew
-aml:RefSemantic7	abc
-opcua:RefSemantic7	abc
+aml:RefSemantic1	ECLASS:0173-1#02-BAE069#007
+aml:RefSemantic3	0173-1#02-AAO663#002
+aml:RefSemantic2	ECLASS:0173-1#02-BAE122#006
+opcua:UAVariable9	ECLASS:0173-1#02-BAE122#006

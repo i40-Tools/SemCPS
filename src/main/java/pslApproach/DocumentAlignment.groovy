@@ -20,12 +20,10 @@ package pslApproach;
 import java.text.DecimalFormat;
 
 import edu.umd.cs.psl.application.inference.MPEInference;
-import edu.umd.cs.psl.application.learning.weight.maxlikelihood.MaxLikelihoodMPE;
 import edu.umd.cs.psl.config.*;
 import edu.umd.cs.psl.database.DataStore;
 import edu.umd.cs.psl.database.Database;
 import edu.umd.cs.psl.database.Partition;
-import edu.umd.cs.psl.database.ReadOnlyDatabase;
 import edu.umd.cs.psl.database.rdbms.RDBMSDataStore;
 import edu.umd.cs.psl.database.rdbms.driver.H2DatabaseDriver;
 import edu.umd.cs.psl.database.rdbms.driver.H2DatabaseDriver.Type;
@@ -35,7 +33,6 @@ import edu.umd.cs.psl.model.argument.GroundTerm;
 import edu.umd.cs.psl.model.argument.type.*;
 import edu.umd.cs.psl.model.atom.GroundAtom;
 import edu.umd.cs.psl.model.atom.RandomVariableAtom
-import edu.umd.cs.psl.model.function.ExternalFunction;
 import edu.umd.cs.psl.model.predicate.Predicate;
 import edu.umd.cs.psl.model.predicate.type.*;
 import edu.umd.cs.psl.ui.functions.textsimilarity.*;
@@ -53,67 +50,31 @@ PSLModel m = new PSLModel(this, data);
 
 ////////////////////////// predicate declaration ////////////////////////
 
-m.add predicate: "name"        , types: [
-	ArgumentType.UniqueID,
-	ArgumentType.UniqueID
-]
+m.add predicate: "name"        , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
 
-m.add predicate: "fromDocument", types: [
-	ArgumentType.UniqueID,
-	ArgumentType.UniqueID
-]
+m.add predicate: "fromDocument", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
 
 
-m.add predicate: "Attribute"     , types: [
-	ArgumentType.UniqueID,
-	ArgumentType.UniqueID
-]
+m.add predicate: "Attribute"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
 
-m.add predicate: "InternalElement"     , types: [
-	ArgumentType.UniqueID,
-	ArgumentType.UniqueID
-]
+m.add predicate: "InternalElements"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
 
 
-m.add predicate: "hasRefSemantic"     , types: [
-	ArgumentType.UniqueID,
-	ArgumentType.String
-]
+m.add predicate: "hasRefSemantic"     , types: [ArgumentType.UniqueID, ArgumentType.String]
 
-m.add predicate: "hasID"     , types: [
-	ArgumentType.UniqueID,
-	ArgumentType.String
-]
+m.add predicate: "hasID"     , types: [ArgumentType.UniqueID, ArgumentType.String]
 
-m.add predicate: "hasInternalLink"     , types: [
-	ArgumentType.UniqueID,
-	ArgumentType.String
-]
+m.add predicate: "hasInternalLink"     , types: [ArgumentType.UniqueID, ArgumentType.String]
 
-m.add predicate: "hasEClassVersion"     , types: [
-	ArgumentType.UniqueID,
-	ArgumentType.String
-]
+m.add predicate: "hasEClassVersion"     , types: [ArgumentType.UniqueID, ArgumentType.String]
 
-m.add predicate: "hasEClassClassificationClass"     , types: [
-	ArgumentType.UniqueID,
-	ArgumentType.String
-]
-m.add predicate: "hasEClassIRDI"     , types: [
-	ArgumentType.UniqueID,
-	ArgumentType.String
-]
+m.add predicate: "hasEClassClassificationClass"     , types: [ArgumentType.UniqueID, ArgumentType.String]
+m.add predicate: "hasEClassIRDI"     , types: [ArgumentType.UniqueID, ArgumentType.String]
 
 //target predicate
-m.add predicate: "similar"     , types: [
-	ArgumentType.UniqueID,
-	ArgumentType.UniqueID
-]
+m.add predicate: "similar"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
 
-m.add predicate: "similarType"     , types: [
-	ArgumentType.UniqueID,
-	ArgumentType.UniqueID
-]
+m.add predicate: "similarType"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
 
 
 m.add function: "similarValue"  , implementation: new MyStringSimilarity();
@@ -126,15 +87,19 @@ m.add function: "similarValue"  , implementation: new MyStringSimilarity();
 /* (O1-O2) means that O1 and O2 are not equal */
 
 // Two AML Attributes are the same if its RefSemantic are the same
-m.add rule : (Attribute(A,X) & Attribute(B,Y) & hasRefSemantic(X,Z) & hasRefSemantic(Y,W) & similarValue(Z,W) & 
-	          fromDocument(A,O1) & fromDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 10;
+m.add rule : (Attribute(A,X) & Attribute(B,Y) & hasRefSemantic(X,Z) & hasRefSemantic(Y,W) & similarValue(Z,W) &
+fromDocument(A,O1) & fromDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 10;
 
 // Two AMl Attributes are the same if they share the same ID
-m.add rule : (Attribute(A,X) & Attribute(B,Y) & hasID(X,Z) & hasID(Y,W) & similarValue(Z,W) & 
-	          fromDocument(A,O1) & fromDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 5;
+m.add rule : (Attribute(A,X) & Attribute(B,Y) & hasID(A,Z) & hasID(Y,W) & similarValue(Z,W) &
+fromDocument(A,O1) & fromDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 5;
 
-<<<<<<< HEAD:src/main/java/edu/umd/cs/example/OntologyAlignment.groovy
-//// Refsemantic is equal if its value is equal // skipping for now we can add if we want
+// Two AMl InternalElements are the same if they share the same ID
+m.add rule : (InternalElements(A,X) & InternalElements(B,Y) & hasID(A,Z) & hasID(Y,W) & similarValue(Z,W) &
+fromDocument(A,O1) & fromDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 5;
+
+
+// Refsemantic is equal if its value is equal // skipping for now we can add if we want
 //
 //m.add rule : (hasRefSemantic(X,Z) & hasRefSemantic(Y,W) & similarValue(Z,W) & fromOntology(X,O1) & fromOntology(Y,O2) & (O1-O2)) >> similar(X,Y), weight : 1000;
 //
@@ -143,27 +108,16 @@ m.add rule : (Attribute(A,X) & Attribute(B,Y) & hasID(X,Z) & hasID(Y,W) & simila
 //m.add rule : (hasID(X,Z) & hasID(Y,W) & similarValue(Z,W) & fromOntology(X,O1) & fromOntology(Y,O2) & (O1-O2)) >> similar(X,Y), weight : 1000;
 
 
-// Attribute is same if its RefSemantic is Same
-m.add rule : (Attribute(A,X) & Attribute(B,Y)  & hasRefSemantic(X,Z) & hasRefSemantic(Y,W) & similarValue(Z,W)
-& fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B) , weight : 1000;
-
-// Attribute is same if its ID is Same
-m.add rule : (Attribute(A,X) & Attribute(B,Y)  & hasID(X,Z) & hasID(Y,W) & similarValue(Z,W)
-& fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(A,B) , weight : 1000;
-
-
-=======
 // Two AML Attributes are semantically the same if its eclass,IRDI and classification class are the same
 /*m.add rule :( Attribute(E,X) & Attribute(U,Y)  & hasEClassIRDI(X,Z) & hasEClassIRDI(Y,W) & similarValue(Z,W)
-			& Attribute(E,Q) & Attribute(U,T) & hasEClassVersion(Q,M) & hasEClassVersion(T,N) & similarValue(M,N)
-			& Attribute(E,D) & Attribute(U,K) & hasEClassVersion(D,O) & hasEClassVersion(K,L) & similarValue(O,L)
-			& fromDocument(E,O1) & fromDocument(U,O2) & (O1-O2)) >> similar(E,U) , weight : 12;
-*/
->>>>>>> 008899efaccef398ccfc54853db8f3fe612badee:src/main/java/pslApproach/DocumentAlignment.groovy
+ & Attribute(E,Q) & Attribute(U,T) & hasEClassVersion(Q,M) & hasEClassVersion(T,N) & similarValue(M,N)
+ & Attribute(E,D) & Attribute(U,K) & hasEClassVersion(D,O) & hasEClassVersion(K,L) & similarValue(O,L)
+ & fromDocument(E,O1) & fromDocument(U,O2) & (O1-O2)) >> similar(E,U) , weight : 12;
+ */
 
-// Two InternalElement are the same if its InternalLink is the same
-m.add rule : (InternalElement(A,X) & InternalElement(B,Y)  & hasInternalLink(X,Z) & hasInternalLink(Y,W) & 
-	          similarValue(Z,W) & fromDocument(A,O1) & fromDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 12;
+// Two InternalElements are the same if its InternalLink is the same
+m.add rule : (InternalElements(A,X) & InternalElements(B,Y)  & hasInternalLink(X,Z) & hasInternalLink(Y,W) &
+similarValue(Z,W) & fromDocument(A,O1) & fromDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 12;
 
 
 
@@ -173,6 +127,7 @@ GroundTerm classID = data.getUniqueID("class");
 m.add PredicateConstraint.PartialFunctional , on : similar;
 m.add PredicateConstraint.PartialInverseFunctional , on : similar;
 m.add PredicateConstraint.Symmetric , on : similar;
+
 
 // prior
 m.add rule : ~similar(A,B), weight: 1;
@@ -187,35 +142,14 @@ def dir = 'data' + java.io.File.separator + 'ontology' + java.io.File.separator;
 def testDir = dir + 'test' + java.io.File.separator;
 Partition testObservations = new Partition(3);
 Partition testPredictions = new Partition(4);
-for (Predicate p : [
-	fromDocument,
-	name,
-	Attribute,
-	hasRefSemantic,
-	hasID,
-	hasInternalLink,
-	hasEClassVersion,
-	hasEClassClassificationClass,
-	hasEClassIRDI,
-	InternalElement
-])
+for (Predicate p : [fromDocument, name, Attribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasEClassIRDI, InternalElements])
 {
 	insert = data.getInserter(p, testObservations);
 	InserterUtils.loadDelimitedData(insert, testDir + p.getName().toLowerCase() + ".txt");
 
 }
 
-Database testDB = data.getDatabase(testPredictions, [
-	name,
-	fromDocument,
-	Attribute,
-	hasRefSemantic,
-	hasID,
-	hasInternalLink,
-	hasEClassVersion,
-	hasEClassClassificationClass,
-	hasEClassIRDI,
-	InternalElement] as Set, testObservations);
+Database testDB = data.getDatabase(testPredictions, [name, fromDocument, Attribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasEClassIRDI, InternalElements] as Set, testObservations);
 
 populateSimilar(testDB);
 

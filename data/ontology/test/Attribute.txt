@@ -1,28 +1,4 @@
-aml:Attribute1	aml:RefSemantic1
-
-opcua:UAVariable4	opcua:RefSemantic1
-
-aml:Attribute7	aml:RefSemantic7
-
-opcua:UAVariable7	opcua:RefSemantic7
-
-aml:Attribute1	aml:ID
-
-opcua:UAVariable4	opcua:ID
-
-aml:Attribute1	aml:eClassClassificationClass1
-
-opcua:UAVariable4	opcua:eClassClassificationClass1
-
-aml:Attribute1	aml:eClassIRDI1
-
-opcua:UAVariable4	opcua:eClassIRDI1
-
-aml:Attribute1	aml:eClassVersion1
-
-opcua:UAVariable4	opcua:eClassVersion1
-
-aml:InternalElement1	aml:InternalLink
-
-opcua:UAObject	opcua:InternalLink
-
+aml:Attribute4	aml:RefSemantic1
+aml:Attribute6	aml:RefSemantic3
+aml:Attribute5	aml:RefSemantic2
+opcua:UAVariable8	opcua:UAVariable9

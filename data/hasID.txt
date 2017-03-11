@@ -1,0 +1,4 @@
+aml:Attribute1	74d0c8ef-ab53-462a-8225-306ed22dc0f2
+aml:InternalElement1	74d0c8ef-ab53-462a-8225-306ed22dc0f3
+opcua:UAVariable5	74d0c8ef-ab53-462a-8225-306ed22dc0f2
+opcua:UAObject2	74d0c8ef-ab53-462a-8225-306ed22dc0f3

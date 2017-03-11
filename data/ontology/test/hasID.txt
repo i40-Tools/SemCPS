@@ -1,2 +1,2 @@
-aml:ID	adw
-opcua:ID	adw
+aml:InternalElement1	3fc3ade7-aa58-44a4-ab37-fa7e7665a74e
+opcua:Value2	74d0c8ef-ab53-462a-8225-306ed22dc0f3

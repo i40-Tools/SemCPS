@@ -1,17 +1,16 @@
 package main;
 
-import integration.Integration;
-import integration.XSDValidator;
-
 import java.io.File;
 import java.io.IOException;
 
 import org.codehaus.groovy.control.CompilationFailedException;
 
-import datalogApproach.DeductiveDB;
 import Test.ModelRepair;
-import util.ConfigManager;
+import datalogApproach.DeductiveDB;
 import groovy.lang.Script;
+import integration.Integration;
+import integration.XSDValidator;
+import util.ConfigManager;
 
 /**
  * 
@@ -30,11 +29,11 @@ public class AlligatorMain {
 		try {
 			AlligatorMain main = new AlligatorMain();
 			main.readConvertStandardFiles();
-			
-			//main.executeDatalogApproach();
+
+			// main.executeDatalogApproach();
 			main.generatePSLDataModel();
 			main.executePSLAproach();
-			//main.integrate();
+			// main.integrate();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -43,32 +42,33 @@ public class AlligatorMain {
 
 	/**
 	 * Method that read standard files and convert then to RDF
-	 * @throws Exception 
-	 * TODO create more specific exceptions
+	 * 
+	 * @throws Exception
+	 *             TODO create more specific exceptions
 	 */
-	public void readConvertStandardFiles() throws Exception{
-		
-		standardFiles.readFiles(ConfigManager.getFilePath(), ".aml",
-				".opcua", ".xml");
+	public void readConvertStandardFiles() throws Exception {
+
+		standardFiles.readFiles(ConfigManager.getFilePath(), ".aml", ".opcua", ".xml");
 		standardFiles.convert2RDF();
-		standardFiles.readFiles(ConfigManager.getFilePath(), ".ttl",
-				".rdf", ".owl");
+		standardFiles.readFiles(ConfigManager.getFilePath(), ".ttl", ".rdf", ".owl");
 	}
-	
+
 	/**
 	 * Generate the PSL datamodel out of the existing standard documents
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
-	public void generatePSLDataModel() throws Exception{
+	public void generatePSLDataModel() throws Exception {
 		standardFiles.generatePSLPredicates(ConfigManager.getFilePath());
 	}
 
 	/**
 	 * General method to execute the PSL-based approach
+	 * 
 	 * @throws CompilationFailedException
 	 * @throws IOException
 	 */
-	public void executePSLAproach() throws CompilationFailedException, IOException{
+	public void executePSLAproach() throws CompilationFailedException, IOException {
 		// Needed to run the PSL rules part
 		Script script = new Script() {
 			@Override
@@ -81,8 +81,9 @@ public class AlligatorMain {
 
 	/**
 	 * General method to execute the Datalog-based approach
+	 * 
 	 * @throws Throwable
-	 * TODO create more specific exceptions
+	 *             TODO create more specific exceptions
 	 */
 	public void executeDatalogApproach() throws Throwable {
 		standardFiles.prologFilePath();
@@ -97,22 +98,21 @@ public class AlligatorMain {
 	}
 
 	/**
-	 * Method used to integrate the documents taking the results from the inference
+	 * Method used to integrate the documents taking the results from the
+	 * inference
+	 * 
 	 * @throws Throwable
-	 * TODO create more specific exceptions
+	 *             TODO create more specific exceptions
 	 */
-	public void integrate() throws Throwable{
+	public void integrate() throws Throwable {
 		integration = new Integration();
 		integration.integrate();
 		// check for validity
-		File file = new File(ConfigManager.getFilePath() +
-				"integration/integration.aml");
+		File file = new File(ConfigManager.getFilePath() + "integration/integration.aml");
 		if (file.exists()) {
-			if (!new XSDValidator(ConfigManager.getFilePath() +
-					"integration/integration.aml").schemaValidate()) {
+			if (!new XSDValidator(ConfigManager.getFilePath() + "integration/integration.aml").schemaValidate()) {
 				System.out.println("Repairing Structure");
-				ModelRepair.testRoundTrip(ConfigManager.getFilePath() +
-						"integration/integration.aml");
+				ModelRepair.testRoundTrip(ConfigManager.getFilePath() + "integration/integration.aml");
 				System.out.println("Schema Validated");
 			}
 		}
