@@ -1,20 +1,4 @@
-/*
- * This file is part of the PSL software.
- * Copyright 2011-2015 University of Maryland
- * Copyright 2013-2015 The Regents of the University of California
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 package pslApproach;
 
 import java.text.DecimalFormat;
@@ -39,7 +23,6 @@ import edu.umd.cs.psl.ui.functions.textsimilarity.*;
 import edu.umd.cs.psl.ui.loading.InserterUtils;
 import edu.umd.cs.psl.util.database.Queries;
 
-////////////////////////// initial setup ////////////////////////
 ConfigManager cm = ConfigManager.getManager()
 ConfigBundle config = cm.getBundle("ontology-alignment")
 
@@ -48,89 +31,77 @@ String dbpath = config.getString("dbpath", defaultPath + File.separator + "ontol
 DataStore data = new RDBMSDataStore(new H2DatabaseDriver(Type.Disk, dbpath, true), config)
 PSLModel m = new PSLModel(this, data);
 
-////////////////////////// predicate declaration ////////////////////////
 
-m.add predicate: "name"        , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
+public void definePredicates(){
+	m.add predicate: "name"        , types: [ArgumentType.UniqueID, ArgumentType.UniqueID];
 
-m.add predicate: "fromDocument", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
+	m.add predicate: "fromDocument", types: [ArgumentType.UniqueID, ArgumentType.UniqueID];
 
+	m.add predicate: "Attribute"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID];
 
-m.add predicate: "Attribute"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
+	m.add predicate: "InternalElements"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID];
 
-m.add predicate: "InternalElements"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
+	m.add predicate: "hasRefSemantic"     , types: [ArgumentType.UniqueID, ArgumentType.String];
 
+	m.add predicate: "hasID"     , types: [ArgumentType.UniqueID, ArgumentType.String];
 
-m.add predicate: "hasRefSemantic"     , types: [ArgumentType.UniqueID, ArgumentType.String]
+	m.add predicate: "hasInternalLink"     , types: [ArgumentType.UniqueID, ArgumentType.String];
 
-m.add predicate: "hasID"     , types: [ArgumentType.UniqueID, ArgumentType.String]
+	m.add predicate: "hasEClassVersion"     , types: [ArgumentType.UniqueID, ArgumentType.String];
 
-m.add predicate: "hasInternalLink"     , types: [ArgumentType.UniqueID, ArgumentType.String]
+	m.add predicate: "hasEClassClassificationClass"     , types: [ArgumentType.UniqueID, ArgumentType.String];
 
-m.add predicate: "hasEClassVersion"     , types: [ArgumentType.UniqueID, ArgumentType.String]
+	m.add predicate: "hasEClassIRDI"     , types: [ArgumentType.UniqueID, ArgumentType.String];
 
-m.add predicate: "hasEClassClassificationClass"     , types: [ArgumentType.UniqueID, ArgumentType.String]
-m.add predicate: "hasEClassIRDI"     , types: [ArgumentType.UniqueID, ArgumentType.String]
+	m.add predicate: "similar"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]l;
 
-//target predicate
-m.add predicate: "similar"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
-
-m.add predicate: "similarType"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
-
-
-m.add function: "similarValue"  , implementation: new MyStringSimilarity();
-
-// if u want 0 or 1 result use this
-//m.add function: "similarValue"  , implementation: new MyStringSimilarity();
-
-///////////////////////////// rules ////////////////////////////////////
-
-/* (O1-O2) means that O1 and O2 are not equal */
-
-// Two AML Attributes are the same if its RefSemantic are the same
-m.add rule : (Attribute(A,X) & Attribute(B,Y) & hasRefSemantic(X,Z) & hasRefSemantic(Y,W) & similarValue(Z,W) &
-fromDocument(A,O1) & fromDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 10;
-
-// Two AMl Attributes are the same if they share the same ID
-m.add rule : (Attribute(A,X) & Attribute(B,Y) & hasID(A,Z) & hasID(Y,W) & similarValue(Z,W) &
-fromDocument(A,O1) & fromDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 5;
-
-// Two AMl InternalElements are the same if they share the same ID
-m.add rule : (InternalElements(A,X) & InternalElements(B,Y) & hasID(A,Z) & hasID(Y,W) & similarValue(Z,W) &
-fromDocument(A,O1) & fromDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 5;
+	m.add predicate: "similarType"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID];
+}
 
 
-// Refsemantic is equal if its value is equal // skipping for now we can add if we want
-//
-//m.add rule : (hasRefSemantic(X,Z) & hasRefSemantic(Y,W) & similarValue(Z,W) & fromOntology(X,O1) & fromOntology(Y,O2) & (O1-O2)) >> similar(X,Y), weight : 1000;
-//
-//// ID is equal if its value is equal
-//
-//m.add rule : (hasID(X,Z) & hasID(Y,W) & similarValue(Z,W) & fromOntology(X,O1) & fromOntology(Y,O2) & (O1-O2)) >> similar(X,Y), weight : 1000;
+public void defineFunctions(){
+	m.add function: "similarValue"  , implementation: new MyStringSimilarity();
+}
 
+public void defineRules(){
 
-// Two AML Attributes are semantically the same if its eclass,IRDI and classification class are the same
-/*m.add rule :( Attribute(E,X) & Attribute(U,Y)  & hasEClassIRDI(X,Z) & hasEClassIRDI(Y,W) & similarValue(Z,W)
- & Attribute(E,Q) & Attribute(U,T) & hasEClassVersion(Q,M) & hasEClassVersion(T,N) & similarValue(M,N)
- & Attribute(E,D) & Attribute(U,K) & hasEClassVersion(D,O) & hasEClassVersion(K,L) & similarValue(O,L)
- & fromDocument(E,O1) & fromDocument(U,O2) & (O1-O2)) >> similar(E,U) , weight : 12;
- */
+	// Two AML Attributes are the same if its RefSemantic are the same
+	m.add rule : (Attribute(A,X) & Attribute(B,Y) & hasRefSemantic(X,Z) & hasRefSemantic(Y,W) & similarValue(Z,W) &
+	fromDocument(A,O1) & fromDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 10;
 
-// Two InternalElements are the same if its InternalLink is the same
-m.add rule : (InternalElements(A,X) & InternalElements(B,Y)  & hasInternalLink(X,Z) & hasInternalLink(Y,W) &
-similarValue(Z,W) & fromDocument(A,O1) & fromDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 12;
+	// Two AMl Attributes are the same if they share the same ID
+	m.add rule : (Attribute(A,X) & Attribute(B,Y) & hasID(A,Z) & hasID(Y,W) & similarValue(Z,W) &
+	fromDocument(A,O1) & fromDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 5;
 
+	// Two AMl InternalElements are the same if they share the same ID
+	m.add rule : (InternalElements(A,X) & InternalElements(B,Y) & hasID(A,Z) & hasID(Y,W) & similarValue(Z,W) &
+	fromDocument(A,O1) & fromDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 5;
+
+	m.add rule : (hasID(X,Z) & hasID(Y,W) & similarValue(Z,W) & fromOntology(X,O1) & fromOntology(Y,O2) & (O1-O2)) >> similar(X,Y), weight : 1000;
+
+	// Two AML Attributes are semantically the same if its eclass,IRDI and classification class are the same
+	m.add rule :( Attribute(E,X) & Attribute(U,Y)  & hasEClassIRDI(X,Z) & hasEClassIRDI(Y,W) & similarValue(Z,W)
+	& Attribute(E,Q) & Attribute(U,T) & hasEClassVersion(Q,M) & hasEClassVersion(T,N) & similarValue(M,N)
+	& Attribute(E,D) & Attribute(U,K) & hasEClassVersion(D,O) & hasEClassVersion(K,L) & similarValue(O,L)
+	& fromDocument(E,O1) & fromDocument(U,O2) & (O1-O2)) >> similar(E,U) , weight : 12;
+
+	// Two InternalElements are the same if its InternalLink is the same
+	m.add rule : (InternalElements(A,X) & InternalElements(B,Y)  & hasInternalLink(X,Z) & hasInternalLink(Y,W) &
+	similarValue(Z,W) & fromDocument(A,O1) & fromDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 12;
+
+	// constraints
+	m.add PredicateConstraint.PartialFunctional , on : similar;
+	m.add PredicateConstraint.PartialInverseFunctional , on : similar;
+	m.add PredicateConstraint.Symmetric , on : similar;
+
+	// prior
+	m.add rule : ~similar(A,B), weight: 1;
+}
 
 
 GroundTerm classID = data.getUniqueID("class");
 
-// constraints
-m.add PredicateConstraint.PartialFunctional , on : similar;
-m.add PredicateConstraint.PartialInverseFunctional , on : similar;
-m.add PredicateConstraint.Symmetric , on : similar;
 
-
-// prior
-m.add rule : ~similar(A,B), weight: 1;
 
 //////////////////////////// data setup ///////////////////////////
 
@@ -175,10 +146,10 @@ for (GroundAtom atom : Queries.getAllAtoms(testDB, similar)){
 
 
 /**
- * Populates all the similar atoms between the concepts of two ontologies using
- * the fromOntology predicate.
+ * Populates all the similar atoms between the concepts of two Documents using
+ * the fromDocument predicate.
  * 
- * @param db  The database to populate. It should contain the fromOntology atoms
+ * @param db  The database to populate. It should contain the fromDocument atoms
  */
 void populateSimilar(Database db) {
 	/* Collects the ontology concepts */

@@ -124,5 +124,4 @@ public class ConfigManager {
 		return filePath;
 	}
 
-
 }

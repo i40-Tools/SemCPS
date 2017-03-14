@@ -232,7 +232,6 @@ public class Files2Facts {
 			PrintWriter hasRefSemanticwriter, PrintWriter hasIDwriter, PrintWriter internalElementwriter)
 			throws Exception {
 
-		StringBuilder buf = new StringBuilder();
 		InputStream inputStream = FileManager.get().open(file.getAbsolutePath());
 
 		Model model = null;
@@ -257,7 +256,6 @@ public class Files2Facts {
 				break;
 			}
 			allSubjects.add(subject.asResource());
-
 		}
 
 		while (iterator.hasNext()) {
