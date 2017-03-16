@@ -1,34 +1,34 @@
 package pslApproach;
 
+import java.nio.file.Paths;
+
 import org.linqs.psl.application.inference.MPEInference;
 import org.linqs.psl.config.ConfigBundle;
 import org.linqs.psl.config.ConfigManager;
-import org.linqs.psl.database.Database;
-import org.linqs.psl.database.DatabasePopulator;
 import org.linqs.psl.database.DataStore;
+import org.linqs.psl.database.Database;
 import org.linqs.psl.database.Partition;
 import org.linqs.psl.database.Queries;
-import org.linqs.psl.database.ReadOnlyDatabase;
+import org.linqs.psl.database.ReadOnlyDatabase
 import org.linqs.psl.database.loading.Inserter;
+import org.linqs.psl.database.rdbms.RDBMSDataStore;
 import org.linqs.psl.database.rdbms.driver.H2DatabaseDriver;
 import org.linqs.psl.database.rdbms.driver.H2DatabaseDriver.Type;
-import org.linqs.psl.database.rdbms.RDBMSDataStore;
 import org.linqs.psl.groovy.PSLModel;
 import org.linqs.psl.model.atom.Atom;
+import org.linqs.psl.model.function.ExternalFunction
 import org.linqs.psl.model.predicate.StandardPredicate;
+import org.linqs.psl.model.term.Constant
 import org.linqs.psl.model.term.ConstantType;
 import org.linqs.psl.utils.dataloading.InserterUtils;
 import org.linqs.psl.utils.evaluation.printing.AtomPrintStream;
 import org.linqs.psl.utils.evaluation.printing.DefaultAtomPrintStream;
-import org.linqs.psl.utils.evaluation.statistics.ContinuousPredictionComparator;
 import org.linqs.psl.utils.evaluation.statistics.DiscretePredictionComparator;
 import org.linqs.psl.utils.evaluation.statistics.DiscretePredictionStatistics;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import groovy.time.TimeCategory;
-import java.nio.file.Paths;
 
 /**
  * A simple Collective Classification example that mirrors the example for the
@@ -62,8 +62,8 @@ public class EasyCC {
 
 		public boolean sqPotentials = true;
 		public Map weightMap = [
-				"Knows":10,
-				"Prior":2
+			"Knows":10,
+			"Prior":2
 		];
 		public boolean useFunctionalConstraint = false;
 		public boolean useFunctionalRule = false;
@@ -94,8 +94,16 @@ public class EasyCC {
 	 * Defines the logical predicates used by this program
 	 */
 	private void definePredicates() {
-		model.add predicate: "Lives", types: [ConstantType.UniqueID, ConstantType.UniqueID];
-		model.add predicate: "Knows", types: [ConstantType.UniqueID, ConstantType.UniqueID];
+		model.add predicate: "Lives", types: [
+			ConstantType.UniqueID,
+			ConstantType.UniqueID
+		];
+		model.add predicate: "Knows", types: [
+			ConstantType.UniqueID,
+			ConstantType.UniqueID
+		];
+
+		model.add function: "similarValue"  ,implementation:new MyStringSimilariti();
 	}
 
 	/**
@@ -105,30 +113,30 @@ public class EasyCC {
 		log.info("Defining model rules");
 
 		model.add(
-			rule: ( Knows(P1,P2) & Lives(P1,L) ) >> Lives(P2,L),
-			squared: config.sqPotentials,
-			weight : config.weightMap["Knows"]
-		);
+				rule: ( Knows(P1,P2) & Lives(P1,L) ) >> Lives(P2,L),
+				squared: config.sqPotentials,
+				weight : config.weightMap["Knows"]
+				);
 
 		model.add(
-			rule: ( Knows(P2,P1) & Lives(P1,L) ) >> Lives(P2,L),
-			squared: config.sqPotentials,
-			weight : config.weightMap["Knows"]
-		);
+				rule: ( Knows(P2,P1) & Lives(P1,L) ) >> Lives(P2,L),
+				squared: config.sqPotentials,
+				weight : config.weightMap["Knows"]
+				);
 
 		if (config.useFunctionalRule) {
 			model.add(
-				rule: Lives(P,L1) >> ~Lives(P,L2),
-				squared:config.sqPotentials,
-				weight: config.weightMap["Functional"]
-			);
+					rule: Lives(P,L1) >> ~Lives(P,L2),
+					squared:config.sqPotentials,
+					weight: config.weightMap["Functional"]
+					);
 		}
 
 		model.add(
-			rule: ~Lives(P,L),
-			squared:config.sqPotentials,
-			weight: config.weightMap["Prior"]
-		);
+				rule: ~Lives(P,L),
+				squared:config.sqPotentials,
+				weight: config.weightMap["Prior"]
+				);
 
 		log.debug("model: {}", model);
 	}
@@ -226,11 +234,10 @@ public class EasyCC {
 
 		ds.close();
 	}
-	
+
 	public EasyCC(){
-		
 	}
-	
+
 	public void execute(){
 		ConfigBundle cb = ConfigManager.getManager().getBundle("easycc");
 		EasyCC cc = new EasyCC(cb);
@@ -247,3 +254,29 @@ public class EasyCC {
 		cc.run();
 	}
 }
+
+
+class MyStringSimilariti implements ExternalFunction {
+
+	@Override
+	public ConstantType[] getArgumentTypes() {
+		// TODO Auto-generated method stub
+		return [
+			ConstantType.String,
+			ConstantType.String
+		].toArray();
+	}
+
+	@Override
+	public int getArity() {
+		// TODO Auto-generated method stub
+		return 2;
+	}
+
+	@Override
+	public double getValue(ReadOnlyDatabase arg0, Constant... arg1) {
+		// TODO Auto-generated method stub
+		return args[0].toString().equals(args[1].toString()) ? 1.0 : 0.0;
+	}
+}
+

@@ -47,6 +47,14 @@
 </dependency>
 <!-- https://mvnrepository.com/artifact/org.eclipse.emf.ecore/xmi -->
 <!-- https://mvnrepository.com/artifact/org.eclipse.emf.ecore/xmi -->
+
+<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-collections4 -->
+<dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-collections4</artifactId>
+    <version>4.0</version>
+</dependency>
+
 <dependency>
     <groupId>in.jlibs</groupId>
     <artifactId>jlibs-xmldog</artifactId>
