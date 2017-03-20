@@ -34,7 +34,7 @@ public class AlligatorMain {
 			main.readConvertStandardFiles();
 
 			// main.executeDatalogApproach();
-			// main.generatePSLDataModel();
+			main.generatePSLDataModel();
 			// main.executePSLAproach();
 			// main.integrate();
 			main.executePSLAproach();
