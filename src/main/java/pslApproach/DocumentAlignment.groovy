@@ -215,8 +215,9 @@ public class DocumentAligment{
 		dpc.setBaseline(truthDB);
 		DiscretePredictionStatistics stats = dpc.compare(eval);
 
-		System.out.println(stats.getPrecision(DiscretePredictionStatistics.BinaryClass.POSITIVE));
-		System.out.println(	stats.getRecall(DiscretePredictionStatistics.BinaryClass.POSITIVE));
+		System.out.println("One of them is precision / recall. just guessing for now")
+		System.out.println("Precision:"+stats.getPrecision(DiscretePredictionStatistics.BinaryClass.POSITIVE));
+		System.out.println("Recall:"+stats.getRecall(DiscretePredictionStatistics.BinaryClass.POSITIVE));
 
 		resultsDB.close();
 		truthDB.close();
