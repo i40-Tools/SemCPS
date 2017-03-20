@@ -95,15 +95,17 @@ public class EasyCC {
 	 */
 	private void definePredicates() {
 		model.add predicate: "Lives", types: [
-			ConstantType.UniqueID,
-			ConstantType.UniqueID
+			ConstantType.String,
+			ConstantType.String
 		];
 		model.add predicate: "Knows", types: [
-			ConstantType.UniqueID,
-			ConstantType.UniqueID
+			ConstantType.String,
+			ConstantType.String
 		];
 
-		model.add function: "similarValue"  ,implementation:new MyStringSimilariti();
+
+
+		model.add function: "similarValue"  ,implementation:new MyStringSimilarity();
 	}
 
 	/**
@@ -113,33 +115,20 @@ public class EasyCC {
 		log.info("Defining model rules");
 
 		model.add(
-				rule: ( Knows(P1,P2) & Lives(P1,L) ) >> Lives(P2,L),
+				rule:( Knows(P1,P2) & Lives(P1,L)) >> Lives(P2,L),
 				squared: config.sqPotentials,
 				weight : config.weightMap["Knows"]
+
 				);
 
-		model.add(
-				rule: ( Knows(P2,P1) & Lives(P1,L) ) >> Lives(P2,L),
-				squared: config.sqPotentials,
-				weight : config.weightMap["Knows"]
-				);
 
-		if (config.useFunctionalRule) {
-			model.add(
-					rule: Lives(P,L1) >> ~Lives(P,L2),
-					squared:config.sqPotentials,
-					weight: config.weightMap["Functional"]
-					);
-		}
 
-		model.add(
-				rule: ~Lives(P,L),
-				squared:config.sqPotentials,
-				weight: config.weightMap["Prior"]
-				);
 
 		log.debug("model: {}", model);
 	}
+
+
+
 
 	/**
 	 * Loads the evidence, inference targets, and evaluation data into the DataStore
@@ -253,30 +242,28 @@ public class EasyCC {
 		EasyCC cc = new EasyCC(cb);
 		cc.run();
 	}
-}
 
+	public class MyStringSimilarity implements ExternalFunction {
+		@Override
+		public int getArity() {
+			return 2;
+		}
 
-class MyStringSimilariti implements ExternalFunction {
+		@Override
+		public ConstantType[] getArgumentTypes() {
+			return [
+				ConstantType.String,
+				ConstantType.String
+			].toArray();
+		}
 
-	@Override
-	public ConstantType[] getArgumentTypes() {
-		// TODO Auto-generated method stub
-		return [
-			ConstantType.String,
-			ConstantType.String
-		].toArray();
-	}
-
-	@Override
-	public int getArity() {
-		// TODO Auto-generated method stub
-		return 2;
-	}
-
-	@Override
-	public double getValue(ReadOnlyDatabase arg0, Constant... arg1) {
-		// TODO Auto-generated method stub
-		return args[0].toString().equals(args[1].toString()) ? 1.0 : 0.0;
+		@Override
+		public double getValue(ReadOnlyDatabase db, Constant... args) {
+			return args[0].toString().equals(args[1].toString()) ? 1.0 : 0.0;
+		}
 	}
 }
+
+
+
 

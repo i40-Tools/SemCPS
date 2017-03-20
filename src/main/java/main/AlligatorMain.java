@@ -2,30 +2,23 @@ package main;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 
-import org.codehaus.groovy.control.CompilationFailedException;
-import org.codehaus.groovy.tools.GroovyClass;
-import org.linqs.psl.config.ConfigBundle;
+import javax.script.ScriptException;
 
-import pslApproach.EasyCC;
+import org.codehaus.groovy.control.CompilationFailedException;
+
 import Test.ModelRepair;
 import datalogApproach.DeductiveDB;
-import groovy.lang.GroovyClassLoader;
 import groovy.lang.Script;
-import groovy.util.GroovyScriptEngine;
 import groovy.util.ResourceException;
 import integration.Integration;
 import integration.XSDValidator;
 import util.ConfigManager;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-
 /**
  * Main class of the Alligator project
+ * 
  * @author Irlan
  * @author Omar
  * 
@@ -38,11 +31,11 @@ public class AlligatorMain {
 	public static void main(String[] args) throws Throwable {
 		try {
 			AlligatorMain main = new AlligatorMain();
-			//main.readConvertStandardFiles();
+			// main.readConvertStandardFiles();
 
 			// main.executeDatalogApproach();
-			//main.generatePSLDataModel();
-			//main.executePSLAproach();
+			// main.generatePSLDataModel();
+			// main.executePSLAproach();
 			// main.integrate();
 			main.executePSLAproach();
 
@@ -78,17 +71,19 @@ public class AlligatorMain {
 	 * 
 	 * @throws CompilationFailedException
 	 * @throws IOException
-	 * @throws ScriptException 
-	 * @throws IllegalAccessException 
-	 * @throws InstantiationException 
-	 * @throws SecurityException 
-	 * @throws NoSuchMethodException 
-	 * @throws InvocationTargetException 
-	 * @throws IllegalArgumentException 
-	 * @throws groovy.util.ScriptException 
-	 * @throws ResourceException 
+	 * @throws ScriptException
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 * @throws SecurityException
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalArgumentException
+	 * @throws groovy.util.ScriptException
+	 * @throws ResourceException
 	 */
-	public void executePSLAproach() throws CompilationFailedException, IOException, ScriptException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, InstantiationException, ResourceException, groovy.util.ScriptException {
+	public void executePSLAproach() throws CompilationFailedException, IOException, ScriptException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException,
+			SecurityException, InstantiationException, ResourceException, groovy.util.ScriptException {
 		// Needed to run the PSL rules part
 		Script script = new Script() {
 			@Override
@@ -96,11 +91,13 @@ public class AlligatorMain {
 				return null;
 			}
 		};
-		//script.evaluate(new File("src/main/java/pslApproach/EasyCC.groovy"));
-		
-		Class scriptClass = new GroovyScriptEngine( "." ).loadScriptByName( "src/main/java/pslApproach/EasyCC.groovy");
-		Object scriptInstance = scriptClass.newInstance() ;
-		scriptClass.getDeclaredMethod("execute", new Class[] {}).invoke( scriptInstance, new Object[] {});
+		script.evaluate(new File("src/main/java/pslApproach/DocumentAlignment.groovy"));
+
+		// Class scriptClass = new
+		// GroovyScriptEngine(".").loadScriptByName("src/main/java/pslApproach/EasyCC.groovy");
+		// Object scriptInstance = scriptClass.newInstance();
+		// scriptClass.getDeclaredMethod("execute", new Class[]
+		// {}).invoke(scriptInstance, new Object[] {});
 	}
 
 	/**
