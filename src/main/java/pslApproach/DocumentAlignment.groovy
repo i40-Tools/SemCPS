@@ -34,6 +34,11 @@ public class DocumentAligment{
 	private DataStore data;
 	private Partition testObservations;
 	private Partition testPredictions;
+	private Partition targetsPartition;
+	private Partition truthPartition;
+	def dir;
+	def testDir;
+
 	public static void main(String[] args) {
 		DocumentAligment docAlign = new DocumentAligment();
 		docAlign.execute();
@@ -47,6 +52,8 @@ public class DocumentAligment{
 		setUpData();
 		populateSimilar(testDB);
 		runInference();
+
+		evalResults(targetsPartition, truthPartition);
 	}
 
 	public void execute(){
@@ -90,6 +97,7 @@ public class DocumentAligment{
 		model.add predicate: "similar"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID];
 
 		model.add predicate: "similarType"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID];
+		model.add predicate: "eval", types: [ArgumentType.String, ArgumentType.String];
 	}
 
 
@@ -140,11 +148,11 @@ public class DocumentAligment{
 		GroundTerm classID = data.getUniqueID("class");
 
 		/* Loads data */
-		def dir = 'data' + java.io.File.separator + 'ontology' + java.io.File.separator;
+		dir = 'data' + java.io.File.separator + 'ontology' + java.io.File.separator;
 
 		/////////////////////////// test setup //////////////////////////////////
 
-		def testDir = dir + 'test' + java.io.File.separator;
+		testDir = dir + 'test' + java.io.File.separator;
 		Partition testObservations = new Partition(3);
 		Partition testPredictions = new Partition(4);
 		for (Predicate p : [fromDocument, name, Attribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasEClassIRDI, InternalElements])
@@ -156,6 +164,7 @@ public class DocumentAligment{
 		}
 
 		testDB = data.getDatabase(testPredictions, [name, fromDocument, Attribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasEClassIRDI, InternalElements] as Set, testObservations);
+
 	}
 
 	public void runInference(){
@@ -175,7 +184,13 @@ public class DocumentAligment{
 			// only writes if its equal to 1 or u can set the threshold
 			if(formatter.format(atom.getValue())>="0.5"){
 				println 'matches threshold writing to similar.txt'
-				file1.append('\n' + atom.toString())
+				// converting to format for evaluation
+				String result=atom.toString().replaceAll("SIMILAR","");
+				result=result.replaceAll("[()]","");
+				String[] text=result.split(",");
+				result=text[0]+"\t"+text[1];
+				file1.append(result+'\n')
+
 			}
 		}
 	}
@@ -185,15 +200,23 @@ public class DocumentAligment{
 	 * Evaluates the results of inference versus expected truth values
 	 */
 	private void evalResults(Partition targetsPartition, Partition truthPartition) {
-		Database resultsDB = ds.getDatabase(targetsPartition, [Lives] as Set);
-		Database truthDB = ds.getDatabase(truthPartition, [Lives] as Set);
+		targetsPartition = new Partition(5);
+		truthPartition = new Partition(6);
+
+		def insert = data.getInserter(eval, targetsPartition);
+		InserterUtils.loadDelimitedData(insert, testDir + "similar.txt");
+
+		insert = data.getInserter(eval, truthPartition);
+		InserterUtils.loadDelimitedData(insert, testDir + "GoldStandard.txt");
+
+		Database resultsDB = data.getDatabase(targetsPartition, [eval] as Set);
+		Database truthDB = data.getDatabase(truthPartition, [eval] as Set);
 		DiscretePredictionComparator dpc = new DiscretePredictionComparator(resultsDB);
 		dpc.setBaseline(truthDB);
-		DiscretePredictionStatistics stats = dpc.compare(Lives);
-		log.info(
-				"Stats: precision {}, recall {}",
-				stats.getPrecision(DiscretePredictionStatistics.BinaryClass.POSITIVE),
-				stats.getRecall(DiscretePredictionStatistics.BinaryClass.POSITIVE));
+		DiscretePredictionStatistics stats = dpc.compare(eval);
+
+		System.out.println(stats.getPrecision(DiscretePredictionStatistics.BinaryClass.POSITIVE));
+		System.out.println(	stats.getRecall(DiscretePredictionStatistics.BinaryClass.POSITIVE));
 
 		resultsDB.close();
 		truthDB.close();

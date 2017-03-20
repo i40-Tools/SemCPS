@@ -198,6 +198,9 @@ public class EasyCC {
 				stats.getPrecision(DiscretePredictionStatistics.BinaryClass.POSITIVE),
 				stats.getRecall(DiscretePredictionStatistics.BinaryClass.POSITIVE));
 
+		System.out.println(stats.getPrecision(DiscretePredictionStatistics.BinaryClass.POSITIVE));
+		System.out.println(	stats.getRecall(DiscretePredictionStatistics.BinaryClass.POSITIVE));
+
 		resultsDB.close();
 		truthDB.close();
 	}
