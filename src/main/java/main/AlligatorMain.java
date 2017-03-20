@@ -31,7 +31,7 @@ public class AlligatorMain {
 	public static void main(String[] args) throws Throwable {
 		try {
 			AlligatorMain main = new AlligatorMain();
-			// main.readConvertStandardFiles();
+			main.readConvertStandardFiles();
 
 			// main.executeDatalogApproach();
 			// main.generatePSLDataModel();

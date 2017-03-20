@@ -204,10 +204,10 @@ public class DocumentAligment{
 		truthPartition = new Partition(6);
 
 		def insert = data.getInserter(eval, targetsPartition);
-		InserterUtils.loadDelimitedData(insert, testDir + "similar.txt");
+		InserterUtils.loadDelimitedData(insert, testDir + "GoldStandard.txt");
 
 		insert = data.getInserter(eval, truthPartition);
-		InserterUtils.loadDelimitedData(insert, testDir + "GoldStandard.txt");
+		InserterUtils.loadDelimitedData(insert, testDir + "similar.txt");
 
 		Database resultsDB = data.getDatabase(targetsPartition, [eval] as Set);
 		Database truthDB = data.getDatabase(truthPartition, [eval] as Set);
