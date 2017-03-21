@@ -1,14 +1,26 @@
 
 package main;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Set;
+
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFFormat;
+import org.coode.owlapi.turtle.TurtleOntologyFormat;
+import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.model.OWLOntologyManager;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -45,7 +57,6 @@ public class Files2Facts {
 
 	/**
 	 * Converts the file to turtle format based on Krextor
-	 * 
 	 * @param input
 	 * @param output
 	 */
@@ -62,6 +73,22 @@ public class Files2Facts {
 						ConfigManager.getFilePath() + "plfile" + i + ".ttl");
 			}
 			i++;
+		}
+	}
+
+	/**
+	 * Adds a better turtle format for the obtained RDF files
+	 * @throws IOException
+	 */
+	public void improveRDFOutputFormat() throws IOException{
+		for (File file : files) {
+			if (file.getName().endsWith(".ttl")) {
+				org.apache.jena.rdf.model.Model model = RDFDataMgr.loadModel(file.getAbsolutePath()) ;
+				File replaceFile = new File(file.getParent() + "/" + file.getName() );
+				FileOutputStream out = new FileOutputStream(replaceFile, false);
+				RDFDataMgr.write(out, model, RDFFormat.TURTLE_BLOCKS) ;
+				out.close();
+			}
 		}
 	}
 
@@ -140,7 +167,7 @@ public class Files2Facts {
 			object = stmt.getObject();
 
 			buf.append("clause1(").append(StringUtil.lowerCaseFirstChar(predicate.asNode().getLocalName())).append("(")
-					.append(StringUtil.lowerCaseFirstChar(subject.asNode().getLocalName()) + number).append(",");
+			.append(StringUtil.lowerCaseFirstChar(subject.asNode().getLocalName()) + number).append(",");
 			if (object.isURIResource()) {
 				object = model.getResource(object.as(Resource.class).getURI());
 				String objectStr = object.asNode().getLocalName();
@@ -230,7 +257,7 @@ public class Files2Facts {
 	 */
 	public String createPSLPredicate(File file, int number, PrintWriter fromDocumentwriter, PrintWriter attributewriter,
 			PrintWriter hasRefSemanticwriter, PrintWriter hasIDwriter, PrintWriter internalElementwriter)
-			throws Exception {
+					throws Exception {
 
 		InputStream inputStream = FileManager.get().open(file.getAbsolutePath());
 
@@ -264,19 +291,20 @@ public class Files2Facts {
 			subject = stmt.getSubject();
 			predicate = stmt.getPredicate();
 			object = stmt.getObject();
-			System.out.println(subject.asNode().getLocalName() + " subject");
+			//System.out.println(subject.asNode().getLocalName() + " subject");
 
 			addSubjectURI(subject, forDocument, "");
 
-			System.out.println(predicate.asNode().getLocalName() + " pred");
+			//System.out.println(predicate.asNode().getLocalName() + " pred");
 
 			if (predicate.asNode().getLocalName().equals("hasRefSemantic")) {
 				addSubjectURI(subject, forAttribute, ":" + object.asNode().getLocalName());
 
 				StmtIterator stmts = model.listStatements(object.asResource(), null, (RDFNode) null);
 				Statement stmte = stmts.nextStatement();
-				addSubjectURI(object, forRefSemantic, ":remove" + stmte.getObject().asLiteral().getLexicalForm());
-
+				if (object.isLiteral()) {
+					addSubjectURI(object, forRefSemantic, ":remove" + stmte.getObject().asLiteral().getLexicalForm());
+				}
 			}
 
 			// adds id for aml
@@ -291,7 +319,7 @@ public class Files2Facts {
 			}
 
 			if (object.isLiteral()) {
-				System.out.println(object.asLiteral().getLexicalForm() + "value");
+				//System.out.println(object.asLiteral().getLexicalForm() + "value");
 
 				// RefSemantic part starts here for opcua
 				if (object.asLiteral().getLexicalForm().equals("RefSemantic")) {
@@ -317,9 +345,11 @@ public class Files2Facts {
 					stmts = model.listStatements(refSemanticValue.asResource(), null, (RDFNode) null);
 					Statement stmte = stmts.nextStatement();
 
-					// adds to list to write on file
-					addSubjectURI(refSemanticSubject, forRefSemantic,
-							":remove" + stmte.getObject().asLiteral().getLexicalForm());
+					if(stmte.getObject().isLiteral()){
+						// adds to list to write on file
+						addSubjectURI(refSemanticSubject, forRefSemantic,
+								":remove" + stmte.getObject().asLiteral().getLexicalForm());
+					}
 
 					// loop all subjects and match parentnode it to identify
 					// which attribute is it and so that we could orignal
@@ -327,7 +357,6 @@ public class Files2Facts {
 
 					addParentSubject(allSubjects, model, parentNode, forAttribute,
 							":" + subject.asNode().getLocalName(), true);
-
 				}
 
 				// gets value for id
@@ -353,10 +382,11 @@ public class Files2Facts {
 					stmts = model.listStatements(IDSubject.asResource(), null, (RDFNode) null);
 					Statement stmte = stmts.nextStatement();
 					// gets Value
-					IDValue = stmte.getObject().asLiteral().getLexicalForm();
-					IDValue = IDValue.replace("{", "");
-					IDValue = IDValue.replace("}", "");
-
+					if (stmte.getObject().isLiteral()) {
+						IDValue = stmte.getObject().asLiteral().getLexicalForm();
+						IDValue = IDValue.replace("{", "");
+						IDValue = IDValue.replace("}", "");
+					}
 					// loop all subjects and match parentnode it to identify
 					// which attribute is it
 
@@ -368,7 +398,7 @@ public class Files2Facts {
 				}
 
 			} else {
-				System.out.println(object + " object");
+				//System.out.println(object + " object");
 
 			}
 
