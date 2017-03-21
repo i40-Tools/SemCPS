@@ -28,7 +28,7 @@ import util.ConfigManager;
 import util.StringUtil;
 
 /**
- * Reads the RDF files and convert them to Datalog facts
+ * Reads the RDF files and convert them to Datalog facts or to PSL facts
  * 
  * @author Irlan 28.06.2016
  */
@@ -44,7 +44,7 @@ public class Files2Facts {
 	private String IDValue;
 	private Set<String> forInternalElements;
 	private PrintWriter fromDocumentwriter;
-	private PrintWriter attributewriter;
+	private PrintWriter attributeWriter;
 	private PrintWriter hasRefSemanticwriter;
 	private PrintWriter hasIDwriter;
 	private PrintWriter internalElementwriter;
@@ -150,15 +150,12 @@ public class Files2Facts {
 	public String factsFromFiles(File file, int number) throws Exception {
 
 		StringBuilder buf = new StringBuilder();
-
 		InputStream inputStream = FileManager.get().open(file.getAbsolutePath());
 
 		Model model = null;
 		model = ModelFactory.createDefaultModel();
 
-		// parses in turtle format
 		model.read(new InputStreamReader(inputStream), null, "TURTLE");
-
 		StmtIterator iterator = model.listStatements();
 
 		while (iterator.hasNext()) {
@@ -198,9 +195,9 @@ public class Files2Facts {
 
 	/**
 	 * add subjects with appropriate ontology
-	 * 
 	 * @param subject
 	 * @param subjects
+	 * @TODO don't understand the comment
 	 */
 	void addSubjectURI(RDFNode subject, Set<String> subjects, String predicate) {
 		if (subject.asNode().getNameSpace().contains("aml")) {
@@ -210,12 +207,10 @@ public class Files2Facts {
 		else if (subject.asNode().getNameSpace().contains("opcua")) {
 			subjects.add("opcua:" + subject.asNode().getLocalName() + "\t" + "opcua" + predicate);
 		}
-
 	}
 
 	/**
-	 * Searches parent subject and adds it to list based on parentnodeID.
-	 * 
+	 * Searches parent subject and adds it to list based on parentnodeID for OPC UA.
 	 * @param allSubjects
 	 * @param model
 	 * @param parentNode
@@ -248,9 +243,7 @@ public class Files2Facts {
 	}
 
 	/**
-	 * Reads the turtle format RDF files and extract the contents for data log
-	 * conversion.
-	 * 
+	 * Reads the RDF files and extract the contents for creating PSL predicates.
 	 * @param file
 	 * @param number
 	 * @return
@@ -288,7 +281,6 @@ public class Files2Facts {
 
 			addsDataforAML(); // process required data for AML
 			addsDataforOPCUA(allSubjects); // process required data for opcua
-
 		}
 
 		/**
@@ -305,15 +297,11 @@ public class Files2Facts {
 
 	/**
 	 * Writes data to files
-	 * 
 	 * @param docName
 	 * @param documentwriter
 	 */
 	private void writeData(Set<String> docName, PrintWriter documentwriter) {
-		// TODO Auto-generated method stub
-
 		for (String i : docName) {
-
 			// remove annotation to make it a literal value
 			if (i.contains("aml:remove")) {
 				i = i.replace("aml:remove", "");
@@ -321,15 +309,12 @@ public class Files2Facts {
 			if (i.contains("opcua:remove")) {
 				i = i.replace("opcua:remove", "");
 			}
-
 			documentwriter.println(i);
 		}
-
 	}
 
 	/**
 	 * OPCUA data is complex and requires matching with parent node
-	 * 
 	 * @param allSubjects
 	 */
 	private void addsDataforOPCUA(ArrayList<Resource> allSubjects) {
@@ -344,51 +329,46 @@ public class Files2Facts {
 				// ParentNode
 
 				// adds opcua refsemantic value here
-				StmtIterator stmts = model.listStatements(refSemanticValue.asResource(), null, (RDFNode) null);
+				StmtIterator stmts = model.listStatements(refSemanticValue.asResource(), 
+									 null, (RDFNode) null);
 				Statement stmte = stmts.nextStatement();
-				
+
 				if(stmte.getObject().isLiteral()){
-				// adds to list to write on file
-				addSubjectURI(refSemanticSubject, forRefSemantic,
-						":remove" + stmte.getObject().asLiteral().getLexicalForm());
+					// adds to list to write on file
+					addSubjectURI(refSemanticSubject, forRefSemantic,
+							":remove" + stmte.getObject().asLiteral().getLexicalForm());
 				}
-				
+
 				// loop all subjects and match parentnode it to identify
 				// which attribute is it and so that we could orignal
 				// attribute whose refsemantic it is
 
-				addParentSubject(allSubjects, model, parentNode, forAttribute, ":" + subject.asNode().getLocalName(),
-						true);
-
+				addParentSubject(allSubjects, model, parentNode, forAttribute, 
+						         ":" + subject.asNode().getLocalName(),true);
 			}
 
 			// gets value for id
 			if (object.asLiteral().getLexicalForm().equals("ID")) {
-
 				addOPCUAid(allSubjects);
 			}
 
 		} else {
 			System.out.println(object + " object");
-
 		}
 
 	}
 
 	/**
-	 * Adds opcua id
-	 * 
+	 * Adds OPC UA ids
 	 * @param allSubjects
 	 */
 	private void addOPCUAid(ArrayList<Resource> allSubjects) {
-		// TODO Auto-generated method stub
-
 		String parentNode = getParentNode("ID");
 
 		// adds opcua ID value here using its object
-		StmtIterator stmts = model.listStatements(IDSubject.asResource(), null, (RDFNode) null);
+		StmtIterator stmts = model.listStatements(IDSubject.asResource(), null, 
+				             (RDFNode) null);
 		Statement stmte = stmts.nextStatement();
-
 		if(stmte.getObject().isLiteral()){
 			// gets Value
 			IDValue = stmte.getObject().asLiteral().getLexicalForm();
@@ -469,7 +449,6 @@ public class Files2Facts {
 			// gets the literal ID value and add it to forID
 			addSubjectURI(subject, forID, ":remove" + object.asLiteral().getLexicalForm());
 		}
-
 	}
 
 	/**
@@ -486,17 +465,12 @@ public class Files2Facts {
 	}
 
 	/**
-	 * Get all subects for opcua
-	 * 
+	 * Get all subjects for opcua
 	 * @param subjectIterator
 	 * @return
 	 */
 	private ArrayList<Resource> getAllSubjects(StmtIterator subjectIterator) {
-		// TODO Auto-generated method stub
-
-		// gets all subjects required for opcua
 		ArrayList<Resource> allSubjects = new ArrayList<Resource>();
-
 		while (subjectIterator.hasNext()) {
 			Statement stmt = subjectIterator.nextStatement();
 			subject = stmt.getSubject();
@@ -505,7 +479,6 @@ public class Files2Facts {
 			}
 			allSubjects.add(subject.asResource());
 		}
-
 		return allSubjects;
 	}
 
@@ -513,14 +486,11 @@ public class Files2Facts {
 	 * Initialises data structures
 	 */
 	private void initDataStructs() {
-		// TODO Auto-generated method stub
-
 		forDocument = new LinkedHashSet<>();
 		forAttribute = new LinkedHashSet<>();
 		forID = new LinkedHashSet<>();
 		forRefSemantic = new LinkedHashSet<>();
 		forInternalElements = new LinkedHashSet<>();
-
 	}
 
 	/**
@@ -550,7 +520,7 @@ public class Files2Facts {
 		initFileWriters();
 		for (File file : files) {
 			// pass in the writers
-			createPSLPredicate(file, i++, fromDocumentwriter, attributewriter, hasRefSemanticwriter, hasIDwriter,
+			createPSLPredicate(file, i++, fromDocumentwriter, attributeWriter, hasRefSemanticwriter, hasIDwriter,
 					internalElementwriter);
 		}
 
@@ -565,7 +535,7 @@ public class Files2Facts {
 	private void closeFileWriters() {
 		// TODO Auto-generated method stub
 		fromDocumentwriter.close();
-		attributewriter.close();
+		attributeWriter.close();
 		hasRefSemanticwriter.close();
 		hasIDwriter.close();
 		internalElementwriter.close();
@@ -579,14 +549,11 @@ public class Files2Facts {
 	 */
 
 	private void initFileWriters() throws FileNotFoundException {
-		// TODO Auto-generated method stub
-
 		fromDocumentwriter = new PrintWriter("data/ontology/test/fromDocument.txt");
-		attributewriter = new PrintWriter("data/ontology/test/Attribute.txt");
+		attributeWriter = new PrintWriter("data/ontology/test/Attribute.txt");
 		hasRefSemanticwriter = new PrintWriter("data/ontology/test/hasRefsemantic.txt");
 		hasIDwriter = new PrintWriter("data/ontology/test/hasID.txt");
 		internalElementwriter = new PrintWriter("data/ontology/test/InternalElements.txt");
-
 	}
 
 	/**
