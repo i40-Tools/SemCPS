@@ -32,16 +32,12 @@ import util.StringUtil;
  * 
  * @author Irlan 28.06.2016
  */
-public class Files2Facts {
+public class Files2Facts extends IndustryStandards {
 	private RDFNode object;
 	private RDFNode predicate;
 	private RDFNode subject;
 
 	private ArrayList<File> files;
-	private Resource refSemanticSubject;
-	private Resource refSemanticValue;
-	private Resource IDSubject;
-	private String IDValue;
 	private Set<String> forInternalElements;
 	private PrintWriter fromDocumentwriter;
 	private PrintWriter attributeWriter;
@@ -123,20 +119,20 @@ public class Files2Facts {
 
 	/**
 	 * Adds a better turtle format for the obtained RDF files
+	 * 
 	 * @throws IOException
 	 */
-	public void improveRDFOutputFormat() throws IOException{
+	public void improveRDFOutputFormat() throws IOException {
 		for (File file : files) {
 			if (file.getName().endsWith(".ttl")) {
-				org.apache.jena.rdf.model.Model model = RDFDataMgr.loadModel(file.getAbsolutePath()) ;
-				File replaceFile = new File(file.getParent() + "/" + file.getName() );
+				org.apache.jena.rdf.model.Model model = RDFDataMgr.loadModel(file.getAbsolutePath());
+				File replaceFile = new File(file.getParent() + "/" + file.getName());
 				FileOutputStream out = new FileOutputStream(replaceFile, false);
-				RDFDataMgr.write(out, model, RDFFormat.TURTLE_BLOCKS) ;
+				RDFDataMgr.write(out, model, RDFFormat.TURTLE_BLOCKS);
 				out.close();
 			}
 		}
 	}
-
 
 	/**
 	 * Reads the turtle format RDF files and extract the contents for data log
@@ -165,7 +161,7 @@ public class Files2Facts {
 			object = stmt.getObject();
 
 			buf.append("clause1(").append(StringUtil.lowerCaseFirstChar(predicate.asNode().getLocalName())).append("(")
-			.append(StringUtil.lowerCaseFirstChar(subject.asNode().getLocalName()) + number).append(",");
+					.append(StringUtil.lowerCaseFirstChar(subject.asNode().getLocalName()) + number).append(",");
 			if (object.isURIResource()) {
 				object = model.getResource(object.as(Resource.class).getURI());
 				String objectStr = object.asNode().getLocalName();
@@ -194,56 +190,8 @@ public class Files2Facts {
 	}
 
 	/**
-	 * add subjects with appropriate ontology
-	 * @param subject
-	 * @param subjects
-	 * @TODO don't understand the comment
-	 */
-	void addSubjectURI(RDFNode subject, Set<String> subjects, String predicate) {
-		if (subject.asNode().getNameSpace().contains("aml")) {
-			subjects.add("aml:" + subject.asNode().getLocalName() + "\t" + "aml" + predicate);
-		}
-
-		else if (subject.asNode().getNameSpace().contains("opcua")) {
-			subjects.add("opcua:" + subject.asNode().getLocalName() + "\t" + "opcua" + predicate);
-		}
-	}
-
-	/**
-	 * Searches parent subject and adds it to list based on parentnodeID for OPC UA.
-	 * @param allSubjects
-	 * @param model
-	 * @param parentNode
-	 * @param forID
-	 */
-	void addParentSubject(ArrayList<Resource> allSubjects, Model model, String parentNode, Set<String> forID,
-			String value, boolean flag) {
-
-		for (int i = 0; i < allSubjects.size(); i++) {
-			StmtIterator stmts = model.listStatements(allSubjects.get(i), null, (RDFNode) null);
-			while (stmts.hasNext()) {
-
-				Statement stmte = stmts.nextStatement();
-
-				if (stmte.getPredicate().asNode().getLocalName().equals("hasNodeId")) {
-					if (stmte.getObject().asLiteral().getLexicalForm().equals(parentNode)) {
-						if (stmte.getSubject().asNode().getLocalName().contains("UAObject") && flag == true) {
-							addSubjectURI(allSubjects.get(i), forInternalElements, value);
-
-						} else {
-							addSubjectURI(allSubjects.get(i), forID, value);
-						}
-
-					}
-				}
-
-			}
-		}
-
-	}
-
-	/**
 	 * Reads the RDF files and extract the contents for creating PSL predicates.
+	 * 
 	 * @param file
 	 * @param number
 	 * @return
@@ -251,7 +199,7 @@ public class Files2Facts {
 	 */
 	public String createPSLPredicate(File file, int number, PrintWriter fromDocumentwriter, PrintWriter attributewriter,
 			PrintWriter hasRefSemanticwriter, PrintWriter hasIDwriter, PrintWriter internalElementwriter)
-					throws Exception {
+			throws Exception {
 
 		InputStream inputStream = FileManager.get().open(file.getAbsolutePath());
 		model = ModelFactory.createDefaultModel();
@@ -262,7 +210,6 @@ public class Files2Facts {
 		// init data structures
 		initDataStructs();
 
-		// gets all subjects for opcua
 		ArrayList<Resource> allSubjects = getAllSubjects(subjectIterator);
 
 		while (iterator.hasNext()) {
@@ -271,16 +218,17 @@ public class Files2Facts {
 			subject = stmt.getSubject();
 			predicate = stmt.getPredicate();
 			object = stmt.getObject();
-			System.out.println(subject.asNode().getLocalName() + " subject");
 
 			// all subjects are added accordign to ontology e.g aml: opcua:
 			// forDocument.txt
 			addSubjectURI(subject, forDocument, "");
 
-			System.out.println(predicate.asNode().getLocalName() + " pred");
-
 			addsDataforAML(); // process required data for AML
-			addsDataforOPCUA(allSubjects); // process required data for opcua
+			Opcua opcua = new Opcua(subject, object, predicate, model, forAttribute, forID, forRefSemantic,
+					forInternalElements);
+
+			opcua.addsDataforOPCUA(allSubjects); // process required data for
+													// opcua
 		}
 
 		/**
@@ -297,6 +245,7 @@ public class Files2Facts {
 
 	/**
 	 * Writes data to files
+	 * 
 	 * @param docName
 	 * @param documentwriter
 	 */
@@ -315,111 +264,9 @@ public class Files2Facts {
 
 	/**
 	 * OPCUA data is complex and requires matching with parent node
-	 * @param allSubjects
-	 */
-	private void addsDataforOPCUA(ArrayList<Resource> allSubjects) {
-		if (object.isLiteral()) {
-			System.out.println(object.asLiteral().getLexicalForm() + "value");
-
-			// RefSemantic part starts here for opcua
-			if (object.asLiteral().getLexicalForm().equals("RefSemantic")) {
-				// get subject
-
-				String parentNode = getParentNode("RefSemantic");// gets
-				// ParentNode
-
-				// adds opcua refsemantic value here
-				StmtIterator stmts = model.listStatements(refSemanticValue.asResource(), 
-									 null, (RDFNode) null);
-				Statement stmte = stmts.nextStatement();
-
-				if(stmte.getObject().isLiteral()){
-					// adds to list to write on file
-					addSubjectURI(refSemanticSubject, forRefSemantic,
-							":remove" + stmte.getObject().asLiteral().getLexicalForm());
-				}
-
-				// loop all subjects and match parentnode it to identify
-				// which attribute is it and so that we could orignal
-				// attribute whose refsemantic it is
-
-				addParentSubject(allSubjects, model, parentNode, forAttribute, 
-						         ":" + subject.asNode().getLocalName(),true);
-			}
-
-			// gets value for id
-			if (object.asLiteral().getLexicalForm().equals("ID")) {
-				addOPCUAid(allSubjects);
-			}
-
-		} else {
-			System.out.println(object + " object");
-		}
-
-	}
-
-	/**
-	 * Adds OPC UA ids
-	 * @param allSubjects
-	 */
-	private void addOPCUAid(ArrayList<Resource> allSubjects) {
-		String parentNode = getParentNode("ID");
-
-		// adds opcua ID value here using its object
-		StmtIterator stmts = model.listStatements(IDSubject.asResource(), null, 
-				             (RDFNode) null);
-		Statement stmte = stmts.nextStatement();
-		if(stmte.getObject().isLiteral()){
-			// gets Value
-			IDValue = stmte.getObject().asLiteral().getLexicalForm();
-			IDValue = IDValue.replace("{", "");
-			IDValue = IDValue.replace("}", "");
-		}
-
-		// loop all subjects and match parentnode it to identify
-		// which attribute is it
-
-		addParentSubject(allSubjects, model, parentNode, forAttribute, ":" + IDSubject.asNode().getLocalName(), true);
-
-		addSubjectURI(IDSubject, forID, ":remove" + IDValue);
-
-	}
-
-	/**
-	 * Just returns parents node for opcua
 	 * 
-	 * @param type
-	 * @return
+	 * @param allSubjects
 	 */
-	private String getParentNode(String type) {
-		// TODO Auto-generated method stub
-
-		String parentNode = null;
-		StmtIterator stmts = model.listStatements(subject.asResource(), null, (RDFNode) null);
-
-		// goes through its statements and gets parent node id
-		while (stmts.hasNext()) {
-			Statement stmte = stmts.nextStatement();
-			if (stmte.getPredicate().asNode().getLocalName().equals("parentNodeId")) {
-				parentNode = stmte.getObject().asLiteral().getLexicalForm();
-			}
-
-			// get opcua refsemantic subject and its value object
-			if (stmte.getPredicate().asNode().getLocalName().equals("hasValue")) {
-				if (type == "ID") {
-					IDSubject = stmte.getObject().asResource();
-				} else if (type == "RefSemantic") {
-
-					refSemanticValue = stmte.getObject().asResource();
-					refSemanticSubject = stmte.getSubject();
-
-				}
-			}
-
-		}
-
-		return parentNode;
-	}
 
 	/**
 	 * Automation ML part for data population
@@ -428,6 +275,7 @@ public class Files2Facts {
 	private void addsDataforAML() {
 		// TODO Auto-generated method stub
 
+		// RefSemantic part starts here
 		if (predicate.asNode().getLocalName().equals("hasRefSemantic")) {
 			// adds for attribute.txt
 			addSubjectURI(subject, forAttribute, ":" + object.asNode().getLocalName());
@@ -436,7 +284,7 @@ public class Files2Facts {
 
 		}
 
-		// adds id for aml
+		// RefSemantic part starts here
 		if (predicate.asNode().getLocalName().equals("identifier")) {
 
 			// id is for internal Element goes in InternalElement file
@@ -456,16 +304,21 @@ public class Files2Facts {
 	 */
 	private void addRefSemantic() {
 		StmtIterator stmts = model.listStatements(object.asResource(), null, (RDFNode) null);
-		Statement stmte = stmts.nextStatement();
-		// remove because its a literal so we can identify. we dont need aml:
-		// opcua: tags
-		if(object.isLiteral()){
-			addSubjectURI(object, forRefSemantic, ":remove" + stmte.getObject().asLiteral().getLexicalForm());
+		while (stmts.hasNext()) {
+
+			Statement stmte = stmts.nextStatement();
+			// remove because its a literal so we can identify. we dont need
+			// aml:
+			// opcua: tags
+			if (stmte.getObject().isLiteral()) {
+				addSubjectURI(object, forRefSemantic, ":remove" + stmte.getObject().asLiteral().getLexicalForm());
+			}
 		}
 	}
 
 	/**
 	 * Get all subjects for opcua
+	 * 
 	 * @param subjectIterator
 	 * @return
 	 */

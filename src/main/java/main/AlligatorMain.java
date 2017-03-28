@@ -35,9 +35,9 @@ public class AlligatorMain {
 
 			// main.executeDatalogApproach();
 			main.generatePSLDataModel();
-			// main.executePSLAproach();
-			// main.integrate();
 			main.executePSLAproach();
+			// main.integrate();
+			// main.executePSLAproach();
 			// main.integrate();
 
 		} catch (Exception e) {
@@ -47,8 +47,9 @@ public class AlligatorMain {
 
 	/**
 	 * Method that read standard files and convert then to RDF
-	 * @throws Exception 
-	 * TODO create more specific exceptions
+	 * 
+	 * @throws Exception
+	 *             TODO create more specific exceptions
 	 */
 	public void readConvertStandardFiles() throws Exception {
 		standardFiles.readFiles(ConfigManager.getFilePath(), ".aml", ".opcua", ".xml");
