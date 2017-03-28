@@ -263,12 +263,6 @@ public class Files2Facts extends IndustryStandards {
 	}
 
 	/**
-	 * OPCUA data is complex and requires matching with parent node
-	 * 
-	 * @param allSubjects
-	 */
-
-	/**
 	 * Automation ML part for data population
 	 */
 
