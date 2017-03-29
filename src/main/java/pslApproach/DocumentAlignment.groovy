@@ -98,6 +98,8 @@ public class DocumentAligment{
 
 		model.add predicate: "similarType"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID];
 		model.add predicate: "eval", types: [ArgumentType.String, ArgumentType.String];
+
+		model.add predicate: "roleClass"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID];
 	}
 
 
@@ -155,7 +157,7 @@ public class DocumentAligment{
 		testDir = dir + 'test' + java.io.File.separator;
 		Partition testObservations = new Partition(3);
 		Partition testPredictions = new Partition(4);
-		for (Predicate p : [fromDocument, name, Attribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasEClassIRDI, InternalElements])
+		for (Predicate p : [fromDocument, name, Attribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasEClassIRDI, roleClass, InternalElements])
 		{
 			def insert = data.getInserter(p, testObservations);
 
@@ -163,7 +165,7 @@ public class DocumentAligment{
 
 		}
 
-		testDB = data.getDatabase(testPredictions, [name, fromDocument, Attribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasEClassIRDI, InternalElements] as Set, testObservations);
+		testDB = data.getDatabase(testPredictions, [name, fromDocument, Attribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, roleClass, hasEClassIRDI, InternalElements] as Set, testObservations);
 
 	}
 

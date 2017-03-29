@@ -1,2 +1,1 @@
-aml:eClassVersion1	psw
-opcua:eClassVersion1	psw
+aml:Attribute1	9.0

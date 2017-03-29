@@ -1,4 +1,1 @@
-aml:eClassClassificationClass1	www
-opcua:eClassClassificationClass1	www
-
-
+aml:Attribute2	27022501

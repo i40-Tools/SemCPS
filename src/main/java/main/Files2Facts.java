@@ -44,11 +44,20 @@ public class Files2Facts extends IndustryStandards {
 	private PrintWriter hasRefSemanticwriter;
 	private PrintWriter hasIDwriter;
 	private PrintWriter internalElementwriter;
+	private PrintWriter roleClassWriter;
+	private PrintWriter hasEclassVersionWriter;
+	private PrintWriter hasEclassClassificationClassWriter;
+	private PrintWriter haseClassIRDIWriter;
+
 	private Model model;
 	private LinkedHashSet<String> forAttribute;
+	private LinkedHashSet<String> forRoleClass;
 	private LinkedHashSet<String> forID;
 	private LinkedHashSet<String> forRefSemantic;
 	private LinkedHashSet<String> forDocument;
+	private LinkedHashSet<String> foreClassVersion;
+	private LinkedHashSet<String> foreClassClassificationClass;
+	private LinkedHashSet<String> foreClassIRDI;
 
 	/**
 	 * Converts the file to turtle format based on Krextor
@@ -197,9 +206,7 @@ public class Files2Facts extends IndustryStandards {
 	 * @return
 	 * @throws Exception
 	 */
-	public String createPSLPredicate(File file, int number, PrintWriter fromDocumentwriter, PrintWriter attributewriter,
-			PrintWriter hasRefSemanticwriter, PrintWriter hasIDwriter, PrintWriter internalElementwriter)
-			throws Exception {
+	public String createPSLPredicate(File file, int number) throws Exception {
 
 		InputStream inputStream = FileManager.get().open(file.getAbsolutePath());
 		model = ModelFactory.createDefaultModel();
@@ -235,10 +242,15 @@ public class Files2Facts extends IndustryStandards {
 		 * Write data to files
 		 */
 		writeData(forDocument, fromDocumentwriter);
-		writeData(forAttribute, attributewriter);
+		writeData(forAttribute, attributeWriter);
 		writeData(forInternalElements, internalElementwriter);
 		writeData(forRefSemantic, hasRefSemanticwriter);
 		writeData(forID, hasIDwriter);
+		writeData(forRoleClass, roleClassWriter);
+
+		writeData(foreClassVersion, hasEclassVersionWriter);
+		writeData(foreClassClassificationClass, hasEclassClassificationClassWriter);
+		writeData(foreClassIRDI, haseClassIRDIWriter);
 
 		return "";
 	}
@@ -270,11 +282,56 @@ public class Files2Facts extends IndustryStandards {
 		// TODO Auto-generated method stub
 
 		// RefSemantic part starts here
+		if (predicate.asNode().getLocalName().equals("hasAttribute")) {
+			addSubjectURI(subject, forRoleClass, ":" + object.asNode().getLocalName());
+
+		}
+
 		if (predicate.asNode().getLocalName().equals("hasRefSemantic")) {
 			// adds for attribute.txt
 			addSubjectURI(subject, forAttribute, ":" + object.asNode().getLocalName());
 			// adds for refsemantic.txt
 			addRefSemantic();
+
+		}
+
+		/***
+		 * Eclass part starts here. TODO refactoring and functions only for test
+		 * purpose now
+		 */
+		if (object.isLiteral()) {
+			if (object.asLiteral().getLexicalForm().equals("eClassClassificationClass")
+					|| object.asLiteral().getLexicalForm().equals("eClassVersion")
+					|| object.asLiteral().getLexicalForm().equals("eClassIRDI")) {
+				if (predicate.asNode().getLocalName().equals("hasAttributeName")) {
+					// adds for attribute.txt
+					addSubjectURI(subject, forAttribute, ":" + object.asLiteral().getLexicalForm());
+				}
+
+				StmtIterator stmts = model.listStatements(subject.asResource(), null, (RDFNode) null);
+				while (stmts.hasNext()) {
+					Statement stmte = stmts.nextStatement();
+
+					if (stmte.getPredicate().asNode().getLocalName().equals("hasAttributeValue")) {
+
+						if (object.asLiteral().getLexicalForm().equals("eClassClassificationClass")) {
+							addSubjectURI(subject, foreClassClassificationClass,
+									":remove" + stmte.getObject().asLiteral().getLexicalForm());
+						}
+
+						if (object.asLiteral().getLexicalForm().equals("eClassVersion")) {
+							addSubjectURI(subject, foreClassVersion,
+									":remove" + stmte.getObject().asLiteral().getLexicalForm());
+						}
+						if (object.asLiteral().getLexicalForm().equals("eClassIRDI")) {
+							addSubjectURI(subject, foreClassIRDI,
+									":remove" + stmte.getObject().asLiteral().getLexicalForm());
+						}
+
+					}
+				}
+
+			}
 
 		}
 
@@ -338,6 +395,11 @@ public class Files2Facts extends IndustryStandards {
 		forID = new LinkedHashSet<>();
 		forRefSemantic = new LinkedHashSet<>();
 		forInternalElements = new LinkedHashSet<>();
+		forRoleClass = new LinkedHashSet<>();
+		foreClassClassificationClass = new LinkedHashSet<>();
+		foreClassIRDI = new LinkedHashSet<>();
+		foreClassVersion = new LinkedHashSet<>();
+
 	}
 
 	/**
@@ -367,8 +429,7 @@ public class Files2Facts extends IndustryStandards {
 		initFileWriters();
 		for (File file : files) {
 			// pass in the writers
-			createPSLPredicate(file, i++, fromDocumentwriter, attributeWriter, hasRefSemanticwriter, hasIDwriter,
-					internalElementwriter);
+			createPSLPredicate(file, i++);
 		}
 
 		closeFileWriters();
@@ -386,6 +447,10 @@ public class Files2Facts extends IndustryStandards {
 		hasRefSemanticwriter.close();
 		hasIDwriter.close();
 		internalElementwriter.close();
+		roleClassWriter.close();
+		hasEclassVersionWriter.close();
+		hasEclassClassificationClassWriter.close();
+		haseClassIRDIWriter.close();
 
 	}
 
@@ -401,6 +466,11 @@ public class Files2Facts extends IndustryStandards {
 		hasRefSemanticwriter = new PrintWriter("data/ontology/test/hasRefsemantic.txt");
 		hasIDwriter = new PrintWriter("data/ontology/test/hasID.txt");
 		internalElementwriter = new PrintWriter("data/ontology/test/InternalElements.txt");
+		roleClassWriter = new PrintWriter("data/ontology/test/roleClass.txt");
+		hasEclassVersionWriter = new PrintWriter("data/ontology/test/hasEclassVersion.txt");
+		hasEclassClassificationClassWriter = new PrintWriter("data/ontology/test/hasEClassClassificationClass.txt");
+		haseClassIRDIWriter = new PrintWriter("data/ontology/test/hasEClassIRDI.txt");
+
 	}
 
 	/**
