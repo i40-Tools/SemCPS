@@ -1,2 +1,4 @@
+aml:InternalElement1	 opcua:UAObject2
+opcua:UAObject2	 aml:InternalElement1
 opcua:UAVariable8	 aml:Attribute5
 aml:Attribute5	 opcua:UAVariable8

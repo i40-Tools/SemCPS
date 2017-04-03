@@ -99,7 +99,7 @@ public class DocumentAligment{
 		model.add predicate: "similarType"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID];
 		model.add predicate: "eval", types: [ArgumentType.String, ArgumentType.String];
 
-		model.add predicate: "roleClass"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID];
+		model.add predicate: "RoleClass"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID];
 	}
 
 
@@ -123,11 +123,11 @@ public class DocumentAligment{
 		fromDocument(A,O1) & fromDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 5;
 
 
-		//		// Two AML Attributes are semantically the same if its eclass,IRDI and classification class are the same
-		//		model.add rule :( Attribute(E,X) & Attribute(U,Y)  & hasEClassIRDI(X,Z) & hasEClassIRDI(Y,W) & similarValue(Z,W)
-		//		& Attribute(E,Q) & Attribute(U,T) & hasEClassVersion(Q,M) & hasEClassVersion(T,N) & similarValue(M,N)
-		//		& Attribute(E,D) & Attribute(U,K) & hasEClassVersion(D,O) & hasEClassVersion(K,L) & similarValue(O,L)
-		//		& fromDocument(E,O1) & fromDocument(U,O2) & (O1-O2)) >> similar(E,U) , weight : 12;
+		// Two Roles Class are same if its eclass,IRDI and classification class are the same
+		model.add rule :( Attribute(E,X) & Attribute(U,Y)  & hasEClassIRDI(X,Z) & hasEClassIRDI(Y,W) & similarValue(Z,W)
+		& Attribute(E,Q) & Attribute(U,T) & hasEClassVersion(Q,M) & hasEClassVersion(T,N) & similarValue(M,N)
+		& Attribute(E,D) & Attribute(U,K) & hasEClassVersion(D,O) & hasEClassVersion(K,L) & similarValue(O,L)
+		& fromDocument(E,O1) & fromDocument(U,O2) & (O1-O2)) >> similar(E,U) , weight : 12;
 
 		//		// Two InternalElements are the same if its InternalLink is the same
 		//		model.add rule : (InternalElements(A,X) & InternalElements(B,Y)  & hasInternalLink(X,Z) & hasInternalLink(Y,W) &

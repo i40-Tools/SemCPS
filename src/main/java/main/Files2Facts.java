@@ -232,7 +232,7 @@ public class Files2Facts extends IndustryStandards {
 
 			addsDataforAML(); // process required data for AML
 			Opcua opcua = new Opcua(subject, object, predicate, model, forAttribute, forID, forRefSemantic,
-					forInternalElements);
+					forInternalElements, forRoleClass, foreClassVersion, foreClassIRDI, foreClassClassificationClass);
 
 			opcua.addsDataforOPCUA(allSubjects); // process required data for
 													// opcua

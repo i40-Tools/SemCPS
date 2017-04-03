@@ -1,0 +1,2 @@
+aml:Attribute2	27022501
+opcua:Value6	27022501

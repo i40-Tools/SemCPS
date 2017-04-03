@@ -1,4 +1,0 @@
-aml:Attribute1	Attribute1
-opcua:UAVariable4	UAVariable4
-
-
