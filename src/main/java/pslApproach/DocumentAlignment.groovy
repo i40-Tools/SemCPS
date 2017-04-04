@@ -109,7 +109,6 @@ public class DocumentAligment{
 
 	public void defineRules(){
 
-
 		// Two AML Attributes are the same if its RefSemantic are the same
 		model.add rule : (Attribute(A,X) & Attribute(B,Y) & hasRefSemantic(X,Z) & hasRefSemantic(Y,W) & similarValue(Z,W) &
 		fromDocument(A,O1) & fromDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 10;
@@ -124,10 +123,11 @@ public class DocumentAligment{
 
 
 		// Two Roles Class are same if its eclass,IRDI and classification class are the same
-		model.add rule :( Attribute(E,X) & Attribute(U,Y)  & hasEClassIRDI(X,Z) & hasEClassIRDI(Y,W) & similarValue(Z,W)
-		& Attribute(E,Q) & Attribute(U,T) & hasEClassVersion(Q,M) & hasEClassVersion(T,N) & similarValue(M,N)
-		& Attribute(E,D) & Attribute(U,K) & hasEClassVersion(D,O) & hasEClassVersion(K,L) & similarValue(O,L)
-		& fromDocument(E,O1) & fromDocument(U,O2) & (O1-O2)) >> similar(E,U) , weight : 12;
+		model.add rule :( RoleClass(A1,B1) & RoleClass(A2,B2) & Attribute(B1,X) & Attribute(B2,Y)  & hasEClassIRDI(B1,Z) & hasEClassIRDI(Y,W) & similarValue(Z,W)
+		& RoleClass(A1,C1) & RoleClass(A2,D2) & Attribute(C1,Q) & Attribute(D2,T) & hasEClassVersion(C1,M) & hasEClassVersion(T,N) & similarValue(M,N)
+		& RoleClass(A1,E1) & RoleClass(A2,F2) &Attribute(E1,D) & Attribute(F2,K) & hasEClassVersion(E1,O) & hasEClassVersion(K,L) & similarValue(O,L)
+		& fromDocument(A1,O1) & fromDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 12;
+
 
 		//		// Two InternalElements are the same if its InternalLink is the same
 		//		model.add rule : (InternalElements(A,X) & InternalElements(B,Y)  & hasInternalLink(X,Z) & hasInternalLink(Y,W) &
