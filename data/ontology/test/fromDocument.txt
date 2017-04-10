@@ -1,5 +1,6 @@
 aml:CAEXFile1	aml
 aml:Attribute4	aml
+aml:InterfaceClass1	aml
 aml:ExternalReference1	aml
 aml:RefSemantic3	aml
 aml:Attribute3	aml
@@ -11,11 +12,10 @@ aml:InstanceHierarchy1	aml
 aml:Attribute1	aml
 aml:AdditionalInformation2	aml
 aml:Attribute6	aml
-aml:RoleClass1	aml
+aml:InterfaceClassLib1	aml
 aml:AdditionalInformation1	aml
 aml:Attribute5	aml
 aml:ExternalReference2	aml
-aml:RoleClassLib1	aml
 opcua:Value7	opcua
 opcua:Value11	opcua
 opcua:UAVariable3	opcua
