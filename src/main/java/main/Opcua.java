@@ -20,13 +20,14 @@ public class Opcua extends IndustryStandards {
 
 	private RDFNode object;
 	private RDFNode subject;
+	private RDFNode predicate;
 	private String parentNode;
 	private Model model;
 	private LinkedHashSet<String> forAttribute;
 	private LinkedHashSet<String> forID;
 	private LinkedHashSet<String> forRefSemantic;
-	private Set<String> forInternalElements;
-	private LinkedHashSet<String> forRoleClass;
+	private Set<String> UAObject;
+	private LinkedHashSet<String> UAObjectType;
 	private Resource generictValue;
 	private Resource genericSubject;
 	private LinkedHashSet<String> foreClassVersion;
@@ -34,17 +35,18 @@ public class Opcua extends IndustryStandards {
 	private LinkedHashSet<String> foreClassIRDI;
 
 	public Opcua(RDFNode subject, RDFNode object, RDFNode predicate, Model model, LinkedHashSet<String> forAttribute,
-			LinkedHashSet<String> forID, LinkedHashSet<String> forRefSemantic, Set<String> forInternalElements,
-			LinkedHashSet<String> forRoleClass, LinkedHashSet<String> foreClassVersion,
+			LinkedHashSet<String> forID, LinkedHashSet<String> forRefSemantic, Set<String> UAObject,
+			LinkedHashSet<String> UAObjectType, LinkedHashSet<String> foreClassVersion,
 			LinkedHashSet<String> foreClassIRDI, LinkedHashSet<String> foreClassClassificationClass) {
 		this.subject = subject;
 		this.object = object;
+		this.predicate = predicate;
 		this.model = model;
 		this.forAttribute = forAttribute;
 		this.forID = forID;
 		this.forRefSemantic = forRefSemantic;
-		this.forInternalElements = forInternalElements;
-		this.forRoleClass = forRoleClass;
+		this.UAObject = UAObject;
+		this.UAObjectType = UAObjectType;
 		this.foreClassVersion = foreClassVersion;
 		this.foreClassIRDI = foreClassIRDI;
 		this.foreClassClassificationClass = foreClassClassificationClass;
@@ -60,7 +62,14 @@ public class Opcua extends IndustryStandards {
 		if (subject.asNode().getNameSpace().contains("aml")) {
 			return;
 		}
+
 		if (object.isLiteral()) {
+
+			parentNode = getParentNode();
+			if (parentNode != null) {
+				setValues();
+				addParentSubject(allSubjects, UAObject, ":" + subject.asNode().getLocalName());
+			}
 
 			// RefSemantic part starts here for opcua
 			if (object.asLiteral().getLexicalForm().equals("RefSemantic")) {
@@ -235,8 +244,11 @@ public class Opcua extends IndustryStandards {
 					if (stmte.getObject().asLiteral().getLexicalForm().equals(parentNode)) {
 
 						// this part is just for ID value. can be improved
-						if (stmte.getSubject().asNode().getLocalName().contains("UAObject") && checkIfId()) {
-							addSubjectURI(allSubjects.get(i), forInternalElements, value);
+						if (stmte.getSubject().asNode().getLocalName().contains("UAObject")
+								&& !stmte.getSubject().asNode().getLocalName().contains("Type")
+								&& !stmte.getSubject().asNode().getLocalName().contains("Variable")) {
+							addSubjectURI(stmte.getSubject(), UAObject, value);
+
 						} else if (!stmte.getSubject().asNode().getLocalName().contains("UAObject")) {
 							// for ID
 							addSubjectURI(allSubjects.get(i), forResource, value);
@@ -244,7 +256,7 @@ public class Opcua extends IndustryStandards {
 							// adds role class objects
 							// TODO : add other roleclass attributes priority :3
 
-							addSubjectURI(allSubjects.get(i), forRoleClass, value);
+							addSubjectURI(allSubjects.get(i), UAObjectType, value);
 
 						}
 
@@ -256,4 +268,5 @@ public class Opcua extends IndustryStandards {
 		}
 
 	}
+
 }

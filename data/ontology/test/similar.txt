@@ -1,6 +1,6 @@
-aml:InternalElement1	 opcua:UAObject2
-opcua:UAVariable8	 aml:Attribute5
+aml:Attribute5	 opcua:UAVariable8
 opcua:UAObject2	 aml:InternalElement1
 aml:InterfaceClass1	 opcua:UAObjectType1
 opcua:UAObjectType1	 aml:InterfaceClass1
-aml:Attribute5	 opcua:UAVariable8
+opcua:UAVariable8	 aml:Attribute5
+aml:InternalElement1	 opcua:UAObject2

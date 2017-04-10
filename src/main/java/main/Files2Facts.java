@@ -48,6 +48,10 @@ public class Files2Facts extends IndustryStandards {
 	private PrintWriter hasEclassVersionWriter;
 	private PrintWriter hasEclassClassificationClassWriter;
 	private PrintWriter haseClassIRDIWriter;
+	private PrintWriter InterfaceClass;
+	private PrintWriter SystemUnit;
+	private PrintWriter UAObjectType;
+	private PrintWriter UAObject;
 
 	private Model model;
 	private LinkedHashSet<String> forAttribute;
@@ -58,6 +62,10 @@ public class Files2Facts extends IndustryStandards {
 	private LinkedHashSet<String> foreClassVersion;
 	private LinkedHashSet<String> foreClassClassificationClass;
 	private LinkedHashSet<String> foreClassIRDI;
+	private LinkedHashSet<String> forInterfaceClass;
+	private LinkedHashSet<String> forSystemUnit;
+	private LinkedHashSet<String> forUAObjectType;
+	private LinkedHashSet<String> forUAObject;
 
 	/**
 	 * Converts the file to turtle format based on Krextor
@@ -231,8 +239,8 @@ public class Files2Facts extends IndustryStandards {
 			addSubjectURI(subject, forDocument, "");
 
 			addsDataforAML(); // process required data for AML
-			Opcua opcua = new Opcua(subject, object, predicate, model, forAttribute, forID, forRefSemantic,
-					forInternalElements, forRoleClass, foreClassVersion, foreClassIRDI, foreClassClassificationClass);
+			Opcua opcua = new Opcua(subject, object, predicate, model, forAttribute, forID, forRefSemantic, forUAObject,
+					forUAObjectType, foreClassVersion, foreClassIRDI, foreClassClassificationClass);
 
 			opcua.addsDataforOPCUA(allSubjects); // process required data for
 													// opcua
@@ -247,10 +255,13 @@ public class Files2Facts extends IndustryStandards {
 		writeData(forRefSemantic, hasRefSemanticwriter);
 		writeData(forID, hasIDwriter);
 		writeData(forRoleClass, roleClassWriter);
-
+		writeData(forInterfaceClass, InterfaceClass);
 		writeData(foreClassVersion, hasEclassVersionWriter);
 		writeData(foreClassClassificationClass, hasEclassClassificationClassWriter);
 		writeData(foreClassIRDI, haseClassIRDIWriter);
+		writeData(forSystemUnit, SystemUnit);
+		writeData(forUAObjectType, UAObjectType);
+		writeData(forUAObject, UAObject);
 
 		return "";
 	}
@@ -283,7 +294,21 @@ public class Files2Facts extends IndustryStandards {
 
 		// RefSemantic part starts here
 		if (predicate.asNode().getLocalName().equals("hasAttribute")) {
-			addSubjectURI(subject, forRoleClass, ":" + object.asNode().getLocalName());
+
+			if (subject.asResource().getLocalName().contains("RoleClass")) {
+
+				addSubjectURI(subject, forRoleClass, ":" + object.asNode().getLocalName());
+			}
+
+			if (subject.asResource().getLocalName().contains("InterfaceClass")) {
+
+				addSubjectURI(subject, forInterfaceClass, ":" + object.asNode().getLocalName());
+			}
+
+			if (subject.asResource().getLocalName().contains("SystemUnitClass")) {
+
+				addSubjectURI(subject, forSystemUnit, ":" + object.asNode().getLocalName());
+			}
 
 		}
 
@@ -399,6 +424,10 @@ public class Files2Facts extends IndustryStandards {
 		foreClassClassificationClass = new LinkedHashSet<>();
 		foreClassIRDI = new LinkedHashSet<>();
 		foreClassVersion = new LinkedHashSet<>();
+		forInterfaceClass = new LinkedHashSet<>();
+		forSystemUnit = new LinkedHashSet<>();
+		forUAObjectType = new LinkedHashSet<>();
+		forUAObject = new LinkedHashSet<>();
 
 	}
 
@@ -451,6 +480,10 @@ public class Files2Facts extends IndustryStandards {
 		hasEclassVersionWriter.close();
 		hasEclassClassificationClassWriter.close();
 		haseClassIRDIWriter.close();
+		InterfaceClass.close();
+		SystemUnit.close();
+		UAObjectType.close();
+		UAObject.close();
 
 	}
 
@@ -470,6 +503,10 @@ public class Files2Facts extends IndustryStandards {
 		hasEclassVersionWriter = new PrintWriter("data/ontology/test/hasEclassVersion.txt");
 		hasEclassClassificationClassWriter = new PrintWriter("data/ontology/test/hasEClassClassificationClass.txt");
 		haseClassIRDIWriter = new PrintWriter("data/ontology/test/hasEClassIRDI.txt");
+		InterfaceClass = new PrintWriter("data/ontology/test/InterfaceClass.txt");
+		SystemUnit = new PrintWriter("data/ontology/test/SystemUnitClass.txt");
+		UAObjectType = new PrintWriter("data/ontology/test/UAObjectType.txt");
+		UAObject = new PrintWriter("data/ontology/test/UAObject.txt");
 
 	}
 

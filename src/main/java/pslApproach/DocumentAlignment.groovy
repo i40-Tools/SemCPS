@@ -100,6 +100,10 @@ public class DocumentAligment{
 		model.add predicate: "eval", types: [ArgumentType.String, ArgumentType.String];
 
 		model.add predicate: "RoleClass"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID];
+		model.add predicate: "UAObjectType"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID];
+		model.add predicate: "Interfaceclass"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID];
+		model.add predicate: "SystemUnitclass"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID];
+		model.add predicate: "UAObject"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID];
 	}
 
 
@@ -118,15 +122,29 @@ public class DocumentAligment{
 		fromDocument(A,O1) & fromDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 5;
 
 		// Two AMl InternalElements are the same if they share the same ID
-		model.add rule : (InternalElements(A,X) & InternalElements(B,Y) & hasID(A,Z) & hasID(Y,W) & similarValue(Z,W) &
+		model.add rule : (InternalElements(A,X) & UAObject(B,Y) & hasID(A,Z) & hasID(Y,W) & similarValue(Z,W) &
 		fromDocument(A,O1) & fromDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 5;
 
 
 		// Two Roles Class are same if its eclass,IRDI and classification class are the same
-		model.add rule :( RoleClass(A1,B1) & RoleClass(A2,B2) & Attribute(B1,X) & Attribute(B2,Y)  & hasEClassIRDI(B1,Z) & hasEClassIRDI(Y,W) & similarValue(Z,W)
-		& RoleClass(A1,C1) & RoleClass(A2,D2) & Attribute(C1,Q) & Attribute(D2,T) & hasEClassVersion(C1,M) & hasEClassVersion(T,N) & similarValue(M,N)
-		& RoleClass(A1,E1) & RoleClass(A2,F2) &Attribute(E1,D) & Attribute(F2,K) & hasEClassVersion(E1,O) & hasEClassVersion(K,L) & similarValue(O,L)
+		model.add rule :( RoleClass(A1,B1) & UAObjectType(A2,B2) & Attribute(B1,X) & Attribute(B2,Y)  & hasEClassIRDI(B1,Z) & hasEClassIRDI(Y,W) & similarValue(Z,W)
+		& RoleClass(A1,C1) & UAObjectType(A2,D2) & Attribute(C1,Q) & Attribute(D2,T) & hasEClassVersion(C1,M) & hasEClassVersion(T,N) & similarValue(M,N)
+		& RoleClass(A1,E1) & UAObjectType(A2,F2) &Attribute(E1,D) & Attribute(F2,K) & hasEClassVersion(E1,O) & hasEClassVersion(K,L) & similarValue(O,L)
 		& fromDocument(A1,O1) & fromDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 12;
+
+
+		// Two Interface Class are same if its eclass,IRDI and classification class are the same
+		model.add rule :( Interfaceclass(A1,B1) & UAObjectType(A2,B2) & Attribute(B1,X) & Attribute(B2,Y)  & hasEClassIRDI(B1,Z) & hasEClassIRDI(Y,W) & similarValue(Z,W)
+		& Interfaceclass(A1,C1) & UAObjectType(A2,D2) & Attribute(C1,Q) & Attribute(D2,T) & hasEClassVersion(C1,M) & hasEClassVersion(T,N) & similarValue(M,N)
+		& Interfaceclass(A1,E1) & UAObjectType(A2,F2) &Attribute(E1,D) & Attribute(F2,K) & hasEClassVersion(E1,O) & hasEClassVersion(K,L) & similarValue(O,L)
+		& fromDocument(A1,O1) & fromDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 12;
+
+		// Two SystemUnit Class are same if its eclass,IRDI and classification class are the same
+		model.add rule :( SystemUnitclass(A1,B1) & UAObjectType(A2,B2) & Attribute(B1,X) & Attribute(B2,Y)  & hasEClassIRDI(B1,Z) & hasEClassIRDI(Y,W) & similarValue(Z,W)
+		& SystemUnitclass(A1,C1) & UAObjectType(A2,D2) & Attribute(C1,Q) & Attribute(D2,T) & hasEClassVersion(C1,M) & hasEClassVersion(T,N) & similarValue(M,N)
+		& SystemUnitclass(A1,E1) & UAObjectType(A2,F2) &Attribute(E1,D) & Attribute(F2,K) & hasEClassVersion(E1,O) & hasEClassVersion(K,L) & similarValue(O,L)
+		& fromDocument(A1,O1) & fromDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 12;
+
 
 
 		//		// Two InternalElements are the same if its InternalLink is the same
@@ -157,7 +175,7 @@ public class DocumentAligment{
 		testDir = dir + 'test' + java.io.File.separator;
 		Partition testObservations = new Partition(3);
 		Partition testPredictions = new Partition(4);
-		for (Predicate p : [fromDocument, name, Attribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasEClassIRDI, roleClass, InternalElements])
+		for (Predicate p : [fromDocument, name, Attribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasEClassIRDI, roleClass, InternalElements, UAObjectType, SystemUnitclass, Interfaceclass, UAObject])
 		{
 			def insert = data.getInserter(p, testObservations);
 
@@ -165,7 +183,8 @@ public class DocumentAligment{
 
 		}
 
-		testDB = data.getDatabase(testPredictions, [name, fromDocument, Attribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, roleClass, hasEClassIRDI, InternalElements] as Set, testObservations);
+		testDB = data.getDatabase(testPredictions, [name, fromDocument, Attribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, roleClass, hasEClassIRDI, InternalElements, UAObjectType, SystemUnitclass, Interfaceclass, UAObject
+		] as Set, testObservations);
 
 	}
 

@@ -1,0 +1,10 @@
+opcua:UAObject2	opcua:UAVariable3
+opcua:UAObject4	opcua:UAVariable13
+opcua:UAObject2	opcua:UAVariable2
+opcua:UAObject4	opcua:UAVariable12
+opcua:UAObject1	opcua:UAVariable1
+opcua:UAObject4	opcua:UAVariable11
+opcua:UAVariable5	opcua:UAVariable10
+opcua:UAObject3	opcua:UAVariable4
+opcua:UAObject4	opcua:UAVariable14
+opcua:UAVariable8	opcua:UAVariable9
