@@ -1,3 +1,0 @@
-aml:InternalElement1	3fc3ade7-aa58-44a4-ab37-fa7e7665a74e
-aml:Attribute1	3fc3ade7-aa58-44a4-ab37-fa7e7665a744
-opcua:UAVariable2	3fc3ade7-aa58-44a4-ab37-fa7e7665a74e

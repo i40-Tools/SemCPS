@@ -1,4 +1,0 @@
-opcua:UAObjectType1	opcua:UAVariable8
-opcua:UAObjectType1	opcua:UAVariable7
-opcua:UAObjectType1	opcua:UAVariable6
-opcua:UAObjectType1	opcua:UAVariable5

@@ -1,4 +1,0 @@
-opcua:UAVariable8	 aml:Attribute5
-aml:Attribute5	 opcua:UAVariable8
-aml:Attribute6	 opcua:UAVariable8
-aml:Attribute7	 opcua:UAVariable8

@@ -1,9 +1,0 @@
-aml:RoleClass1	aml:Attribute1
-aml:RoleClass1	aml:Attribute2
-aml:RoleClass1	aml:Attribute3
-aml:RoleClass1	aml:Attribute4
-aml:RoleClass1	aml:Attribute5
-aml:RoleClass1	aml:Attribute6
-opcua:UAObjectType1	opcua:UAVariable7
-opcua:UAObjectType1	opcua:UAVariable6
-opcua:UAObjectType1	opcua:UAVariable5

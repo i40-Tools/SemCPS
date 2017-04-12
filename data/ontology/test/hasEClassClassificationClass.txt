@@ -1,2 +1,2 @@
-aml:Attribute2	27022501
-opcua:Value6	27022501
+aml1:Attribute2	27031402
+aml2:Attribute2	27031402

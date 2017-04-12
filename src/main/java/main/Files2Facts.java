@@ -66,6 +66,7 @@ public class Files2Facts extends IndustryStandards {
 	private LinkedHashSet<String> forSystemUnit;
 	private LinkedHashSet<String> forUAObjectType;
 	private LinkedHashSet<String> forUAObject;
+	int number = 0;
 
 	/**
 	 * Converts the file to turtle format based on Krextor
@@ -215,7 +216,7 @@ public class Files2Facts extends IndustryStandards {
 	 * @throws Exception
 	 */
 	public String createPSLPredicate(File file, int number) throws Exception {
-
+		this.number = number;
 		InputStream inputStream = FileManager.get().open(file.getAbsolutePath());
 		model = ModelFactory.createDefaultModel();
 		model.read(new InputStreamReader(inputStream), null, "TURTLE");
@@ -236,9 +237,9 @@ public class Files2Facts extends IndustryStandards {
 
 			// all subjects are added accordign to ontology e.g aml: opcua:
 			// forDocument.txt
-			addSubjectURI(subject, forDocument, "");
+			addSubjectURI(subject, forDocument, "", number);
 
-			addsDataforAML(); // process required data for AML
+			addsDataforAML(number); // process required data for AML
 			Opcua opcua = new Opcua(subject, object, predicate, model, forAttribute, forID, forRefSemantic, forUAObject,
 					forUAObjectType, foreClassVersion, foreClassIRDI, foreClassClassificationClass);
 
@@ -289,7 +290,7 @@ public class Files2Facts extends IndustryStandards {
 	 * Automation ML part for data population
 	 */
 
-	private void addsDataforAML() {
+	private void addsDataforAML(int number) {
 		// TODO Auto-generated method stub
 
 		// RefSemantic part starts here
@@ -297,24 +298,24 @@ public class Files2Facts extends IndustryStandards {
 
 			if (subject.asResource().getLocalName().contains("RoleClass")) {
 
-				addSubjectURI(subject, forRoleClass, ":" + object.asNode().getLocalName());
+				addSubjectURI(subject, forRoleClass, ":" + object.asNode().getLocalName(), number);
 			}
 
 			if (subject.asResource().getLocalName().contains("InterfaceClass")) {
 
-				addSubjectURI(subject, forInterfaceClass, ":" + object.asNode().getLocalName());
+				addSubjectURI(subject, forInterfaceClass, ":" + object.asNode().getLocalName(), number);
 			}
 
 			if (subject.asResource().getLocalName().contains("SystemUnitClass")) {
 
-				addSubjectURI(subject, forSystemUnit, ":" + object.asNode().getLocalName());
+				addSubjectURI(subject, forSystemUnit, ":" + object.asNode().getLocalName(), number);
 			}
 
 		}
 
 		if (predicate.asNode().getLocalName().equals("hasRefSemantic")) {
 			// adds for attribute.txt
-			addSubjectURI(subject, forAttribute, ":" + object.asNode().getLocalName());
+			addSubjectURI(subject, forAttribute, ":" + object.asNode().getLocalName(), number);
 			// adds for refsemantic.txt
 			addRefSemantic();
 
@@ -330,7 +331,7 @@ public class Files2Facts extends IndustryStandards {
 					|| object.asLiteral().getLexicalForm().equals("eClassIRDI")) {
 				if (predicate.asNode().getLocalName().equals("hasAttributeName")) {
 					// adds for attribute.txt
-					addSubjectURI(subject, forAttribute, ":" + object.asLiteral().getLexicalForm());
+					addSubjectURI(subject, forAttribute, ":" + object.asLiteral().getLexicalForm(), number);
 				}
 
 				StmtIterator stmts = model.listStatements(subject.asResource(), null, (RDFNode) null);
@@ -341,16 +342,16 @@ public class Files2Facts extends IndustryStandards {
 
 						if (object.asLiteral().getLexicalForm().equals("eClassClassificationClass")) {
 							addSubjectURI(subject, foreClassClassificationClass,
-									":remove" + stmte.getObject().asLiteral().getLexicalForm());
+									":remove" + stmte.getObject().asLiteral().getLexicalForm(), number);
 						}
 
 						if (object.asLiteral().getLexicalForm().equals("eClassVersion")) {
 							addSubjectURI(subject, foreClassVersion,
-									":remove" + stmte.getObject().asLiteral().getLexicalForm());
+									":remove" + stmte.getObject().asLiteral().getLexicalForm(), number);
 						}
 						if (object.asLiteral().getLexicalForm().equals("eClassIRDI")) {
 							addSubjectURI(subject, foreClassIRDI,
-									":remove" + stmte.getObject().asLiteral().getLexicalForm());
+									":remove" + stmte.getObject().asLiteral().getLexicalForm(), number);
 						}
 
 					}
@@ -365,13 +366,13 @@ public class Files2Facts extends IndustryStandards {
 
 			// id is for internal Element goes in InternalElement file
 			if (subject.asNode().getLocalName().contains("InternalElement")) {
-				addSubjectURI(subject, forInternalElements, ":" + predicate.asNode().getLocalName());
+				addSubjectURI(subject, forInternalElements, ":" + predicate.asNode().getLocalName(), number);
 			} else {
 				// id is for attribute goes in forAttribute
-				addSubjectURI(subject, forAttribute, ":" + predicate.asNode().getLocalName());
+				addSubjectURI(subject, forAttribute, ":" + predicate.asNode().getLocalName(), number);
 			}
 			// gets the literal ID value and add it to forID
-			addSubjectURI(subject, forID, ":remove" + object.asLiteral().getLexicalForm());
+			addSubjectURI(subject, forID, ":remove" + object.asLiteral().getLexicalForm(), number);
 		}
 	}
 
@@ -387,7 +388,8 @@ public class Files2Facts extends IndustryStandards {
 			// aml:
 			// opcua: tags
 			if (stmte.getObject().isLiteral()) {
-				addSubjectURI(object, forRefSemantic, ":remove" + stmte.getObject().asLiteral().getLexicalForm());
+				addSubjectURI(object, forRefSemantic, ":remove" + stmte.getObject().asLiteral().getLexicalForm(),
+						number);
 			}
 		}
 	}

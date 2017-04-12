@@ -1,2 +1,2 @@
-aml:Attribute3	0173-1---BASIC_1_1#01-ABW077#009
-opcua:Value7	0173-1---BASIC_1_1#01-ABW077#009
+aml1:Attribute3	0173-1---BASIC_1_1#02-ACO096#009
+aml2:Attribute3	0173-1---BASIC_1_1#02-ACO096#009

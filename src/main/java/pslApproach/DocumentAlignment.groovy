@@ -118,33 +118,33 @@ public class DocumentAligment{
 		fromDocument(A,O1) & fromDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 10;
 
 		// Two AMl Attributes are the same if they share the same ID
-		model.add rule : (Attribute(A,X) & Attribute(B,Y) & hasID(A,Z) & hasID(Y,W) & similarValue(Z,W) &
+		model.add rule : (Attribute(A,X) & Attribute(B,Y) & hasID(A,Z) & hasID(B,W) & similarValue(Z,W) &
 		fromDocument(A,O1) & fromDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 5;
 
 		// Two AMl InternalElements are the same if they share the same ID
-		model.add rule : (InternalElements(A,X) & UAObject(B,Y) & hasID(A,Z) & hasID(Y,W) & similarValue(Z,W) &
+		model.add rule : (InternalElements(A,X) & InternalElements(B,Y) & hasID(A,Z) & hasID(B,W) & similarValue(Z,W) &
 		fromDocument(A,O1) & fromDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 5;
 
 
 		// Two Roles Class are same if its eclass,IRDI and classification class are the same
-		model.add rule :( RoleClass(A1,B1) & UAObjectType(A2,B2) & Attribute(B1,X) & Attribute(B2,Y)  & hasEClassIRDI(B1,Z) & hasEClassIRDI(Y,W) & similarValue(Z,W)
-		& RoleClass(A1,C1) & UAObjectType(A2,D2) & Attribute(C1,Q) & Attribute(D2,T) & hasEClassVersion(C1,M) & hasEClassVersion(T,N) & similarValue(M,N)
-		& RoleClass(A1,E1) & UAObjectType(A2,F2) &Attribute(E1,D) & Attribute(F2,K) & hasEClassVersion(E1,O) & hasEClassVersion(K,L) & similarValue(O,L)
+		model.add rule :( RoleClass(A1,B1) & RoleClass(A2,B2) & Attribute(B1,X) & Attribute(B2,Y)  & hasEClassIRDI(B1,Z) & hasEClassIRDI(B2,W) & similarValue(Z,W)
+		& RoleClass(A1,C1) & RoleClass(A2,D2) & Attribute(C1,Q) & Attribute(D2,T) & hasEClassVersion(C1,M) & hasEClassVersion(D2,N) & similarValue(M,N)
+		& RoleClass(A1,E1) & RoleClass(A2,F2) &Attribute(E1,D) & Attribute(F2,K) & hasEClassVersion(E1,O) & hasEClassVersion(F2,L) & similarValue(O,L)
 		& fromDocument(A1,O1) & fromDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 12;
 
 
 		// Two Interface Class are same if its eclass,IRDI and classification class are the same
-		model.add rule :( Interfaceclass(A1,B1) & UAObjectType(A2,B2) & Attribute(B1,X) & Attribute(B2,Y)  & hasEClassIRDI(B1,Z) & hasEClassIRDI(Y,W) & similarValue(Z,W)
-		& Interfaceclass(A1,C1) & UAObjectType(A2,D2) & Attribute(C1,Q) & Attribute(D2,T) & hasEClassVersion(C1,M) & hasEClassVersion(T,N) & similarValue(M,N)
-		& Interfaceclass(A1,E1) & UAObjectType(A2,F2) &Attribute(E1,D) & Attribute(F2,K) & hasEClassVersion(E1,O) & hasEClassVersion(K,L) & similarValue(O,L)
+		model.add rule :( Interfaceclass(A1,B1) & Interfaceclass(A2,B2) & Attribute(B1,X) & Attribute(B2,Y)  & hasEClassIRDI(B1,Z) & hasEClassIRDI(B2,W) & similarValue(Z,W)
+		& Interfaceclass(A1,C1) & Interfaceclass(A2,D2) & Attribute(C1,Q) & Attribute(D2,T) & hasEClassVersion(C1,M) & hasEClassVersion(D2,N) & similarValue(M,N)
+		& Interfaceclass(A1,E1) & Interfaceclass(A2,F2) &Attribute(E1,D) & Attribute(F2,K) & hasEClassVersion(E1,O) & hasEClassVersion(F2,L) & similarValue(O,L)
 		& fromDocument(A1,O1) & fromDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 12;
+
 
 		// Two SystemUnit Class are same if its eclass,IRDI and classification class are the same
-		model.add rule :( SystemUnitclass(A1,B1) & UAObjectType(A2,B2) & Attribute(B1,X) & Attribute(B2,Y)  & hasEClassIRDI(B1,Z) & hasEClassIRDI(Y,W) & similarValue(Z,W)
-		& SystemUnitclass(A1,C1) & UAObjectType(A2,D2) & Attribute(C1,Q) & Attribute(D2,T) & hasEClassVersion(C1,M) & hasEClassVersion(T,N) & similarValue(M,N)
-		& SystemUnitclass(A1,E1) & UAObjectType(A2,F2) &Attribute(E1,D) & Attribute(F2,K) & hasEClassVersion(E1,O) & hasEClassVersion(K,L) & similarValue(O,L)
+		model.add rule :( SystemUnitclass(A1,B1) & SystemUnitclass(A2,B2) & Attribute(B1,X) & Attribute(B2,Y)  & hasEClassIRDI(B1,Z) & hasEClassIRDI(B2,W) & similarValue(Z,W)
+		& SystemUnitclass(A1,C1) & SystemUnitclass(A2,D2) & Attribute(C1,Q) & Attribute(D2,T) & hasEClassVersion(C1,M) & hasEClassVersion(D2,N) & similarValue(M,N)
+		& SystemUnitclass(A1,E1) & SystemUnitclass(A2,F2) &Attribute(E1,D) & Attribute(F2,K) & hasEClassVersion(E1,O) & hasEClassVersion(F2,L) & similarValue(O,L)
 		& fromDocument(A1,O1) & fromDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 12;
-
 
 
 		//		// Two InternalElements are the same if its InternalLink is the same
@@ -203,7 +203,7 @@ public class DocumentAligment{
 		for (GroundAtom atom : Queries.getAllAtoms(testDB, similar)){
 			println atom.toString() + ": " + formatter.format(atom.getValue());
 			// only writes if its equal to 1 or u can set the threshold
-			if(formatter.format(atom.getValue())>="0.5"){
+			if(formatter.format(atom.getValue())>"0.3"){
 				println 'matches threshold writing to similar.txt'
 				// converting to format for evaluation
 				String result=atom.toString().replaceAll("SIMILAR","");
@@ -236,9 +236,13 @@ public class DocumentAligment{
 		dpc.setBaseline(truthDB);
 		DiscretePredictionStatistics stats = dpc.compare(eval);
 
-		System.out.println("One of them is precision / recall. just guessing for now")
-		System.out.println("Precision:"+stats.getPrecision(DiscretePredictionStatistics.BinaryClass.POSITIVE));
-		System.out.println("Recall:"+stats.getRecall(DiscretePredictionStatistics.BinaryClass.POSITIVE));
+
+		System.out.println("Precision (Positive):"+stats.getPrecision(DiscretePredictionStatistics.BinaryClass.POSITIVE));
+		System.out.println("Recall: (Positive)"+stats.getRecall(DiscretePredictionStatistics.BinaryClass.POSITIVE));
+		System.out.println("Precision:(Negative)"+stats.getPrecision(DiscretePredictionStatistics.BinaryClass.NEGATIVE));
+		System.out.println("Recall:(Negative)"+stats.getRecall(DiscretePredictionStatistics.BinaryClass.NEGATIVE));
+
+
 
 		resultsDB.close();
 		truthDB.close();
@@ -257,7 +261,7 @@ public class DocumentAligment{
 		Set<GroundTerm> o1 = new HashSet<GroundTerm>();
 		Set<GroundTerm> o2 = new HashSet<GroundTerm>();
 		for (GroundAtom atom : concepts) {
-			if (atom.getArguments()[1].toString().equals("aml"))
+			if (atom.getArguments()[1].toString().equals("aml1"))
 				o1.add(atom.getArguments()[0]);
 			else
 				o2.add(atom.getArguments()[0]);

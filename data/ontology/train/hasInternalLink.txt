@@ -1,2 +1,0 @@
-aml:InternalLink	ad
-opcua:InternalLink	ad

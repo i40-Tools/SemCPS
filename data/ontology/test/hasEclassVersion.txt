@@ -1,2 +1,2 @@
-aml:Attribute1	9.0
-opcua:Value5	9.0
+aml1:Attribute1	9.0
+aml2:Attribute1	9.0
