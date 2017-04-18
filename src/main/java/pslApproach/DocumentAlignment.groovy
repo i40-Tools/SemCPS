@@ -3,6 +3,7 @@ package pslApproach
 import java.text.DecimalFormat
 
 import edu.umd.cs.psl.application.inference.MPEInference
+import edu.umd.cs.psl.application.learning.weight.maxlikelihood.MaxLikelihoodMPE
 import edu.umd.cs.psl.config.*
 import edu.umd.cs.psl.database.DataStore
 import edu.umd.cs.psl.database.Database
@@ -31,6 +32,8 @@ public class DocumentAligment
 	private ConfigManager cm
 	private ConfigBundle config
 	private Database testDB
+	private Database trainDB
+	private Database truthDB
 	private PSLModel model
 	private DataStore data
 	private Partition testObservations
@@ -153,7 +156,7 @@ public class DocumentAligment
 		& hasEClassVersion(C1,M) & hasEClassVersion(D2,N) & similarValue(M,N)
 		& Interfaceclass(A1,E1) & Interfaceclass(A2,F2) &Attribute(E1,D) & Attribute(F2,K)
 		& hasEClassVersion(E1,O) & hasEClassVersion(F2,L) & similarValue(O,L)
-		& fromDocument(A1,O1) & fromDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 12
+		& fromDocument(A1,O1) & fromDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 100
 
 
 		// Two SystemUnit Class are same if its eclass,IRDI and classification class are the same
@@ -194,23 +197,52 @@ public class DocumentAligment
 
 		testDir = dir + 'test' + java.io.File.separator
 		trainDir = dir + 'train' + java.io.File.separator
+		Partition trainObservations = new Partition(0)
+		Partition trainPredictions = new Partition(1)
+		Partition truth = new Partition(2)
+		for (Predicate p : [fromDocument, name, Attribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasEClassIRDI, roleClass, InternalElements, SystemUnitclass, Interfaceclass])
+		{
+			def insert = data.getInserter(p, trainObservations)
+
+			InserterUtils.loadDelimitedData(insert, trainDir + p.getName().toLowerCase() + ".txt")
+
+		}
+
+
+		def insert = data.getInserter(similar, truth)
+		InserterUtils.loadDelimitedDataTruth(insert, trainDir+"similar.txt")
+
+		trainDB = data.getDatabase(trainPredictions, [name, fromDocument, Attribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, roleClass, hasEClassIRDI, InternalElements, SystemUnitclass, Interfaceclass
+
+		] as Set, trainObservations)
+		populateSimilar(trainDB)
+		truthDB = data.getDatabase(truth, [similar] as Set)
+
+
+		println "LEARNING WEIGHTS..."
+		MaxLikelihoodMPE weightLearning = new MaxLikelihoodMPE(model, trainDB, truthDB, config)
+		weightLearning.learn()
+		weightLearning.close()
+		println "LEARNING WEIGHTS DONE"
+
+
 
 		Partition testObservations = new Partition(3)
 		Partition testPredictions = new Partition(4)
 		for (Predicate p : [fromDocument, name, Attribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasEClassIRDI, roleClass, InternalElements, SystemUnitclass, Interfaceclass])
 		{
-			def insert = data.getInserter(p, testObservations)
+			insert = data.getInserter(p, testObservations)
 
 			InserterUtils.loadDelimitedData(insert, testDir + p.getName().toLowerCase() + ".txt")
 
 		}
 
 
-
 		testDB = data.getDatabase(testPredictions, [name, fromDocument, Attribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, roleClass, hasEClassIRDI, InternalElements, SystemUnitclass, Interfaceclass
 
 		] as Set, testObservations)
 
+		populateSimilar(testDB)
 	}
 
 	public void runInference(){
@@ -224,6 +256,8 @@ public class DocumentAligment
 		println "INFERENCE DONE"
 		def file1 = new File('data/ontology/test/similar.txt')
 		file1.write('')
+		def file2 = new File('data/ontology/test/similarwithConfidence.txt')
+		file2.write('')
 		DecimalFormat formatter = new DecimalFormat("#.##")
 		for (GroundAtom atom : Queries.getAllAtoms(testDB, similar)){
 			println atom.toString() + ": " + formatter.format(atom.getValue())
@@ -235,7 +269,10 @@ public class DocumentAligment
 				result=result.replaceAll("[()]","")
 				String[] text=result.split(",")
 				result=text[0]+"\t"+text[1]
+				String result2=text[0]+"\t"+text[1]+" "+atom.getValue()
+
 				file1.append(result+'\n')
+				file2.append(result2+'\n')
 
 			}
 		}
