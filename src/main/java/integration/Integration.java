@@ -58,6 +58,7 @@ public class Integration {
 		Document seed = XmlParser.initInput(file.get(0).getPath());
 		Document integration;
 		if (file.get(0).getName().endsWith(".aml") && file.get(1).getName().endsWith(".aml")) {
+
 			integration = XmlParser.initInput(ConfigManager.getFilePath() + "integration/integration.aml");
 		} else {
 			integration = XmlParser.initInput(ConfigManager.getFilePath() + "integration/integration.opcua");

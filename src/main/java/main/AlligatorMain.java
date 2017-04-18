@@ -83,8 +83,9 @@ public class AlligatorMain {
 	 * @throws ResourceException
 	 */
 	public void executePSLAproach() throws CompilationFailedException, IOException, ScriptException,
-			IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException,
-			SecurityException, InstantiationException, ResourceException, groovy.util.ScriptException {
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+			NoSuchMethodException, SecurityException, InstantiationException, ResourceException,
+			groovy.util.ScriptException {
 		// Needed to run the PSL rules part
 		Script script = new Script() {
 			@Override
@@ -94,11 +95,12 @@ public class AlligatorMain {
 		};
 		script.evaluate(new File("src/main/java/pslApproach/DocumentAlignment.groovy"));
 
-		// Class scriptClass = new
-		// GroovyScriptEngine(".").loadScriptByName("src/main/java/pslApproach/EasyCC.groovy");
+		// Class scriptClass = new GroovyScriptEngine(".")
+		// .loadScriptByName("src/main/java/pslApproach/EasyCC.groovy");
 		// Object scriptInstance = scriptClass.newInstance();
 		// scriptClass.getDeclaredMethod("execute", new Class[]
-		// {}).invoke(scriptInstance, new Object[] {});
+		// {}).invoke(scriptInstance,
+		// new Object[] {});
 	}
 
 	/**
@@ -132,9 +134,11 @@ public class AlligatorMain {
 		// check for validity
 		File file = new File(ConfigManager.getFilePath() + "integration/integration.aml");
 		if (file.exists()) {
-			if (!new XSDValidator(ConfigManager.getFilePath() + "integration/integration.aml").schemaValidate()) {
+			if (!new XSDValidator(ConfigManager.getFilePath() + "integration/integration.aml")
+					.schemaValidate()) {
 				System.out.println("Repairing Structure");
-				ModelRepair.testRoundTrip(ConfigManager.getFilePath() + "integration/integration.aml");
+				ModelRepair
+						.testRoundTrip(ConfigManager.getFilePath() + "integration/integration.aml");
 				System.out.println("Schema Validated");
 			}
 		}

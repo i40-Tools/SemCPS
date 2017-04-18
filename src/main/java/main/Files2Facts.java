@@ -97,13 +97,15 @@ public class Files2Facts extends IndustryStandards {
 	 * @return
 	 * @throws Exception
 	 */
-	public ArrayList<File> readFiles(String path, String type, String type2, String type3) throws Exception {
+	public ArrayList<File> readFiles(String path, String type, String type2, String type3)
+			throws Exception {
 		files = new ArrayList<File>();
 		File originalFilesFolder = new File(path);
 		if (originalFilesFolder.isDirectory()) {
 			for (File amlFile : originalFilesFolder.listFiles()) {
-				if (amlFile.isFile() && (amlFile.getName().endsWith(type) || amlFile.getName().endsWith(type2)
-						|| amlFile.getName().endsWith(type3))) {
+				if (amlFile.isFile()
+						&& (amlFile.getName().endsWith(type) || amlFile.getName().endsWith(type2)
+								|| amlFile.getName().endsWith(type3))) {
 					if (amlFile.getName().endsWith(".aml")) {
 						String name = amlFile.getName().replace(".aml", "");
 						if (name.endsWith("0") || name.endsWith("1")) {
@@ -143,7 +145,8 @@ public class Files2Facts extends IndustryStandards {
 	public void improveRDFOutputFormat() throws IOException {
 		for (File file : files) {
 			if (file.getName().endsWith(".ttl")) {
-				org.apache.jena.rdf.model.Model model = RDFDataMgr.loadModel(file.getAbsolutePath());
+				org.apache.jena.rdf.model.Model model = RDFDataMgr
+						.loadModel(file.getAbsolutePath());
 				File replaceFile = new File(file.getParent() + "/" + file.getName());
 				FileOutputStream out = new FileOutputStream(replaceFile, false);
 				RDFDataMgr.write(out, model, RDFFormat.TURTLE_BLOCKS);
@@ -178,8 +181,11 @@ public class Files2Facts extends IndustryStandards {
 			predicate = stmt.getPredicate();
 			object = stmt.getObject();
 
-			buf.append("clause1(").append(StringUtil.lowerCaseFirstChar(predicate.asNode().getLocalName())).append("(")
-					.append(StringUtil.lowerCaseFirstChar(subject.asNode().getLocalName()) + number).append(",");
+			buf.append("clause1(")
+					.append(StringUtil.lowerCaseFirstChar(predicate.asNode().getLocalName()))
+					.append("(")
+					.append(StringUtil.lowerCaseFirstChar(subject.asNode().getLocalName()) + number)
+					.append(",");
 			if (object.isURIResource()) {
 				object = model.getResource(object.as(Resource.class).getURI());
 				String objectStr = object.asNode().getLocalName();
@@ -240,8 +246,9 @@ public class Files2Facts extends IndustryStandards {
 			addSubjectURI(subject, forDocument, "", number);
 
 			addsDataforAML(number); // process required data for AML
-			Opcua opcua = new Opcua(subject, object, predicate, model, forAttribute, forID, forRefSemantic, forUAObject,
-					forUAObjectType, foreClassVersion, foreClassIRDI, foreClassClassificationClass);
+			Opcua opcua = new Opcua(subject, object, predicate, model, forAttribute, forID,
+					forRefSemantic, forUAObject, forUAObjectType, foreClassVersion, foreClassIRDI,
+					foreClassClassificationClass);
 
 			opcua.addsDataforOPCUA(allSubjects); // process required data for
 													// opcua
@@ -303,7 +310,8 @@ public class Files2Facts extends IndustryStandards {
 
 			if (subject.asResource().getLocalName().contains("InterfaceClass")) {
 
-				addSubjectURI(subject, forInterfaceClass, ":" + object.asNode().getLocalName(), number);
+				addSubjectURI(subject, forInterfaceClass, ":" + object.asNode().getLocalName(),
+						number);
 			}
 
 			if (subject.asResource().getLocalName().contains("SystemUnitClass")) {
@@ -331,27 +339,33 @@ public class Files2Facts extends IndustryStandards {
 					|| object.asLiteral().getLexicalForm().equals("eClassIRDI")) {
 				if (predicate.asNode().getLocalName().equals("hasAttributeName")) {
 					// adds for attribute.txt
-					addSubjectURI(subject, forAttribute, ":" + object.asLiteral().getLexicalForm(), number);
+					addSubjectURI(subject, forAttribute, ":" + object.asLiteral().getLexicalForm(),
+							number);
 				}
 
-				StmtIterator stmts = model.listStatements(subject.asResource(), null, (RDFNode) null);
+				StmtIterator stmts = model.listStatements(subject.asResource(), null,
+						(RDFNode) null);
 				while (stmts.hasNext()) {
 					Statement stmte = stmts.nextStatement();
 
 					if (stmte.getPredicate().asNode().getLocalName().equals("hasAttributeValue")) {
 
-						if (object.asLiteral().getLexicalForm().equals("eClassClassificationClass")) {
+						if (object.asLiteral().getLexicalForm()
+								.equals("eClassClassificationClass")) {
 							addSubjectURI(subject, foreClassClassificationClass,
-									":remove" + stmte.getObject().asLiteral().getLexicalForm(), number);
+									":remove" + stmte.getObject().asLiteral().getLexicalForm(),
+									number);
 						}
 
 						if (object.asLiteral().getLexicalForm().equals("eClassVersion")) {
 							addSubjectURI(subject, foreClassVersion,
-									":remove" + stmte.getObject().asLiteral().getLexicalForm(), number);
+									":remove" + stmte.getObject().asLiteral().getLexicalForm(),
+									number);
 						}
 						if (object.asLiteral().getLexicalForm().equals("eClassIRDI")) {
 							addSubjectURI(subject, foreClassIRDI,
-									":remove" + stmte.getObject().asLiteral().getLexicalForm(), number);
+									":remove" + stmte.getObject().asLiteral().getLexicalForm(),
+									number);
 						}
 
 					}
@@ -366,10 +380,12 @@ public class Files2Facts extends IndustryStandards {
 
 			// id is for internal Element goes in InternalElement file
 			if (subject.asNode().getLocalName().contains("InternalElement")) {
-				addSubjectURI(subject, forInternalElements, ":" + predicate.asNode().getLocalName(), number);
+				addSubjectURI(subject, forInternalElements, ":" + predicate.asNode().getLocalName(),
+						number);
 			} else {
 				// id is for attribute goes in forAttribute
-				addSubjectURI(subject, forAttribute, ":" + predicate.asNode().getLocalName(), number);
+				addSubjectURI(subject, forAttribute, ":" + predicate.asNode().getLocalName(),
+						number);
 			}
 			// gets the literal ID value and add it to forID
 			addSubjectURI(subject, forID, ":remove" + object.asLiteral().getLexicalForm(), number);
@@ -388,8 +404,8 @@ public class Files2Facts extends IndustryStandards {
 			// aml:
 			// opcua: tags
 			if (stmte.getObject().isLiteral()) {
-				addSubjectURI(object, forRefSemantic, ":remove" + stmte.getObject().asLiteral().getLexicalForm(),
-						number);
+				addSubjectURI(object, forRefSemantic,
+						":remove" + stmte.getObject().asLiteral().getLexicalForm(), number);
 			}
 		}
 	}
@@ -484,8 +500,8 @@ public class Files2Facts extends IndustryStandards {
 		haseClassIRDIWriter.close();
 		InterfaceClass.close();
 		SystemUnit.close();
-		UAObjectType.close();
-		UAObject.close();
+		// UAObjectType.close();
+		// UAObject.close();
 
 	}
 
@@ -503,12 +519,14 @@ public class Files2Facts extends IndustryStandards {
 		internalElementwriter = new PrintWriter("data/ontology/test/InternalElements.txt");
 		roleClassWriter = new PrintWriter("data/ontology/test/roleClass.txt");
 		hasEclassVersionWriter = new PrintWriter("data/ontology/test/hasEclassVersion.txt");
-		hasEclassClassificationClassWriter = new PrintWriter("data/ontology/test/hasEClassClassificationClass.txt");
+		hasEclassClassificationClassWriter = new PrintWriter(
+				"data/ontology/test/hasEClassClassificationClass.txt");
 		haseClassIRDIWriter = new PrintWriter("data/ontology/test/hasEClassIRDI.txt");
 		InterfaceClass = new PrintWriter("data/ontology/test/InterfaceClass.txt");
 		SystemUnit = new PrintWriter("data/ontology/test/SystemUnitClass.txt");
-		UAObjectType = new PrintWriter("data/ontology/test/UAObjectType.txt");
-		UAObject = new PrintWriter("data/ontology/test/UAObject.txt");
+		// UAObjectType = new
+		// PrintWriter("data/ontology/test/UAObjectType.txt");
+		// UAObject = new PrintWriter("data/ontology/test/UAObject.txt");
 
 	}
 
@@ -525,7 +543,8 @@ public class Files2Facts extends IndustryStandards {
 		prologWriter.println("'" + ConfigManager.getFilePath() + "edb.pl" + "'.");
 		prologWriter.close();
 
-		prologWriter = new PrintWriter(new File(System.getProperty("user.dir") + "/resources/files/output.txt"));
+		prologWriter = new PrintWriter(
+				new File(System.getProperty("user.dir") + "/resources/files/output.txt"));
 		prologWriter.println("'" + ConfigManager.getFilePath() + "output.txt" + "'.");
 		prologWriter.close();
 
