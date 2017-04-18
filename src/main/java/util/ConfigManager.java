@@ -4,7 +4,6 @@
 
 package util;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -117,10 +116,30 @@ public class ConfigManager {
 	/**
 	 * Get the general file path where all the files are located
 	 * 
-	 * @return
+	 * @return 
 	 */
 	public static String getOntoURIPath() {
 		String filePath = loadConfig().getProperty(URI_NAMESPACE + "URI");
+		return filePath;
+	}
+	
+	/**
+	 * Get the general file path where all the test data files are located
+	 * 
+	 * @return 
+	 */
+	public static String getTestDataPath() {
+		String filePath = loadConfig().getProperty(URI_NAMESPACE + "testDataPath");
+		return filePath;
+	}
+	
+	/**
+	 * Get the general file path where all the test data files are located
+	 * 
+	 * @return 
+	 */
+	public static String getTrainDataPath() {
+		String filePath = loadConfig().getProperty(URI_NAMESPACE + "trainDataPath");
 		return filePath;
 	}
 

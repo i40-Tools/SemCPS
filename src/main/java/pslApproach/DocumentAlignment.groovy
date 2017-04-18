@@ -44,14 +44,12 @@ public class DocumentAligment
 	def testDir
 	def trainDir
 
-	public static void main(String[] args)
-	{
+	public static void main(String[] args){
 		DocumentAligment docAlign = new DocumentAligment()
 		docAlign.execute()
 	}
 
-	public void run()
-	{
+	public void run(){
 		config()
 		definePredicates()
 		defineFunctions()
@@ -59,31 +57,27 @@ public class DocumentAligment
 		setUpData()
 		populateSimilar(testDB)
 		runInference()
-
 		evalResults(targetsPartition, truthPartition)
 	}
 
-	public void execute()
-	{
+	public void execute(){
 		DocumentAligment documentAligment = new DocumentAligment()
 		documentAligment.run()
 	}
 
-	public void config()
-	{
+	/**
+	 * 
+	 */
+	public void config(){
 		cm = ConfigManager.getManager()
-		config = cm.getBundle("ontology-alignment")
-
+		config = cm.getBundle("document-alignment")
 		def defaultPath = System.getProperty("java.io.tmpdir")
-		String dbpath = config.getString("dbpath", defaultPath + File.separator + "ontology-alignment")
-		// EQ
-		// DataStore data = new RDBMSDataStore(new H2DatabaseDriver(Type.Disk, dbpath, true), config)
+		String dbpath = config.getString("dbpath", defaultPath + File.separator + "document-alignment")
 		data = new RDBMSDataStore(new H2DatabaseDriver(Type.Disk, dbpath, true), config)
 		model = new PSLModel(this, data)
 	}
 
-	public void definePredicates()
-	{
+	public void definePredicates(){
 		model.add predicate: "name"        , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
 
 		model.add predicate: "fromDocument", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
@@ -107,22 +101,23 @@ public class DocumentAligment
 		model.add predicate: "similar"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
 
 		model.add predicate: "similarType"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
+		
 		model.add predicate: "eval", types: [ArgumentType.String, ArgumentType.String]
 
 		model.add predicate: "RoleClass"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
+
 		model.add predicate: "Interfaceclass"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
+		
 		model.add predicate: "SystemUnitclass"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
 	}
 
 
-	public void defineFunctions()
-	{
+	public void defineFunctions(){
 		model.add function: "similarValue"  , implementation: new LevenshteinSimilarity()
 	}
 
-	public void defineRules()
-	{
-
+	public void defineRules(){
+		
 		// Two AML Attributes are the same if its RefSemantic are the same
 		model.add rule : (Attribute(A,X) & Attribute(B,Y) & hasRefSemantic(X,Z)
 		& hasRefSemantic(Y,W) & similarValue(Z,W) & fromDocument(A,O1) & fromDocument(B,O2) &
@@ -138,7 +133,6 @@ public class DocumentAligment
 		& similarValue(Z,W) &fromDocument(A,O1) & fromDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
 		weight : 5
 
-
 		// Two Roles Class are same if its eclass,IRDI and classification class are the same
 		model.add rule :( RoleClass(A1,B1) & RoleClass(A2,B2) & Attribute(B1,X) & Attribute(B2,Y)
 		& hasEClassIRDI(B1,Z) & hasEClassIRDI(B2,W) & similarValue(Z,W)
@@ -148,7 +142,6 @@ public class DocumentAligment
 		hasEClassVersion(F2,L) & similarValue(O,L)& fromDocument(A1,O1) & fromDocument(A2,O2) &
 		(O1-O2)) >> similar(A1,A2) , weight : 12
 
-
 		// Two Interface Class are same if its eclass,IRDI and classification class are the same
 		model.add rule :( Interfaceclass(A1,B1) & Interfaceclass(A2,B2) & Attribute(B1,X)
 		& Attribute(B2,Y)  & hasEClassIRDI(B1,Z) & hasEClassIRDI(B2,W) & similarValue(Z,W)
@@ -157,7 +150,6 @@ public class DocumentAligment
 		& Interfaceclass(A1,E1) & Interfaceclass(A2,F2) &Attribute(E1,D) & Attribute(F2,K)
 		& hasEClassVersion(E1,O) & hasEClassVersion(F2,L) & similarValue(O,L)
 		& fromDocument(A1,O1) & fromDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 100
-
 
 		// Two SystemUnit Class are same if its eclass,IRDI and classification class are the same
 		model.add rule :( SystemUnitclass(A1,B1) & SystemUnitclass(A2,B2) & Attribute(B1,X)
@@ -180,18 +172,16 @@ public class DocumentAligment
 
 		// prior
 		model.add rule : ~similar(A,B), weight: 1
-
-
-
 	}
-
-
-	public void setUpData()
-	{
+    
+	/**
+	 * 
+	 */
+	public void setUpData(){
 		GroundTerm classID = data.getUniqueID("class")
 
 		/* Loads data */
-		dir = 'data' + java.io.File.separator + 'ontology' + java.io.File.separator
+		dir = 'data' + java.io.File.separator + 'document' + java.io.File.separator
 
 		/////////////////////////// test setup //////////////////////////////////
 
@@ -200,24 +190,47 @@ public class DocumentAligment
 		Partition trainObservations = new Partition(0)
 		Partition trainPredictions = new Partition(1)
 		Partition truth = new Partition(2)
-		for (Predicate p : [fromDocument, name, Attribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasEClassIRDI, roleClass, InternalElements, SystemUnitclass, Interfaceclass])
-		{
+		for (Predicate p : [
+			fromDocument, 
+			name, 
+			Attribute, 
+			hasRefSemantic, 
+			hasID, 
+			hasInternalLink, 
+			hasEClassVersion, 
+			hasEClassClassificationClass, 
+			hasEClassIRDI, 
+			roleClass, 
+			InternalElements, 
+			SystemUnitclass, 
+			Interfaceclass
+			]){
 			def insert = data.getInserter(p, trainObservations)
-
 			InserterUtils.loadDelimitedData(insert, trainDir + p.getName().toLowerCase() + ".txt")
-
 		}
 
 
 		def insert = data.getInserter(similar, truth)
-		InserterUtils.loadDelimitedDataTruth(insert, trainDir+"similar.txt")
+		InserterUtils.loadDelimitedDataTruth(insert, trainDir + "similar.txt")
 
-		trainDB = data.getDatabase(trainPredictions, [name, fromDocument, Attribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, roleClass, hasEClassIRDI, InternalElements, SystemUnitclass, Interfaceclass
-
-		] as Set, trainObservations)
+		trainDB = data.getDatabase(trainPredictions, [
+			fromDocument,
+			name, 
+			Attribute, 
+			hasRefSemantic, 
+			hasID, 
+			hasInternalLink, 
+			hasEClassVersion, 
+			hasEClassClassificationClass, 
+			hasEClassIRDI,
+			roleClass, 
+			InternalElements, 
+			SystemUnitclass, 
+			Interfaceclass
+		]  
+	    as Set, trainObservations)
 		populateSimilar(trainDB)
 		truthDB = data.getDatabase(truth, [similar] as Set)
-
 
 		println "LEARNING WEIGHTS..."
 		MaxLikelihoodMPE weightLearning = new MaxLikelihoodMPE(model, trainDB, truthDB, config)
@@ -225,21 +238,42 @@ public class DocumentAligment
 		weightLearning.close()
 		println "LEARNING WEIGHTS DONE"
 
-
-
 		Partition testObservations = new Partition(3)
 		Partition testPredictions = new Partition(4)
-		for (Predicate p : [fromDocument, name, Attribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasEClassIRDI, roleClass, InternalElements, SystemUnitclass, Interfaceclass])
+		for (Predicate p : [
+			fromDocument, 
+			name, 
+			Attribute, 
+			hasRefSemantic, 
+			hasID, 
+			hasInternalLink, 
+			hasEClassVersion, 
+			hasEClassClassificationClass, 
+			hasEClassIRDI, 
+			roleClass, 
+			InternalElements, 
+			SystemUnitclass, 
+			Interfaceclass
+		])
 		{
 			insert = data.getInserter(p, testObservations)
-
 			InserterUtils.loadDelimitedData(insert, testDir + p.getName().toLowerCase() + ".txt")
-
 		}
 
-
-		testDB = data.getDatabase(testPredictions, [name, fromDocument, Attribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, roleClass, hasEClassIRDI, InternalElements, SystemUnitclass, Interfaceclass
-
+		testDB = data.getDatabase(testPredictions, [
+			name, 
+			fromDocument, 
+			Attribute, 
+			hasRefSemantic, 
+			hasID, 
+			hasInternalLink, 
+			hasEClassVersion, 
+			hasEClassClassificationClass, 
+			roleClass, 
+			hasEClassIRDI, 
+			InternalElements, 
+			SystemUnitclass, 
+			Interfaceclass
 		] as Set, testObservations)
 
 		populateSimilar(testDB)
@@ -254,9 +288,9 @@ public class DocumentAligment
 		inference.close()
 
 		println "INFERENCE DONE"
-		def file1 = new File('data/ontology/test/similar.txt')
+		def file1 = new File(testDir + 'similar.txt')
 		file1.write('')
-		def file2 = new File('data/ontology/test/similarwithConfidence.txt')
+		def file2 = new File(testDir + 'similarwithConfidence.txt')
 		file2.write('')
 		DecimalFormat formatter = new DecimalFormat("#.##")
 		for (GroundAtom atom : Queries.getAllAtoms(testDB, similar)){
@@ -273,7 +307,6 @@ public class DocumentAligment
 
 				file1.append(result+'\n')
 				file2.append(result2+'\n')
-
 			}
 		}
 	}
@@ -298,13 +331,10 @@ public class DocumentAligment
 		dpc.setBaseline(truthDB)
 		DiscretePredictionStatistics stats = dpc.compare(eval)
 
-
 		System.out.println("Precision (Positive):"+stats.getPrecision(DiscretePredictionStatistics.BinaryClass.POSITIVE))
 		System.out.println("Recall: (Positive)"+stats.getRecall(DiscretePredictionStatistics.BinaryClass.POSITIVE))
 		System.out.println("Precision:(Negative)"+stats.getPrecision(DiscretePredictionStatistics.BinaryClass.NEGATIVE))
 		System.out.println("Recall:(Negative)"+stats.getRecall(DiscretePredictionStatistics.BinaryClass.NEGATIVE))
-
-
 
 		resultsDB.close()
 		truthDB.close()
