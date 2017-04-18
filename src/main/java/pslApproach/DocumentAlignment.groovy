@@ -57,7 +57,6 @@ public class DocumentAligment
 		defineFunctions()
 		defineRules()
 		setUpData()
-		populateSimilar(testDB)
 		runInference()
 
 		evalResults(targetsPartition, truthPartition)
@@ -298,6 +297,10 @@ public class DocumentAligment
 		dpc.setBaseline(truthDB)
 		DiscretePredictionStatistics stats = dpc.compare(eval)
 
+
+		System.out.println("Accuracy:"+stats.getAccuracy())
+		System.out.println("Error:"+stats.getError())
+		System.out.println("Fmeasure:"+stats.getF1(DiscretePredictionStatistics.BinaryClass.POSITIVE))
 
 		System.out.println("Precision (Positive):"+stats.getPrecision(DiscretePredictionStatistics.BinaryClass.POSITIVE))
 		System.out.println("Recall: (Positive)"+stats.getRecall(DiscretePredictionStatistics.BinaryClass.POSITIVE))

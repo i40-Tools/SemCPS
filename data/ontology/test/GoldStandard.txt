@@ -1,7 +1,6 @@
-aml1:RefSemantic1	ECLASS:0173-1#02-AAQ326#001
-aml1:RefSemantic5	0173-1#02-AAO847#002
-aml1:RefSemantic4	ECLASS:0173-1#02-AAO677#001d
-aml1:RefSemantic3	0173-1#02-BAA303#005d
-aml1:RefSemantic2	ECLASS:0173-1#02-AAO663#002a
-aml2:RefSemantic1	ECLASS:0173-1#02-AAO663#002fa
-aml2:RefSemantic2	ECLASS:0173-1#02-AAO677#001a
+aml1:Attribute7	 aml2:Attribute5
+aml2:Attribute5	 aml1:Attribute7
+aml2:Attribute4	 aml1:Attribute5
+aml1:Attribute5	 aml2:Attribute3131313
+aml2:InterfaceClass1	 aml1:InterfaceClass1
+aml1:InterfaceClass1	 aml2:InterfaceClass1
