@@ -209,8 +209,7 @@ public class DocumentAligment
 		def insert = data.getInserter(similar, truth)
 		InserterUtils.loadDelimitedDataTruth(insert, trainDir + "similar.txt")
 
-		trainDB = data.getDatabase(trainPredictions, [fromDocument, name, Attribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasEClassIRDI, roleClass, InternalElements, SystemUnitclass, Interfaceclass
-		]as Set, trainObservations)
+		trainDB = data.getDatabase(trainPredictions, [fromDocument, name, Attribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasEClassIRDI, roleClass, InternalElements, SystemUnitclass, Interfaceclass]as Set, trainObservations)
 		populateSimilar(trainDB)
 		truthDB = data.getDatabase(truth, [similar] as Set)
 
@@ -290,6 +289,10 @@ public class DocumentAligment
 		System.out.println("Accuracy:"+stats.getAccuracy())
 		System.out.println("Error:"+stats.getError())
 		System.out.println("Fmeasure:"+stats.getF1(DiscretePredictionStatistics.BinaryClass.POSITIVE))
+		System.out.println("True negative:"+stats.tn)
+		System.out.println("True Positive:"+stats.tp)
+		System.out.println("False Positive:"+stats.tp)
+		System.out.println("False Negative:"+stats.fp)
 
 		System.out.println("Precision (Positive):"+stats.getPrecision(DiscretePredictionStatistics.BinaryClass.POSITIVE))
 		System.out.println("Recall: (Positive)"+stats.getRecall(DiscretePredictionStatistics.BinaryClass.POSITIVE))
