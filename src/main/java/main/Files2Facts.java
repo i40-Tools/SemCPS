@@ -506,28 +506,27 @@ public class Files2Facts extends IndustryStandards {
 	}
 
 	/**
-	 * Initialises writers
+	 * Initializes File writers
 	 * 
 	 * @throws FileNotFoundException
 	 */
 
 	private void initFileWriters() throws FileNotFoundException {
-		fromDocumentwriter = new PrintWriter("data/ontology/test/fromDocument.txt");
-		attributeWriter = new PrintWriter("data/ontology/test/Attribute.txt");
-		hasRefSemanticwriter = new PrintWriter("data/ontology/test/hasRefsemantic.txt");
-		hasIDwriter = new PrintWriter("data/ontology/test/hasID.txt");
-		internalElementwriter = new PrintWriter("data/ontology/test/InternalElements.txt");
-		roleClassWriter = new PrintWriter("data/ontology/test/roleClass.txt");
-		hasEclassVersionWriter = new PrintWriter("data/ontology/test/hasEclassVersion.txt");
-		hasEclassClassificationClassWriter = new PrintWriter(
-				"data/ontology/test/hasEClassClassificationClass.txt");
-		haseClassIRDIWriter = new PrintWriter("data/ontology/test/hasEClassIRDI.txt");
-		InterfaceClass = new PrintWriter("data/ontology/test/InterfaceClass.txt");
-		SystemUnit = new PrintWriter("data/ontology/test/SystemUnitClass.txt");
-		// UAObjectType = new
-		// PrintWriter("data/ontology/test/UAObjectType.txt");
-		// UAObject = new PrintWriter("data/ontology/test/UAObject.txt");
-
+		fromDocumentwriter = new PrintWriter(ConfigManager.getTestDataPath() + "fromDocument.txt");
+		attributeWriter = new PrintWriter(ConfigManager.getTestDataPath() + "Attribute.txt");
+		hasRefSemanticwriter = new PrintWriter(ConfigManager.getTestDataPath() + 
+				                   "hasRefsemantic.txt");
+		hasIDwriter = new PrintWriter(ConfigManager.getTestDataPath() + "hasID.txt");
+		internalElementwriter = new PrintWriter(ConfigManager.getTestDataPath() + 
+				                    "InternalElements.txt");
+		roleClassWriter = new PrintWriter(ConfigManager.getTestDataPath() + "roleClass.txt");
+		hasEclassVersionWriter = new PrintWriter(ConfigManager.getTestDataPath() + 
+									 "hasEclassVersion.txt");
+		hasEclassClassificationClassWriter = new PrintWriter(ConfigManager.getTestDataPath() + 
+												 "hasEClassClassificationClass.txt");
+		haseClassIRDIWriter = new PrintWriter(ConfigManager.getTestDataPath() + "hasEClassIRDI.txt");
+		InterfaceClass = new PrintWriter(ConfigManager.getTestDataPath() + "InterfaceClass.txt");
+		SystemUnit = new PrintWriter(ConfigManager.getTestDataPath() + "SystemUnitClass.txt");
 	}
 
 	/**

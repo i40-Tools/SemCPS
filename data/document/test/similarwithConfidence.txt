@@ -1,0 +1,4 @@
+aml1:InternalElement1	 aml2:InternalElement1 0.8272423583348228
+aml2:Attribute1	 aml1:Attribute1 0.886692067683566
+aml1:Attribute1	 aml2:Attribute1 0.886692067683566
+aml2:InternalElement1	 aml1:InternalElement1 0.8272423583348228

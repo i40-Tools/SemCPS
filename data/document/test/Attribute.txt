@@ -1,0 +1,2 @@
+aml1:Attribute1	aml1:RefSemantic1
+aml2:Attribute1	aml2:RefSemantic1

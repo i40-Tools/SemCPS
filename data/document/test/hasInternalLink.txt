@@ -1,0 +1,2 @@
+aml1:InternalLink	ad
+aml2:InternalLink	ad

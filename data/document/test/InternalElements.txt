@@ -1,0 +1,2 @@
+aml1:InternalElement1	aml1:identifier
+aml2:InternalElement1	aml2:identifier
