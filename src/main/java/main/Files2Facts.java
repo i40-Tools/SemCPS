@@ -1,6 +1,9 @@
 
 package main;
 
+import industryStandard.IndustryStandards;
+import industryStandard.Opcua;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -38,6 +41,8 @@ public class Files2Facts extends IndustryStandards {
 	private RDFNode subject;
 
 	private ArrayList<File> files;
+	private ArrayList<File> fileWriters;
+	private ArrayList<PrintWriter> printWriters;
 	private Set<String> forInternalElements;
 	private PrintWriter fromDocumentwriter;
 	private PrintWriter attributeWriter;
@@ -512,6 +517,17 @@ public class Files2Facts extends IndustryStandards {
 	 */
 
 	private void initFileWriters() throws FileNotFoundException {
+		fileWriters = new ArrayList<File>();
+		printWriters = new ArrayList<PrintWriter>();
+		
+		File fileWritersFolder = new File(ConfigManager.getTestDataPath());
+		if (fileWritersFolder.isDirectory()) {
+			for (File pslTestFile : fileWritersFolder.listFiles()) {
+				System.out.println(pslTestFile.getName() + " Files");
+				printWriters.add(new PrintWriter(pslTestFile.getName()));
+			}
+		}
+		
 		fromDocumentwriter = new PrintWriter(ConfigManager.getTestDataPath() + "fromDocument.txt");
 		attributeWriter = new PrintWriter(ConfigManager.getTestDataPath() + "Attribute.txt");
 		hasRefSemanticwriter = new PrintWriter(ConfigManager.getTestDataPath() + 
