@@ -65,6 +65,8 @@ To run the AML examples please create a file config.ttl in the main directory of
 
 aml:conf 
      rdfs:label "General Configuration"@en ;
+	 uri:testDataPath "data/document/test/" ;
+	 uri:trainDataPath "data/document/train/" ;
      uri:path "C:/HeterogeneityExampleData/AutomationML/M2-Granularity/Testbeds-1/";
      uri:URI "C:/Users/omar/Desktop/Alligator-master/resources/aml.ttl".
 ```
