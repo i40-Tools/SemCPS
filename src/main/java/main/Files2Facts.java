@@ -43,7 +43,9 @@ public class Files2Facts extends IndustryStandards {
 	private ArrayList<File> files;
 	private ArrayList<File> fileWriters;
 	private ArrayList<PrintWriter> printWriters;
+
 	private Set<String> forInternalElements;
+
 	private PrintWriter fromDocumentwriter;
 	private PrintWriter attributeWriter;
 	private PrintWriter hasRefSemanticwriter;
@@ -55,8 +57,6 @@ public class Files2Facts extends IndustryStandards {
 	private PrintWriter haseClassIRDIWriter;
 	private PrintWriter InterfaceClass;
 	private PrintWriter SystemUnit;
-	private PrintWriter UAObjectType;
-	private PrintWriter UAObject;
 
 	private Model model;
 	private LinkedHashSet<String> forAttribute;
@@ -69,8 +69,7 @@ public class Files2Facts extends IndustryStandards {
 	private LinkedHashSet<String> foreClassIRDI;
 	private LinkedHashSet<String> forInterfaceClass;
 	private LinkedHashSet<String> forSystemUnit;
-	private LinkedHashSet<String> forUAObjectType;
-	private LinkedHashSet<String> forUAObject;
+
 	int number = 0;
 
 	/**
@@ -187,10 +186,10 @@ public class Files2Facts extends IndustryStandards {
 			object = stmt.getObject();
 
 			buf.append("clause1(")
-					.append(StringUtil.lowerCaseFirstChar(predicate.asNode().getLocalName()))
-					.append("(")
-					.append(StringUtil.lowerCaseFirstChar(subject.asNode().getLocalName()) + number)
-					.append(",");
+			.append(StringUtil.lowerCaseFirstChar(predicate.asNode().getLocalName()))
+			.append("(")
+			.append(StringUtil.lowerCaseFirstChar(subject.asNode().getLocalName()) + number)
+			.append(",");
 			if (object.isURIResource()) {
 				object = model.getResource(object.as(Resource.class).getURI());
 				String objectStr = object.asNode().getLocalName();
@@ -237,7 +236,7 @@ public class Files2Facts extends IndustryStandards {
 		// init data structures
 		initDataStructs();
 
-		ArrayList<Resource> allSubjects = getAllSubjects(subjectIterator);
+		//ArrayList<Resource> allSubjects = getAllSubjects(subjectIterator);
 
 		while (iterator.hasNext()) {
 
@@ -246,17 +245,11 @@ public class Files2Facts extends IndustryStandards {
 			predicate = stmt.getPredicate();
 			object = stmt.getObject();
 
-			// all subjects are added accordign to ontology e.g aml: opcua:
+			// all subjects are added according to ontology e.g aml
 			// forDocument.txt
 			addSubjectURI(subject, forDocument, "", number);
 
 			addsDataforAML(number); // process required data for AML
-			Opcua opcua = new Opcua(subject, object, predicate, model, forAttribute, forID,
-					forRefSemantic, forUAObject, forUAObjectType, foreClassVersion, foreClassIRDI,
-					foreClassClassificationClass);
-
-			opcua.addsDataforOPCUA(allSubjects); // process required data for
-													// opcua
 		}
 
 		/**
@@ -273,8 +266,6 @@ public class Files2Facts extends IndustryStandards {
 		writeData(foreClassClassificationClass, hasEclassClassificationClassWriter);
 		writeData(foreClassIRDI, haseClassIRDIWriter);
 		writeData(forSystemUnit, SystemUnit);
-		writeData(forUAObjectType, UAObjectType);
-		writeData(forUAObject, UAObject);
 
 		return "";
 	}
@@ -301,29 +292,22 @@ public class Files2Facts extends IndustryStandards {
 	/**
 	 * Automation ML part for data population
 	 */
-
 	private void addsDataforAML(int number) {
-		// TODO Auto-generated method stub
-
 		// RefSemantic part starts here
 		if (predicate.asNode().getLocalName().equals("hasAttribute")) {
 
 			if (subject.asResource().getLocalName().contains("RoleClass")) {
-
 				addSubjectURI(subject, forRoleClass, ":" + object.asNode().getLocalName(), number);
 			}
 
 			if (subject.asResource().getLocalName().contains("InterfaceClass")) {
-
 				addSubjectURI(subject, forInterfaceClass, ":" + object.asNode().getLocalName(),
 						number);
 			}
 
 			if (subject.asResource().getLocalName().contains("SystemUnitClass")) {
-
 				addSubjectURI(subject, forSystemUnit, ":" + object.asNode().getLocalName(), number);
 			}
-
 		}
 
 		if (predicate.asNode().getLocalName().equals("hasRefSemantic")) {
@@ -331,7 +315,6 @@ public class Files2Facts extends IndustryStandards {
 			addSubjectURI(subject, forAttribute, ":" + object.asNode().getLocalName(), number);
 			// adds for refsemantic.txt
 			addRefSemantic();
-
 		}
 
 		/***
@@ -416,25 +399,6 @@ public class Files2Facts extends IndustryStandards {
 	}
 
 	/**
-	 * Get all subjects for opcua
-	 * 
-	 * @param subjectIterator
-	 * @return
-	 */
-	private ArrayList<Resource> getAllSubjects(StmtIterator subjectIterator) {
-		ArrayList<Resource> allSubjects = new ArrayList<Resource>();
-		while (subjectIterator.hasNext()) {
-			Statement stmt = subjectIterator.nextStatement();
-			subject = stmt.getSubject();
-			if (subject.asNode().getNameSpace().contains("aml")) {
-				break;
-			}
-			allSubjects.add(subject.asResource());
-		}
-		return allSubjects;
-	}
-
-	/**
 	 * Initialises data structures
 	 */
 	private void initDataStructs() {
@@ -449,14 +413,10 @@ public class Files2Facts extends IndustryStandards {
 		foreClassVersion = new LinkedHashSet<>();
 		forInterfaceClass = new LinkedHashSet<>();
 		forSystemUnit = new LinkedHashSet<>();
-		forUAObjectType = new LinkedHashSet<>();
-		forUAObject = new LinkedHashSet<>();
-
 	}
 
 	/**
 	 * Generate all the files of a given folder
-	 * 
 	 * @throws Exception
 	 */
 	public void generateExtensionalDB(String path) throws Exception {
@@ -472,7 +432,6 @@ public class Files2Facts extends IndustryStandards {
 
 	/**
 	 * Generate PSL predicates
-	 * 
 	 * @param path
 	 * @throws Exception
 	 */
@@ -483,17 +442,13 @@ public class Files2Facts extends IndustryStandards {
 			// pass in the writers
 			createPSLPredicate(file, i++);
 		}
-
 		closeFileWriters();
-
 	}
 
 	/**
 	 * Closes writers
 	 */
-
 	private void closeFileWriters() {
-		// TODO Auto-generated method stub
 		fromDocumentwriter.close();
 		attributeWriter.close();
 		hasRefSemanticwriter.close();
@@ -505,21 +460,16 @@ public class Files2Facts extends IndustryStandards {
 		haseClassIRDIWriter.close();
 		InterfaceClass.close();
 		SystemUnit.close();
-		// UAObjectType.close();
-		// UAObject.close();
-
 	}
 
 	/**
 	 * Initializes File writers
-	 * 
 	 * @throws FileNotFoundException
 	 */
-
 	private void initFileWriters() throws FileNotFoundException {
 		fileWriters = new ArrayList<File>();
 		printWriters = new ArrayList<PrintWriter>();
-		
+
 		File fileWritersFolder = new File(ConfigManager.getTestDataPath());
 		if (fileWritersFolder.isDirectory()) {
 			for (File pslTestFile : fileWritersFolder.listFiles()) {
@@ -527,19 +477,19 @@ public class Files2Facts extends IndustryStandards {
 				printWriters.add(new PrintWriter(pslTestFile.getName()));
 			}
 		}
-		
+
 		fromDocumentwriter = new PrintWriter(ConfigManager.getTestDataPath() + "fromDocument.txt");
 		attributeWriter = new PrintWriter(ConfigManager.getTestDataPath() + "Attribute.txt");
 		hasRefSemanticwriter = new PrintWriter(ConfigManager.getTestDataPath() + 
-				                   "hasRefsemantic.txt");
+				"hasRefsemantic.txt");
 		hasIDwriter = new PrintWriter(ConfigManager.getTestDataPath() + "hasID.txt");
 		internalElementwriter = new PrintWriter(ConfigManager.getTestDataPath() + 
-				                    "InternalElements.txt");
+				"InternalElements.txt");
 		roleClassWriter = new PrintWriter(ConfigManager.getTestDataPath() + "roleClass.txt");
 		hasEclassVersionWriter = new PrintWriter(ConfigManager.getTestDataPath() + 
-									 "hasEclassVersion.txt");
+				"hasEclassVersion.txt");
 		hasEclassClassificationClassWriter = new PrintWriter(ConfigManager.getTestDataPath() + 
-												 "hasEClassClassificationClass.txt");
+				"hasEClassClassificationClass.txt");
 		haseClassIRDIWriter = new PrintWriter(ConfigManager.getTestDataPath() + "hasEClassIRDI.txt");
 		InterfaceClass = new PrintWriter(ConfigManager.getTestDataPath() + "InterfaceClass.txt");
 		SystemUnit = new PrintWriter(ConfigManager.getTestDataPath() + "SystemUnitClass.txt");
@@ -549,7 +499,6 @@ public class Files2Facts extends IndustryStandards {
 	 * Creates temporary files which holds the path for edb.pl and output.txt
 	 * These files are necessary for evalAML.pl so that the path is
 	 * automatically set from config.ttl
-	 * 
 	 * @throws FileNotFoundException
 	 */
 	public void prologFilePath() throws FileNotFoundException {
