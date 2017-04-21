@@ -1,4 +1,4 @@
-package main;
+package industryStandard;
 
 import java.util.Set;
 
@@ -21,7 +21,7 @@ public class IndustryStandards {
 	 * @TODO don't understand the comment
 	 */
 
-	void addSubjectURI(RDFNode subject, Set<String> subjects, String predicate, int number) {
+	protected void addSubjectURI(RDFNode subject, Set<String> subjects, String predicate, int number) {
 		if (subject.asNode().getNameSpace().contains("aml")) {
 			if (!predicate.contains("remove")) {
 				subjects.add(

@@ -1,4 +1,4 @@
-package main;
+package industryStandard;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -57,7 +57,7 @@ public class Opcua extends IndustryStandards {
 	 * 
 	 * @param allSubjects2
 	 */
-	void addsDataforOPCUA(ArrayList<Resource> allSubjects) {
+	public void addsDataforOPCUA(ArrayList<Resource> allSubjects) {
 		// return if ontology is aml.
 		if (subject.asNode().getNameSpace().contains("aml")) {
 			return;
