@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -45,6 +46,8 @@ public class Files2Facts extends IndustryStandards {
 	private ArrayList<PrintWriter> printWriters;
 
 	private Set<String> forInternalElements;
+	
+	private LinkedHashSet<String> subjectsToWrite;
 
 	private PrintWriter fromDocumentwriter;
 	private PrintWriter attributeWriter;
@@ -143,7 +146,6 @@ public class Files2Facts extends IndustryStandards {
 
 	/**
 	 * Adds a better turtle format for the obtained RDF files
-	 * 
 	 * @throws IOException
 	 */
 	public void improveRDFOutputFormat() throws IOException {
@@ -237,19 +239,28 @@ public class Files2Facts extends IndustryStandards {
 		initDataStructs();
 
 		//ArrayList<Resource> allSubjects = getAllSubjects(subjectIterator);
-
+		subjectsToWrite = new LinkedHashSet<String>();
+		
 		while (iterator.hasNext()) {
 
 			Statement stmt = iterator.nextStatement();
 			subject = stmt.getSubject();
 			predicate = stmt.getPredicate();
 			object = stmt.getObject();
+			
+			if (predicate.asNode().getLocalName().toString().equals("type")) {
+				subjectsToWrite.add(object.asNode().getLocalName());
+			}
 
 			// all subjects are added according to ontology e.g aml
 			// forDocument.txt
 			addSubjectURI(subject, forDocument, "", number);
 
 			addsDataforAML(number); // process required data for AML
+		}
+		
+		for (String s : subjectsToWrite) {
+		    System.out.println(s + "    aaaaaaaaa");
 		}
 
 		/**
