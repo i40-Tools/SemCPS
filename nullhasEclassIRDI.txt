@@ -1,0 +1,2 @@
+aml1:Attribute3	0173-1---BASIC_1_1#04-AFX029#001
+aml2:Attribute3	0173-1---BASIC_1_1#04-AFX029#001

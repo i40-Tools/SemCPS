@@ -340,10 +340,10 @@ public class DocumentAligment
 		def file1
 		if(util.ConfigManager.getExecutionMethod()=="true"){
 
-			file1 = new File(util.ConfigManager.getTestDataPath()+"Precision/"+"PerciosnWithTrain.txt")
+			file1 = new File(testDir+"Precision/"+"PerciosnWithTrain.txt")
 		}
 		else{
-			file1 = new File(util.ConfigManager.getTestDataPath()+"Precision/"+"PerciosnWithoutTrain.txt")
+			file1 = new File(testDir+"Precision/"+"PerciosnWithoutTrain.txt")
 		}
 
 		file1.createNewFile()
