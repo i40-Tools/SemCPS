@@ -192,10 +192,10 @@ public class DocumentAligment
 		/* Loads data */
 		dir = 'data' + java.io.File.separator + 'document' + java.io.File.separator
 
-		/////////////////////////// test setup //////////////////////////////////
+		/////////////////////////// train setup //////////////////////////////////
 
-		testDir = util.ConfigManager.getTestDataPath()
-		trainDir = util.ConfigManager.getTrainDataPath()
+		testDir = util.ConfigManager.getFilePath()+"PSL/test/"
+		trainDir = util.ConfigManager.getFilePath()+"PSL/train/"
 		Partition trainObservations = new Partition(0)
 		Partition trainPredictions = new Partition(1)
 		Partition truth = new Partition(2)
@@ -231,6 +231,9 @@ public class DocumentAligment
 			weightLearning.close()
 			println "LEARNING WEIGHTS DONE"
 		}
+
+		/////////////////////////// test setup //////////////////////////////////
+
 		Partition testObservations = new Partition(3)
 		Partition testPredictions = new Partition(4)
 

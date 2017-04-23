@@ -1,6 +1,0 @@
-aml1:RoleClass1	 aml2:RoleClass1
-aml2:Attribute4	 aml1:Attribute5
-aml2:RoleClass1	 aml1:RoleClass1
-aml1:Attribute5	 aml2:Attribute4
-aml2:InternalElement1	 aml1:InternalElement1
-aml1:InternalElement1	 aml2:InternalElement1

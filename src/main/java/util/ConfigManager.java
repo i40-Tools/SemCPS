@@ -133,11 +133,9 @@ public class ConfigManager {
 	 */
 
 	public static boolean createDataPath() {
-		String filePath = loadConfig().getProperty(URI_NAMESPACE + "testDataPath");
-		boolean dir = new File(filePath).mkdirs();
-		dir = new File(filePath + "Precision").mkdirs();
-		filePath = loadConfig().getProperty(URI_NAMESPACE + "trainDataPath");
-		dir = new File(filePath).mkdirs();
+		String filePath = loadConfig().getProperty(URI_NAMESPACE + "path");
+		boolean dir = new File(filePath + "PSL/test/Precision").mkdirs();
+		dir = new File(filePath + "PSL/train/").mkdirs();
 		return dir;
 	}
 
