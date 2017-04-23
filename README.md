@@ -81,6 +81,13 @@ To create folders manually before running, you can create and put Goldstandard.t
 .../TestBed1/PSL/test/              
 .../TestBed1/PSL/train/                          
 
+Please note in Similar.txt for training its a truth value. You must add 
+```aml2:InterfaceClass1	 aml1:InterfaceClass1	 1
+aml1:InterfaceClass1	 aml2:InterfaceClass1	 1
+aml1:Attribute5	 aml2:Attribute4	 0
+aml2:Attribute4	 aml1:Attribute5	 1
+```
+
 
 ## Updating Krextor Rules 
 ### What is Krextor?
