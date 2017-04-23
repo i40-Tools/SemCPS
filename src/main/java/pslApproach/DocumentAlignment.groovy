@@ -196,6 +196,7 @@ public class DocumentAligment
 
 		testDir = util.ConfigManager.getFilePath()+"PSL/test/"
 		trainDir = util.ConfigManager.getFilePath()+"PSL/train/"
+
 		Partition trainObservations = new Partition(0)
 		Partition trainPredictions = new Partition(1)
 		Partition truth = new Partition(2)
@@ -215,6 +216,8 @@ public class DocumentAligment
 
 				def insert = data.getInserter(p, trainObservations)
 				InserterUtils.loadDelimitedData(insert, trainDir + p.getName().toLowerCase() + ".txt")
+
+
 			}
 
 
@@ -253,6 +256,7 @@ public class DocumentAligment
 			def insert = data.getInserter(p, testObservations)
 
 			InserterUtils.loadDelimitedData(insert, testDir + p.getName().toLowerCase() + ".txt")
+
 		}
 
 		testDB = data.getDatabase(testPredictions, [hasDocument, hasAttribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasRoleClass, hasEClassIRDI, hasInternalElement, hasSystemUnitClass, hasInterfaceClass

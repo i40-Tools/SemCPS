@@ -255,7 +255,8 @@ public class Files2Facts extends IndustryStandards {
 
 		for (String i : keys) {
 			// same name of files as predicates
-			documentwriter = new PrintWriter(ConfigManager.getTestDataPath() + i + ".txt");
+			documentwriter = new PrintWriter(
+					ConfigManager.getFilePath() + "PSL/test/" + i + ".txt");
 
 			Collection<String> values = generic.get(i);// for every predicate
 														// get its value
