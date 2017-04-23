@@ -129,17 +129,17 @@ public class DocumentAligment
 		// Two AML hasAttributes are the same if its RefSemantic are the same
 		model.add rule : (hasAttribute(A,X) & hasAttribute(B,Y) & hasRefSemantic(X,Z)
 		& hasRefSemantic(Y,W) & similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) &
-		(O1-O2)) >> similar(A,B) , weight : 10
+		(O1-O2)) >> similar(A,B) , weight : 8
 
 		// Two AMl hasAttributes are the same if they share the same ID
 		model.add rule : (hasAttribute(A,X) & hasAttribute(B,Y) & hasID(A,Z) & hasID(B,W)
 		& similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
-		weight : 5
+		weight : 1
 
 		// Two AMl hasInternalElement are the same if they share the same ID
 		model.add rule : (hasInternalElement(A,X) & hasInternalElement(B,Y) & hasID(A,Z) & hasID(B,W)
 		& similarValue(Z,W) &hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
-		weight : 5
+		weight : 4
 
 		// Two Roles Class are same if its eclass,IRDI and classification class are the same
 		model.add rule :( hasRoleClass(A1,B1) & hasRoleClass(A2,B2) & hasAttribute(B1,X) & hasAttribute(B2,Y)
@@ -148,7 +148,7 @@ public class DocumentAligment
 		hasEClassVersion(C1,M) & hasEClassVersion(D2,N) & similarValue(M,N)& hasRoleClass(A1,E1) &
 		hasRoleClass(A2,F2) &hasAttribute(E1,D) & hasAttribute(F2,K) & hasEClassVersion(E1,O) &
 		hasEClassVersion(F2,L) & similarValue(O,L)& hasDocument(A1,O1) & hasDocument(A2,O2) &
-		(O1-O2)) >> similar(A1,A2) , weight : 12
+		(O1-O2)) >> similar(A1,A2) , weight : 1
 
 		// Two Interface Class are same if its eclass,IRDI and classification class are the same
 		model.add rule :( hasInterfaceClass(A1,B1) & hasInterfaceClass(A2,B2) & hasAttribute(B1,X)
@@ -157,7 +157,7 @@ public class DocumentAligment
 		& hasEClassVersion(C1,M) & hasEClassVersion(D2,N) & similarValue(M,N)
 		& hasInterfaceClass(A1,E1) & hasInterfaceClass(A2,F2) &hasAttribute(E1,D) & hasAttribute(F2,K)
 		& hasEClassVersion(E1,O) & hasEClassVersion(F2,L) & similarValue(O,L)
-		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 100
+		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 8
 
 		// Two SystemUnit Class are same if its eclass,IRDI and classification class are the same
 		model.add rule :( hasSystemUnitClass(A1,B1) & hasSystemUnitClass(A2,B2) & hasAttribute(B1,X)
@@ -166,7 +166,7 @@ public class DocumentAligment
 		& hasEClassVersion(C1,M) & hasEClassVersion(D2,N) & similarValue(M,N)&
 		hasSystemUnitClass(A1,E1) & hasSystemUnitClass(A2,F2) &hasAttribute(E1,D) & hasAttribute(F2,K) &
 		hasEClassVersion(E1,O) & hasEClassVersion(F2,L) & similarValue(O,L)
-		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 12
+		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 8
 
 
 		//Two hasInternalElement are the same if its InternalLink is the same
@@ -204,7 +204,6 @@ public class DocumentAligment
 		if(util.ConfigManager.getExecutionMethod()=="true"){
 
 			createGoldStandard(trainDir +"similar.txt")
-			createGoldStandard(trainDir +"GoldStandard.txt")
 
 			for (Predicate p : [hasDocument, hasAttribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasEClassIRDI, hasRoleClass, hasInternalElement, hasSystemUnitClass, hasInterfaceClass]){
 
@@ -228,11 +227,15 @@ public class DocumentAligment
 			populateSimilar(trainDB)
 			truthDB = data.getDatabase(truth, [similar] as Set)
 
+			println "before train"+ model
+
 			println "LEARNING WEIGHTS..."
 			MaxLikelihoodMPE weightLearning = new MaxLikelihoodMPE(model, trainDB, truthDB, config)
 			weightLearning.learn()
 			weightLearning.close()
 			println "LEARNING WEIGHTS DONE"
+			println "after train"+ model
+
 		}
 
 		/////////////////////////// test setup //////////////////////////////////
