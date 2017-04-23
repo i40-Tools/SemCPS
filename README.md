@@ -75,11 +75,11 @@ aml:conf
      
 ```
 
-Just give path of AML heterogenity and folders will be created automatically.
-Then you can add GoldStandard and training data.
-To create folders manually before running, you can create and put Goldstandard.txt and training data.
-.../TestBed1/PSL/test/
-.../TestBed1/PSL/train/
+Just give path of AML heterogenity and folders will be created automatically.                  
+Then you can add GoldStandard and training data.                           
+To create folders manually before running, you can create and put Goldstandard.txt and training data.            
+.../TestBed1/PSL/test/              
+.../TestBed1/PSL/train/                          
 
 
 ## Updating Krextor Rules 
