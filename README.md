@@ -52,8 +52,8 @@ give path to groovy script :
 
 
 To run the AML examples please create a file config.ttl in the main directory of the project. An example is show below:
-```
-@prefix aml:     <https://w3id.org/i40/aml#> .
+```@prefix aml:     <http://vocab.cs.uni-bonn.de/aml#> .
+@prefix het:     <http://vocab.cs.uni-bonn.de/het#> .
 @prefix owl:     <http://www.w3.org/2002/07/owl#> .
 @prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
@@ -62,13 +62,19 @@ To run the AML examples please create a file config.ttl in the main directory of
 @prefix xml:     <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
 @prefix uri:     <http://uri4uri.net/vocab.html/#>
+@prefix sto:     <https://w3id.org/i40/sto#>.
+@prefix ontosec: <http://www.semanticweb.org/ontologies/2008/11/OntologySecurity.owl#>
+
 
 aml:conf 
      rdfs:label "General Configuration"@en ;
-	 uri:testDataPath "data/document/test/" ;
-	 uri:trainDataPath "data/document/train/" ;
-     uri:path "C:/HeterogeneityExampleData/AutomationML/M2-Granularity/Testbeds-1/";
+     uri:path "C:/HeterogeneityExampleData/AutomationML/Single-Heterogeneity/M2/Testbeds-2/";
+     uri:testDataPath "C:/HeterogeneityExampleData/AutomationML/Single-Heterogeneity/M2/Testbeds-2/PSL/test/";
+     uri:trainDataPath "C:/HeterogeneityExampleData/AutomationML/Single-Heterogeneity/M2/Testbeds-2/PSL/train/";
+     sto:Standard "aml";
+     ontosec:Training "false";
      uri:URI "C:/Users/omar/Desktop/Alligator-master/resources/aml.ttl".
+     
 ```
 
 ## Updating Krextor Rules 
