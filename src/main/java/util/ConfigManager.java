@@ -38,9 +38,13 @@ public class ConfigManager {
 
 	public final static String HET_NAMESPACE = "http://vocab.cs.uni-bonn.de/het#";
 	public final static String URI_NAMESPACE = "http://uri4uri.net/vocab.html/#";
+	public final static String ONTO_NAMESPACE = "http://www.semanticweb.org/ontologies/2008/11/"
+			+ "OntologySecurity.owl#";
+	public final static String STO_NAMESPACE = "https://w3id.org/i40/sto#";
 
 	/**
 	 * Get the instance of manager
+	 * 
 	 * @return manager
 	 */
 	public static ConfigManager getInstance() {
@@ -60,19 +64,18 @@ public class ConfigManager {
 		File configFile = new File(dir + "/config.ttl");
 
 		if (configFile.isFile() == false) {
-			System.out.println("Please especify the configuration file"
-					        + "(config.ttl)");
+			System.out.println("Please especify the configuration file" + "(config.ttl)");
 			System.exit(0);
 		}
-		
+
 		if (configFile.length() == 0) {
-		    System.out.println("The configuration file (config.ttl) is empty");
-		    System.exit(0);
+			System.out.println("The configuration file (config.ttl) is empty");
+			System.exit(0);
 		}
 
 		model = ModelFactory.createDefaultModel();
 		InputStream inputStream = FileManager.get().open(configFile.getPath());
-		model.read(new InputStreamReader(inputStream), null, "TURTLE"); 
+		model.read(new InputStreamReader(inputStream), null, "TURTLE");
 		// parses an InputStream assuming RDF in Turtle format
 
 		literals = new ArrayList<RDFNode>();
@@ -116,31 +119,52 @@ public class ConfigManager {
 	/**
 	 * Get the general file path where all the files are located
 	 * 
-	 * @return 
+	 * @return
 	 */
 	public static String getOntoURIPath() {
 		String filePath = loadConfig().getProperty(URI_NAMESPACE + "URI");
 		return filePath;
 	}
-	
+
 	/**
 	 * Get the general file path where all the test data files are located
 	 * 
-	 * @return 
+	 * @return
 	 */
+
+	public static boolean createDataPath() {
+		String filePath = loadConfig().getProperty(URI_NAMESPACE + "testDataPath");
+		boolean dir = new File(filePath).mkdirs();
+		dir = new File(filePath + "Precision").mkdirs();
+		filePath = loadConfig().getProperty(URI_NAMESPACE + "trainDataPath");
+		dir = new File(filePath).mkdirs();
+		return dir;
+	}
+
 	public static String getTestDataPath() {
 		String filePath = loadConfig().getProperty(URI_NAMESPACE + "testDataPath");
 		return filePath;
 	}
-	
+
+	public static String getExecutionMethod() {
+		String filePath = loadConfig().getProperty(ONTO_NAMESPACE + "Training");
+		return filePath;
+	}
+
 	/**
 	 * Get the general file path where all the test data files are located
 	 * 
-	 * @return 
+	 * @return
+	 * 
 	 */
 	public static String getTrainDataPath() {
 		String filePath = loadConfig().getProperty(URI_NAMESPACE + "trainDataPath");
 		return filePath;
+	}
+
+	public static String getStandard() {
+		String standard = loadConfig().getProperty(STO_NAMESPACE + "Standard");
+		return standard;
 	}
 
 }

@@ -1,4 +1,6 @@
-aml2:Attribute1	 aml1:Attribute1 0.8866920676835661
-aml2:InternalElement1	 aml1:InternalElement1 0.8272423583348228
-aml1:InternalElement1	 aml2:InternalElement1 0.8272423583348228
-aml1:Attribute1	 aml2:Attribute1 0.8866920676835661
+aml1:RoleClass1	 aml2:RoleClass1 0.9219706988153836
+aml2:Attribute4	 aml1:Attribute5 0.9080808272130346
+aml2:RoleClass1	 aml1:RoleClass1 0.9219706988153836
+aml1:Attribute5	 aml2:Attribute4 0.9080808272130346
+aml2:InternalElement1	 aml1:InternalElement1 0.8327594238970331
+aml1:InternalElement1	 aml2:InternalElement1 0.8327594238970331

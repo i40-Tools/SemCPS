@@ -29,7 +29,7 @@ import edu.umd.cs.psl.util.database.Queries
  * @author Omar Rana
  * @author Irlan Grangel
  * Computes the alignment of two entities based on Probabilistic Soft Logic(PSL)
- * 
+ *
  */
 public class DocumentAligment
 {
@@ -86,13 +86,12 @@ public class DocumentAligment
 	 */
 	public void definePredicates()
 	{
-		model.add predicate: "name"        , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
 
-		model.add predicate: "fromDocument", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
+		model.add predicate: "hasDocument", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
 
-		model.add predicate: "Attribute"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
+		model.add predicate: "hasAttribute"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
 
-		model.add predicate: "InternalElements"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
+		model.add predicate: "hasInternalElement"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
 
 		model.add predicate: "hasRefSemantic"     , types: [ArgumentType.UniqueID, ArgumentType.String]
 
@@ -112,67 +111,67 @@ public class DocumentAligment
 
 		model.add predicate: "eval", types: [ArgumentType.String, ArgumentType.String]
 
-		model.add predicate: "RoleClass"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
+		model.add predicate: "hasRoleClass"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
 
-		model.add predicate: "Interfaceclass"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
+		model.add predicate: "hasInterfaceClass"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
 
-		model.add predicate: "SystemUnitclass"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
+		model.add predicate: "hasSystemUnitClass"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
 	}
 
 	public void defineFunctions()
 	{
-		model.add function: "similarValue"  , implementation: new LevenshteinSimilarity()
+		model.add function: "similarValue"  , implementation: new DiceSimilarity()
 	}
 
 	public void defineRules()
 	{
 
-		// Two AML Attributes are the same if its RefSemantic are the same
-		model.add rule : (Attribute(A,X) & Attribute(B,Y) & hasRefSemantic(X,Z)
-		& hasRefSemantic(Y,W) & similarValue(Z,W) & fromDocument(A,O1) & fromDocument(B,O2) &
+		// Two AML hasAttributes are the same if its RefSemantic are the same
+		model.add rule : (hasAttribute(A,X) & hasAttribute(B,Y) & hasRefSemantic(X,Z)
+		& hasRefSemantic(Y,W) & similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) &
 		(O1-O2)) >> similar(A,B) , weight : 10
 
-		// Two AMl Attributes are the same if they share the same ID
-		model.add rule : (Attribute(A,X) & Attribute(B,Y) & hasID(A,Z) & hasID(B,W)
-		& similarValue(Z,W) & fromDocument(A,O1) & fromDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
+		// Two AMl hasAttributes are the same if they share the same ID
+		model.add rule : (hasAttribute(A,X) & hasAttribute(B,Y) & hasID(A,Z) & hasID(B,W)
+		& similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
 		weight : 5
 
-		// Two AMl InternalElements are the same if they share the same ID
-		model.add rule : (InternalElements(A,X) & InternalElements(B,Y) & hasID(A,Z) & hasID(B,W)
-		& similarValue(Z,W) &fromDocument(A,O1) & fromDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
+		// Two AMl hasInternalElement are the same if they share the same ID
+		model.add rule : (hasInternalElement(A,X) & hasInternalElement(B,Y) & hasID(A,Z) & hasID(B,W)
+		& similarValue(Z,W) &hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
 		weight : 5
 
 		// Two Roles Class are same if its eclass,IRDI and classification class are the same
-		model.add rule :( RoleClass(A1,B1) & RoleClass(A2,B2) & Attribute(B1,X) & Attribute(B2,Y)
+		model.add rule :( hasRoleClass(A1,B1) & hasRoleClass(A2,B2) & hasAttribute(B1,X) & hasAttribute(B2,Y)
 		& hasEClassIRDI(B1,Z) & hasEClassIRDI(B2,W) & similarValue(Z,W)
-		& RoleClass(A1,C1) & RoleClass(A2,D2) & Attribute(C1,Q) & Attribute(D2,T) &
-		hasEClassVersion(C1,M) & hasEClassVersion(D2,N) & similarValue(M,N)& RoleClass(A1,E1) &
-		RoleClass(A2,F2) &Attribute(E1,D) & Attribute(F2,K) & hasEClassVersion(E1,O) &
-		hasEClassVersion(F2,L) & similarValue(O,L)& fromDocument(A1,O1) & fromDocument(A2,O2) &
+		& hasRoleClass(A1,C1) & hasRoleClass(A2,D2) & hasAttribute(C1,Q) & hasAttribute(D2,T) &
+		hasEClassVersion(C1,M) & hasEClassVersion(D2,N) & similarValue(M,N)& hasRoleClass(A1,E1) &
+		hasRoleClass(A2,F2) &hasAttribute(E1,D) & hasAttribute(F2,K) & hasEClassVersion(E1,O) &
+		hasEClassVersion(F2,L) & similarValue(O,L)& hasDocument(A1,O1) & hasDocument(A2,O2) &
 		(O1-O2)) >> similar(A1,A2) , weight : 12
 
 		// Two Interface Class are same if its eclass,IRDI and classification class are the same
-		model.add rule :( Interfaceclass(A1,B1) & Interfaceclass(A2,B2) & Attribute(B1,X)
-		& Attribute(B2,Y)  & hasEClassIRDI(B1,Z) & hasEClassIRDI(B2,W) & similarValue(Z,W)
-		& Interfaceclass(A1,C1) & Interfaceclass(A2,D2) & Attribute(C1,Q) & Attribute(D2,T)
+		model.add rule :( hasInterfaceClass(A1,B1) & hasInterfaceClass(A2,B2) & hasAttribute(B1,X)
+		& hasAttribute(B2,Y)  & hasEClassIRDI(B1,Z) & hasEClassIRDI(B2,W) & similarValue(Z,W)
+		& hasInterfaceClass(A1,C1) & hasInterfaceClass(A2,D2) & hasAttribute(C1,Q) & hasAttribute(D2,T)
 		& hasEClassVersion(C1,M) & hasEClassVersion(D2,N) & similarValue(M,N)
-		& Interfaceclass(A1,E1) & Interfaceclass(A2,F2) &Attribute(E1,D) & Attribute(F2,K)
+		& hasInterfaceClass(A1,E1) & hasInterfaceClass(A2,F2) &hasAttribute(E1,D) & hasAttribute(F2,K)
 		& hasEClassVersion(E1,O) & hasEClassVersion(F2,L) & similarValue(O,L)
-		& fromDocument(A1,O1) & fromDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 100
+		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 100
 
 		// Two SystemUnit Class are same if its eclass,IRDI and classification class are the same
-		model.add rule :( SystemUnitclass(A1,B1) & SystemUnitclass(A2,B2) & Attribute(B1,X)
-		& Attribute(B2,Y)  & hasEClassIRDI(B1,Z) & hasEClassIRDI(B2,W) & similarValue(Z,W)
-		& SystemUnitclass(A1,C1) & SystemUnitclass(A2,D2) & Attribute(C1,Q) & Attribute(D2,T)
+		model.add rule :( hasSystemUnitClass(A1,B1) & hasSystemUnitClass(A2,B2) & hasAttribute(B1,X)
+		& hasAttribute(B2,Y)  & hasEClassIRDI(B1,Z) & hasEClassIRDI(B2,W) & similarValue(Z,W)
+		& hasSystemUnitClass(A1,C1) & hasSystemUnitClass(A2,D2) & hasAttribute(C1,Q) & hasAttribute(D2,T)
 		& hasEClassVersion(C1,M) & hasEClassVersion(D2,N) & similarValue(M,N)&
-		SystemUnitclass(A1,E1) & SystemUnitclass(A2,F2) &Attribute(E1,D) & Attribute(F2,K) &
+		hasSystemUnitClass(A1,E1) & hasSystemUnitClass(A2,F2) &hasAttribute(E1,D) & hasAttribute(F2,K) &
 		hasEClassVersion(E1,O) & hasEClassVersion(F2,L) & similarValue(O,L)
-		& fromDocument(A1,O1) & fromDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 12
+		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 12
 
 
-		//Two InternalElements are the same if its InternalLink is the same
-		//		model.add rule : (InternalElements(A,X) & InternalElements(B,Y)  & hasInternalLink(X,Z) & hasInternalLink(Y,W) &
-		//		similarValue(Z,W) & fromDocument(A,O1) & fromDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 12;
+		//Two hasInternalElement are the same if its InternalLink is the same
+		//		model.add rule : (hasInternalElement(A,X) & hasInternalElement(B,Y)  & hasInternalLink(X,Z) & hasInternalLink(Y,W) &
+		//		similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 12;
 
 		// constraints
 		model.add PredicateConstraint.PartialFunctional , on : similar
@@ -184,7 +183,7 @@ public class DocumentAligment
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void setUpData()
 	{
@@ -195,42 +194,76 @@ public class DocumentAligment
 
 		/////////////////////////// test setup //////////////////////////////////
 
-		testDir = dir + 'test' + java.io.File.separator
-		trainDir = dir + 'train' + java.io.File.separator
+		testDir = util.ConfigManager.getTestDataPath()
+		trainDir = util.ConfigManager.getTrainDataPath()
 		Partition trainObservations = new Partition(0)
 		Partition trainPredictions = new Partition(1)
 		Partition truth = new Partition(2)
-		for (Predicate p : [fromDocument, name, Attribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasEClassIRDI, roleClass, InternalElements, SystemUnitclass, Interfaceclass]){
-			def insert = data.getInserter(p, trainObservations)
-			InserterUtils.loadDelimitedData(insert, trainDir + p.getName().toLowerCase() + ".txt")
+
+		if(util.ConfigManager.getExecutionMethod()=="true"){
+
+			createGoldStandard(trainDir +"similar.txt")
+			createGoldStandard(trainDir +"GoldStandard.txt")
+
+			for (Predicate p : [hasDocument, hasAttribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasEClassIRDI, hasRoleClass, hasInternalElement, hasSystemUnitClass, hasInterfaceClass]){
+
+				def file1 = new File(trainDir + p.getName().toLowerCase()+ ".txt")
+				if(!file1.exists()){
+					file1.createNewFile()
+				}
+
+
+				def insert = data.getInserter(p, trainObservations)
+				InserterUtils.loadDelimitedData(insert, trainDir + p.getName().toLowerCase() + ".txt")
+			}
+
+
+			def insert = data.getInserter(similar, truth)
+			InserterUtils.loadDelimitedDataTruth(insert, trainDir + "similar.txt")
+
+			trainDB = data.getDatabase(trainPredictions, [hasDocument, hasAttribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasEClassIRDI, hasRoleClass, hasInternalElement, hasSystemUnitClass, hasInterfaceClass]as Set, trainObservations)
+			populateSimilar(trainDB)
+			truthDB = data.getDatabase(truth, [similar] as Set)
+
+			println "LEARNING WEIGHTS..."
+			MaxLikelihoodMPE weightLearning = new MaxLikelihoodMPE(model, trainDB, truthDB, config)
+			weightLearning.learn()
+			weightLearning.close()
+			println "LEARNING WEIGHTS DONE"
 		}
-
-
-		def insert = data.getInserter(similar, truth)
-		InserterUtils.loadDelimitedDataTruth(insert, trainDir + "similar.txt")
-
-		trainDB = data.getDatabase(trainPredictions, [fromDocument, name, Attribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasEClassIRDI, roleClass, InternalElements, SystemUnitclass, Interfaceclass]as Set, trainObservations)
-		populateSimilar(trainDB)
-		truthDB = data.getDatabase(truth, [similar] as Set)
-
-		println "LEARNING WEIGHTS..."
-		MaxLikelihoodMPE weightLearning = new MaxLikelihoodMPE(model, trainDB, truthDB, config)
-		weightLearning.learn()
-		weightLearning.close()
-		println "LEARNING WEIGHTS DONE"
-
 		Partition testObservations = new Partition(3)
 		Partition testPredictions = new Partition(4)
-		for (Predicate p : [fromDocument, name, Attribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasEClassIRDI, roleClass, InternalElements, SystemUnitclass, Interfaceclass])
+
+		for (Predicate p : [hasDocument, hasAttribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasEClassIRDI, hasRoleClass, hasInternalElement, hasSystemUnitClass, hasInterfaceClass])
 		{
-			insert = data.getInserter(p, testObservations)
+			def file1 = new File(testDir + p.getName().toLowerCase()+ ".txt")
+			if(!file1.exists()){
+				file1.createNewFile()
+			}
+		}
+		createGoldStandard(testDir +"similar.txt")
+		createGoldStandard(testDir +"GoldStandard.txt")
+		createGoldStandard(testDir +"similarwithConfidence.txt")
+
+		for (Predicate p : [hasDocument, hasAttribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasEClassIRDI, hasRoleClass, hasInternalElement, hasSystemUnitClass, hasInterfaceClass])
+		{
+			def insert = data.getInserter(p, testObservations)
+
 			InserterUtils.loadDelimitedData(insert, testDir + p.getName().toLowerCase() + ".txt")
 		}
 
-		testDB = data.getDatabase(testPredictions, [name, fromDocument, Attribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, roleClass, hasEClassIRDI, InternalElements, SystemUnitclass, Interfaceclass
+		testDB = data.getDatabase(testPredictions, [hasDocument, hasAttribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasRoleClass, hasEClassIRDI, hasInternalElement, hasSystemUnitClass, hasInterfaceClass
 		] as Set, testObservations)
 
 		populateSimilar(testDB)
+	}
+
+	public void createGoldStandard(String testDir){
+
+		def file1 = new File(testDir)
+		if(!file1.exists()){
+			file1.createNewFile()
+		}
 	}
 
 	public void runInference(){
@@ -299,6 +332,36 @@ public class DocumentAligment
 		System.out.println("Precision:(Negative)"+stats.getPrecision(DiscretePredictionStatistics.BinaryClass.NEGATIVE))
 		System.out.println("Recall:(Negative)"+stats.getRecall(DiscretePredictionStatistics.BinaryClass.NEGATIVE))
 
+
+		// Saving result to file
+		def file1
+		if(util.ConfigManager.getExecutionMethod()=="true"){
+
+			file1 = new File(util.ConfigManager.getTestDataPath()+"Precision/"+"PerciosnWithTrain.txt")
+		}
+		else{
+			file1 = new File(util.ConfigManager.getTestDataPath()+"Precision/"+"PerciosnWithoutTrain.txt")
+		}
+
+		file1.createNewFile()
+		file1.write("")
+		file1.append("Accuracy:"+stats.getAccuracy()+ '\n')
+		file1.append("Error:"+stats.getError()+ '\n')
+		file1.append("Fmeasure:"+stats.getF1(DiscretePredictionStatistics.BinaryClass.POSITIVE)
+				+ '\n')
+		file1.append("True negative:"+stats.tn+ '\n')
+		file1.append("True Positive:"+stats.tp+ '\n')
+		file1.append("False Positive:"+stats.tp+ '\n')
+		file1.append("False Negative:"+stats.fp+ '\n')
+		file1.append("Precision (Positive):"+stats.getPrecision(DiscretePredictionStatistics.
+				BinaryClass.POSITIVE)+ '\n')
+		file1.append("Recall: (Positive)"+stats.getRecall(DiscretePredictionStatistics.
+				BinaryClass.POSITIVE)+ '\n')
+		file1.append("Precision:(Negative)"+stats.getPrecision(DiscretePredictionStatistics.
+				BinaryClass.NEGATIVE)+ '\n')
+		file1.append("Recall:(Negative)"+stats.getRecall(DiscretePredictionStatistics.
+				BinaryClass.NEGATIVE)+ '\n')
+
 		resultsDB.close()
 		truthDB.close()
 	}
@@ -306,13 +369,13 @@ public class DocumentAligment
 
 	/**
 	 * Populates all the similar atoms between the concepts of two Documents using
-	 * the fromDocument predicate.
+	 * the hasDocument predicate.
 	 *
-	 * @param db  The database to populate. It should contain the fromDocument atoms
+	 * @param db  The database to populate. It should contain the hasDocument atoms
 	 */
 	void populateSimilar(Database db) {
 		/* Collects the ontology concepts */
-		Set<GroundAtom> concepts = Queries.getAllAtoms(db, fromDocument)
+		Set<GroundAtom> concepts = Queries.getAllAtoms(db, hasDocument)
 		Set<GroundTerm> o1 = new HashSet<GroundTerm>()
 		Set<GroundTerm> o2 = new HashSet<GroundTerm>()
 		for (GroundAtom atom : concepts) {

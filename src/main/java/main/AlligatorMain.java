@@ -64,6 +64,8 @@ public class AlligatorMain {
 	 * @throws Exception
 	 */
 	public void generatePSLDataModel() throws Exception {
+		ConfigManager.createDataPath();// creates folders if not there
+
 		standardFiles.generatePSLPredicates(ConfigManager.getFilePath());
 	}
 
@@ -93,6 +95,7 @@ public class AlligatorMain {
 				return null;
 			}
 		};
+		// script.evaluate(new File("src/main/java/pslApproach/EasyLP.groovy"));
 		script.evaluate(new File("src/main/java/pslApproach/DocumentAlignment.groovy"));
 
 		// Class scriptClass = new GroovyScriptEngine(".")

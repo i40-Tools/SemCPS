@@ -1,9 +1,6 @@
 
 package main;
 
-import industryStandard.IndustryStandards;
-import industryStandard.Opcua;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -12,7 +9,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -27,6 +24,7 @@ import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.util.FileManager;
 
+import industryStandard.IndustryStandards;
 import uni.bonn.krextor.Krextor;
 import util.ConfigManager;
 import util.StringUtil;
@@ -42,38 +40,13 @@ public class Files2Facts extends IndustryStandards {
 	private RDFNode subject;
 
 	private ArrayList<File> files;
-	private ArrayList<File> fileWriters;
-	private ArrayList<PrintWriter> printWriters;
 
-	private Set<String> forInternalElements;
-	
 	private LinkedHashSet<String> subjectsToWrite;
 
-	private PrintWriter fromDocumentwriter;
-	private PrintWriter attributeWriter;
-	private PrintWriter hasRefSemanticwriter;
-	private PrintWriter hasIDwriter;
-	private PrintWriter internalElementwriter;
-	private PrintWriter roleClassWriter;
-	private PrintWriter hasEclassVersionWriter;
-	private PrintWriter hasEclassClassificationClassWriter;
-	private PrintWriter haseClassIRDIWriter;
-	private PrintWriter InterfaceClass;
-	private PrintWriter SystemUnit;
-
 	private Model model;
-	private LinkedHashSet<String> forAttribute;
-	private LinkedHashSet<String> forRoleClass;
-	private LinkedHashSet<String> forID;
-	private LinkedHashSet<String> forRefSemantic;
-	private LinkedHashSet<String> forDocument;
-	private LinkedHashSet<String> foreClassVersion;
-	private LinkedHashSet<String> foreClassClassificationClass;
-	private LinkedHashSet<String> foreClassIRDI;
-	private LinkedHashSet<String> forInterfaceClass;
-	private LinkedHashSet<String> forSystemUnit;
 
 	int number = 0;
+	private PrintWriter documentwriter;
 
 	/**
 	 * Converts the file to turtle format based on Krextor
@@ -128,7 +101,6 @@ public class Files2Facts extends IndustryStandards {
 					}
 
 					else if (amlFile.getName().endsWith(".xml")) {
-						String name = amlFile.getName().replace(".xml", "");
 						files.add(amlFile);
 					}
 
@@ -141,11 +113,13 @@ public class Files2Facts extends IndustryStandards {
 			System.out.println("Error in the directory that you provided");
 			System.exit(0);
 		}
+
 		return files;
 	}
 
 	/**
 	 * Adds a better turtle format for the obtained RDF files
+	 * 
 	 * @throws IOException
 	 */
 	public void improveRDFOutputFormat() throws IOException {
@@ -188,10 +162,10 @@ public class Files2Facts extends IndustryStandards {
 			object = stmt.getObject();
 
 			buf.append("clause1(")
-			.append(StringUtil.lowerCaseFirstChar(predicate.asNode().getLocalName()))
-			.append("(")
-			.append(StringUtil.lowerCaseFirstChar(subject.asNode().getLocalName()) + number)
-			.append(",");
+					.append(StringUtil.lowerCaseFirstChar(predicate.asNode().getLocalName()))
+					.append("(")
+					.append(StringUtil.lowerCaseFirstChar(subject.asNode().getLocalName()) + number)
+					.append(",");
 			if (object.isURIResource()) {
 				object = model.getResource(object.as(Resource.class).getURI());
 				String objectStr = object.asNode().getLocalName();
@@ -227,103 +201,119 @@ public class Files2Facts extends IndustryStandards {
 	 * @return
 	 * @throws Exception
 	 */
-	public String createPSLPredicate(File file, int number) throws Exception {
-		this.number = number;
-		InputStream inputStream = FileManager.get().open(file.getAbsolutePath());
-		model = ModelFactory.createDefaultModel();
-		model.read(new InputStreamReader(inputStream), null, "TURTLE");
-		StmtIterator iterator = model.listStatements();
-		StmtIterator subjectIterator = model.listStatements();
+	public String createPSLPredicate(File file, int number, String standard) throws Exception {
 
-		// init data structures
-		initDataStructs();
+		switch (standard) {
 
-		//ArrayList<Resource> allSubjects = getAllSubjects(subjectIterator);
-		subjectsToWrite = new LinkedHashSet<String>();
-		
-		while (iterator.hasNext()) {
+		case "aml":
 
-			Statement stmt = iterator.nextStatement();
-			subject = stmt.getSubject();
-			predicate = stmt.getPredicate();
-			object = stmt.getObject();
-			
-			if (predicate.asNode().getLocalName().toString().equals("type")) {
-				subjectsToWrite.add(object.asNode().getLocalName());
+			this.number = number;
+			InputStream inputStream = FileManager.get().open(file.getAbsolutePath());
+			model = ModelFactory.createDefaultModel();
+			model.read(new InputStreamReader(inputStream), null, "TURTLE");
+			StmtIterator iterator = model.listStatements();
+
+			subjectsToWrite = new LinkedHashSet<String>();
+
+			while (iterator.hasNext()) {
+
+				Statement stmt = iterator.nextStatement();
+				subject = stmt.getSubject();
+				predicate = stmt.getPredicate();
+				object = stmt.getObject();
+
+				if (predicate.asNode().getLocalName().toString().equals("type")) {
+					subjectsToWrite.add(object.asNode().getLocalName());
+
+				}
+
+				// all subjects are added according to ontology e.g aml
+				// hasDocument.txt
+				addSubjectURI(subject, "", number, "hasDocument");
+
+				addsDataforAML(number); // process required data for AML
 			}
 
-			// all subjects are added according to ontology e.g aml
-			// forDocument.txt
-			addSubjectURI(subject, forDocument, "", number);
+			// case "opcua":
 
-			addsDataforAML(number); // process required data for AML
+			writeData();
+
 		}
-		
-		for (String s : subjectsToWrite) {
-		    System.out.println(s + "    aaaaaaaaa");
-		}
-
-		/**
-		 * Write data to files
-		 */
-		writeData(forDocument, fromDocumentwriter);
-		writeData(forAttribute, attributeWriter);
-		writeData(forInternalElements, internalElementwriter);
-		writeData(forRefSemantic, hasRefSemanticwriter);
-		writeData(forID, hasIDwriter);
-		writeData(forRoleClass, roleClassWriter);
-		writeData(forInterfaceClass, InterfaceClass);
-		writeData(foreClassVersion, hasEclassVersionWriter);
-		writeData(foreClassClassificationClass, hasEclassClassificationClassWriter);
-		writeData(foreClassIRDI, haseClassIRDIWriter);
-		writeData(forSystemUnit, SystemUnit);
-
 		return "";
 	}
 
 	/**
 	 * Writes data to files
 	 * 
-	 * @param docName
+	 * @param collection
 	 * @param documentwriter
+	 * @throws FileNotFoundException
 	 */
-	private void writeData(Set<String> docName, PrintWriter documentwriter) {
-		for (String i : docName) {
-			// remove annotation to make it a literal value
-			if (i.contains("aml:remove")) {
-				i = i.replace("aml:remove", "");
+	private void writeData() throws FileNotFoundException {
+
+		Set<String> keys = generic.keySet();// gets all predicates
+
+		for (String i : keys) {
+			// same name of files as predicates
+			documentwriter = new PrintWriter(ConfigManager.getTestDataPath() + i + ".txt");
+
+			Collection<String> values = generic.get(i);// for every predicate
+														// get its value
+			for (String val : values) {
+				// remove annotation to make it a literal value
+				if (val.contains("aml:remove")) {
+					val = val.replace("aml:remove", "");
+				}
+				if (val.contains("opcua:remove")) {
+					val = val.replace("opcua:remove", "");
+				}
+				documentwriter.println(val);
 			}
-			if (i.contains("opcua:remove")) {
-				i = i.replace("opcua:remove", "");
-			}
-			documentwriter.println(i);
+			documentwriter.close();
+
 		}
 	}
 
 	/**
-	 * Automation ML part for data population
+	 * Gets the class of object.
+	 * 
+	 * @param name
+	 * @return
 	 */
-	private void addsDataforAML(int number) {
+	String getType(RDFNode name) {
+		String type = null;
+		StmtIterator stmts = model.listStatements(name.asResource(), null, (RDFNode) null);
+		while (stmts.hasNext()) {
+			Statement stmte = stmts.nextStatement();
+
+			if (stmte.getPredicate().asNode().getLocalName().toString().equals("type")) {
+				type = stmte.getObject().asNode().getLocalName();
+			}
+		}
+		return type;
+	}
+
+	/**
+	 * Automation ML part for data population
+	 * 
+	 * @throws FileNotFoundException
+	 */
+	private void addsDataforAML(int number) throws FileNotFoundException {
 		// RefSemantic part starts here
+
 		if (predicate.asNode().getLocalName().equals("hasAttribute")) {
 
-			if (subject.asResource().getLocalName().contains("RoleClass")) {
-				addSubjectURI(subject, forRoleClass, ":" + object.asNode().getLocalName(), number);
-			}
-
-			if (subject.asResource().getLocalName().contains("InterfaceClass")) {
-				addSubjectURI(subject, forInterfaceClass, ":" + object.asNode().getLocalName(),
-						number);
-			}
-
-			if (subject.asResource().getLocalName().contains("SystemUnitClass")) {
-				addSubjectURI(subject, forSystemUnit, ":" + object.asNode().getLocalName(), number);
-			}
+			// gets all classes which hasAttribute relation
+			addSubjectURI(subject, ":" + object.asNode().getLocalName(), number,
+					"has" + getType(subject));
 		}
 
 		if (predicate.asNode().getLocalName().equals("hasRefSemantic")) {
-			// adds for attribute.txt
-			addSubjectURI(subject, forAttribute, ":" + object.asNode().getLocalName(), number);
+
+			// adds for attribute
+			addSubjectURI(subject, ":" + object.asNode().getLocalName(), number,
+					"has" + getType(subject));
+
 			// adds for refsemantic.txt
 			addRefSemantic();
 		}
@@ -338,8 +328,8 @@ public class Files2Facts extends IndustryStandards {
 					|| object.asLiteral().getLexicalForm().equals("eClassIRDI")) {
 				if (predicate.asNode().getLocalName().equals("hasAttributeName")) {
 					// adds for attribute.txt
-					addSubjectURI(subject, forAttribute, ":" + object.asLiteral().getLexicalForm(),
-							number);
+					addSubjectURI(subject, ":" + object.asLiteral().getLexicalForm(), number,
+							"hasAttribute");
 				}
 
 				StmtIterator stmts = model.listStatements(subject.asResource(), null,
@@ -351,20 +341,20 @@ public class Files2Facts extends IndustryStandards {
 
 						if (object.asLiteral().getLexicalForm()
 								.equals("eClassClassificationClass")) {
-							addSubjectURI(subject, foreClassClassificationClass,
+							addSubjectURI(subject,
 									":remove" + stmte.getObject().asLiteral().getLexicalForm(),
-									number);
+									number, "hasEClassClassificationClass");
 						}
 
 						if (object.asLiteral().getLexicalForm().equals("eClassVersion")) {
-							addSubjectURI(subject, foreClassVersion,
+							addSubjectURI(subject,
 									":remove" + stmte.getObject().asLiteral().getLexicalForm(),
-									number);
+									number, "hasEclassVersion");
 						}
 						if (object.asLiteral().getLexicalForm().equals("eClassIRDI")) {
-							addSubjectURI(subject, foreClassIRDI,
+							addSubjectURI(subject,
 									":remove" + stmte.getObject().asLiteral().getLexicalForm(),
-									number);
+									number, "hasEclassIRDI");
 						}
 
 					}
@@ -379,22 +369,25 @@ public class Files2Facts extends IndustryStandards {
 
 			// id is for internal Element goes in InternalElement file
 			if (subject.asNode().getLocalName().contains("InternalElement")) {
-				addSubjectURI(subject, forInternalElements, ":" + predicate.asNode().getLocalName(),
-						number);
+				addSubjectURI(subject, ":" + predicate.asNode().getLocalName(), number,
+						"hasInternalElement");
 			} else {
-				// id is for attribute goes in forAttribute
-				addSubjectURI(subject, forAttribute, ":" + predicate.asNode().getLocalName(),
-						number);
+				// id is for attribute goes in hasAttribute
+				addSubjectURI(subject, ":" + predicate.asNode().getLocalName(), number,
+						"hasAttribute");
 			}
-			// gets the literal ID value and add it to forID
-			addSubjectURI(subject, forID, ":remove" + object.asLiteral().getLexicalForm(), number);
+			// gets the literal ID value and add it to hasID
+			addSubjectURI(subject, ":remove" + object.asLiteral().getLexicalForm(), number,
+					"hasID");
 		}
 	}
 
 	/**
 	 * Add refsemantic in the list
+	 * 
+	 * @throws FileNotFoundException
 	 */
-	private void addRefSemantic() {
+	private void addRefSemantic() throws FileNotFoundException {
 		StmtIterator stmts = model.listStatements(object.asResource(), null, (RDFNode) null);
 		while (stmts.hasNext()) {
 
@@ -403,31 +396,15 @@ public class Files2Facts extends IndustryStandards {
 			// aml:
 			// opcua: tags
 			if (stmte.getObject().isLiteral()) {
-				addSubjectURI(object, forRefSemantic,
-						":remove" + stmte.getObject().asLiteral().getLexicalForm(), number);
+				addSubjectURI(object, ":remove" + stmte.getObject().asLiteral().getLexicalForm(),
+						number, "hasRefSemantic");
 			}
 		}
 	}
 
 	/**
-	 * Initialises data structures
-	 */
-	private void initDataStructs() {
-		forDocument = new LinkedHashSet<>();
-		forAttribute = new LinkedHashSet<>();
-		forID = new LinkedHashSet<>();
-		forRefSemantic = new LinkedHashSet<>();
-		forInternalElements = new LinkedHashSet<>();
-		forRoleClass = new LinkedHashSet<>();
-		foreClassClassificationClass = new LinkedHashSet<>();
-		foreClassIRDI = new LinkedHashSet<>();
-		foreClassVersion = new LinkedHashSet<>();
-		forInterfaceClass = new LinkedHashSet<>();
-		forSystemUnit = new LinkedHashSet<>();
-	}
-
-	/**
 	 * Generate all the files of a given folder
+	 * 
 	 * @throws Exception
 	 */
 	public void generateExtensionalDB(String path) throws Exception {
@@ -443,73 +420,24 @@ public class Files2Facts extends IndustryStandards {
 
 	/**
 	 * Generate PSL predicates
+	 * 
 	 * @param path
 	 * @throws Exception
 	 */
 	public void generatePSLPredicates(String path) throws Exception {
 		int i = 1;
-		initFileWriters();
 		for (File file : files) {
 			// pass in the writers
-			createPSLPredicate(file, i++);
-		}
-		closeFileWriters();
-	}
-
-	/**
-	 * Closes writers
-	 */
-	private void closeFileWriters() {
-		fromDocumentwriter.close();
-		attributeWriter.close();
-		hasRefSemanticwriter.close();
-		hasIDwriter.close();
-		internalElementwriter.close();
-		roleClassWriter.close();
-		hasEclassVersionWriter.close();
-		hasEclassClassificationClassWriter.close();
-		haseClassIRDIWriter.close();
-		InterfaceClass.close();
-		SystemUnit.close();
-	}
-
-	/**
-	 * Initializes File writers
-	 * @throws FileNotFoundException
-	 */
-	private void initFileWriters() throws FileNotFoundException {
-		fileWriters = new ArrayList<File>();
-		printWriters = new ArrayList<PrintWriter>();
-
-		File fileWritersFolder = new File(ConfigManager.getTestDataPath());
-		if (fileWritersFolder.isDirectory()) {
-			for (File pslTestFile : fileWritersFolder.listFiles()) {
-				System.out.println(pslTestFile.getName() + " Files");
-				printWriters.add(new PrintWriter(pslTestFile.getName()));
-			}
+			createPSLPredicate(file, i++, ConfigManager.getStandard());
 		}
 
-		fromDocumentwriter = new PrintWriter(ConfigManager.getTestDataPath() + "fromDocument.txt");
-		attributeWriter = new PrintWriter(ConfigManager.getTestDataPath() + "Attribute.txt");
-		hasRefSemanticwriter = new PrintWriter(ConfigManager.getTestDataPath() + 
-				"hasRefsemantic.txt");
-		hasIDwriter = new PrintWriter(ConfigManager.getTestDataPath() + "hasID.txt");
-		internalElementwriter = new PrintWriter(ConfigManager.getTestDataPath() + 
-				"InternalElements.txt");
-		roleClassWriter = new PrintWriter(ConfigManager.getTestDataPath() + "roleClass.txt");
-		hasEclassVersionWriter = new PrintWriter(ConfigManager.getTestDataPath() + 
-				"hasEclassVersion.txt");
-		hasEclassClassificationClassWriter = new PrintWriter(ConfigManager.getTestDataPath() + 
-				"hasEClassClassificationClass.txt");
-		haseClassIRDIWriter = new PrintWriter(ConfigManager.getTestDataPath() + "hasEClassIRDI.txt");
-		InterfaceClass = new PrintWriter(ConfigManager.getTestDataPath() + "InterfaceClass.txt");
-		SystemUnit = new PrintWriter(ConfigManager.getTestDataPath() + "SystemUnitClass.txt");
 	}
 
 	/**
 	 * Creates temporary files which holds the path for edb.pl and output.txt
 	 * These files are necessary for evalAML.pl so that the path is
 	 * automatically set from config.ttl
+	 * 
 	 * @throws FileNotFoundException
 	 */
 	public void prologFilePath() throws FileNotFoundException {
