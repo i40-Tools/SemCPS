@@ -342,34 +342,32 @@ public class DocumentAligment
 		System.out.println("Precision:(Negative)"+stats.getPrecision(DiscretePredictionStatistics.BinaryClass.NEGATIVE))
 		System.out.println("Recall:(Negative)"+stats.getRecall(DiscretePredictionStatistics.BinaryClass.NEGATIVE))
 
-
-		// Saving result to file
-		def file1
-		if(util.ConfigManager.getExecutionMethod()=="true"){
-
-			file1 = new File(testDir+"Precision/"+"PerciosnWithTrain.txt")
+		// Saving Precision and Recall result to file
+		def resultsFile
+		if(util.ConfigManager.getExecutionMethod() == "true"){
+			resultsFile = new File(testDir + "Precision/" + "PrecisionRecallWithTraining.txt")
 		}
 		else{
-			file1 = new File(testDir+"Precision/"+"PerciosnWithoutTrain.txt")
+			resultsFile = new File(testDir + "Precision/" + "PrecisionRecallWithoutTraining.txt")
 		}
 
-		file1.createNewFile()
-		file1.write("")
-		file1.append("Accuracy:"+stats.getAccuracy()+ '\n')
-		file1.append("Error:"+stats.getError()+ '\n')
-		file1.append("Fmeasure:"+stats.getF1(DiscretePredictionStatistics.BinaryClass.POSITIVE)
+		resultsFile.createNewFile()
+		resultsFile.write("")
+		resultsFile.append("Accuracy:"+stats.getAccuracy()+ '\n')
+		resultsFile.append("Error:"+stats.getError()+ '\n')
+		resultsFile.append("Fmeasure:"+stats.getF1(DiscretePredictionStatistics.BinaryClass.POSITIVE)
 				+ '\n')
-		file1.append("True negative:"+stats.tn+ '\n')
-		file1.append("True Positive:"+stats.tp+ '\n')
-		file1.append("False Positive:"+stats.tp+ '\n')
-		file1.append("False Negative:"+stats.fp+ '\n')
-		file1.append("Precision (Positive):"+stats.getPrecision(DiscretePredictionStatistics.
+		resultsFile.append("True negative:"+stats.tn+ '\n')
+		resultsFile.append("True Positive:"+stats.tp+ '\n')
+		resultsFile.append("False Positive:"+stats.tp+ '\n')
+		resultsFile.append("False Negative:"+stats.fp+ '\n')
+		resultsFile.append("Precision (Positive):"+stats.getPrecision(DiscretePredictionStatistics.
 				BinaryClass.POSITIVE)+ '\n')
-		file1.append("Recall: (Positive)"+stats.getRecall(DiscretePredictionStatistics.
+		resultsFile.append("Recall: (Positive)"+stats.getRecall(DiscretePredictionStatistics.
 				BinaryClass.POSITIVE)+ '\n')
-		file1.append("Precision:(Negative)"+stats.getPrecision(DiscretePredictionStatistics.
+		resultsFile.append("Precision:(Negative)"+stats.getPrecision(DiscretePredictionStatistics.
 				BinaryClass.NEGATIVE)+ '\n')
-		file1.append("Recall:(Negative)"+stats.getRecall(DiscretePredictionStatistics.
+		resultsFile.append("Recall:(Negative)"+stats.getRecall(DiscretePredictionStatistics.
 				BinaryClass.NEGATIVE)+ '\n')
 
 		resultsDB.close()
