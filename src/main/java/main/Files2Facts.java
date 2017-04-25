@@ -161,10 +161,10 @@ public class Files2Facts extends IndustryStandards {
 			object = stmt.getObject();
 
 			buf.append("clause1(")
-					.append(StringUtil.lowerCaseFirstChar(predicate.asNode().getLocalName()))
-					.append("(")
-					.append(StringUtil.lowerCaseFirstChar(subject.asNode().getLocalName()) + number)
-					.append(",");
+			.append(StringUtil.lowerCaseFirstChar(predicate.asNode().getLocalName()))
+			.append("(")
+			.append(StringUtil.lowerCaseFirstChar(subject.asNode().getLocalName()) + number)
+			.append(",");
 			if (object.isURIResource()) {
 				object = model.getResource(object.as(Resource.class).getURI());
 				String objectStr = object.asNode().getLocalName();
@@ -200,20 +200,20 @@ public class Files2Facts extends IndustryStandards {
 	 * @throws Exception
 	 */
 	public String createPSLPredicate(File file, int number, String standard) throws Exception {
-		
+
 		this.number = number;
 		InputStream inputStream = FileManager.get().open(file.getAbsolutePath());
 		model = ModelFactory.createDefaultModel();
 		model.read(new InputStreamReader(inputStream), null, "TURTLE");
 		StmtIterator iterator = model.listStatements();
 		subjectsToWrite = new LinkedHashSet<String>();
-		
+
 		switch (standard) {
 
 		case "aml":
 
 			while (iterator.hasNext()) {
-				
+
 				Statement stmt = iterator.nextStatement();
 				subject = stmt.getSubject();
 				predicate = stmt.getPredicate();
@@ -235,7 +235,8 @@ public class Files2Facts extends IndustryStandards {
 	}
 
 	/**
-	 * Writes data to files
+	 * Reads RDF files with Standards data and create PSL files with this content
+	 * The name of the files match with the list without repetition of RDF predicates 
 	 * 
 	 * @param collection
 	 * @param documentwriter
@@ -243,15 +244,13 @@ public class Files2Facts extends IndustryStandards {
 	 */
 	private void writeData() throws FileNotFoundException {
 
-		Set<String> keys = generic.keySet();// gets all predicates
+		Set<String> predicates = generic.keySet(); // gets predicates to name the data files
 
-		for (String i : keys) {
-			// same name of files as predicates
-			documentwriter = new PrintWriter(
-					ConfigManager.getFilePath() + "PSL/test/" + i + ".txt");
+		for (String i : predicates) {
+			// name files as predicates
+			documentwriter = new PrintWriter(ConfigManager.getFilePath() + "PSL/test/" + i + ".txt");
 
-			Collection<String> values = generic.get(i);// for every predicate
-														// get its value
+			Collection<String> values = generic.get(i);// for every predicate get its value
 			for (String val : values) {
 				// remove annotation to make it a literal value
 				if (val.contains("aml:remove")) {
@@ -263,7 +262,6 @@ public class Files2Facts extends IndustryStandards {
 				documentwriter.println(val);
 			}
 			documentwriter.close();
-
 		}
 	}
 
@@ -423,7 +421,6 @@ public class Files2Facts extends IndustryStandards {
 			// pass in the writers
 			createPSLPredicate(file, i++, ConfigManager.getStandard());
 		}
-
 	}
 
 	/**
