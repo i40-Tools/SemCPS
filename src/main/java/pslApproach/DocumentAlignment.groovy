@@ -50,7 +50,7 @@ public class DocumentAligment
 
 	public static void main(String[] args)
 	{
-		DocumentAligment docAlign = new DocumentAligment()
+		DocumentAligment docAlign  =  new DocumentAligment()
 		docAlign.execute()
 	}
 
@@ -67,18 +67,18 @@ public class DocumentAligment
 
 	public void execute()
 	{
-		DocumentAligment documentAligment = new DocumentAligment()
+		DocumentAligment documentAligment  =  new DocumentAligment()
 		documentAligment.run()
 	}
 
 	public void config()
 	{
-		cm = ConfigManager.getManager()
-		config = cm.getBundle("document-alignment")
-		def defaultPath = System.getProperty("java.io.tmpdir")
-		String dbpath = config.getString("dbpath", defaultPath + File.separator + "document-alignment")
-		data = new RDBMSDataStore(new H2DatabaseDriver(Type.Disk, dbpath, true), config)
-		model = new PSLModel(this, data)
+		cm  =  ConfigManager.getManager()
+		config  =  cm.getBundle("document-alignment")
+		def defaultPath  =  System.getProperty("java.io.tmpdir")
+		String dbpath  =  config.getString("dbpath", defaultPath  +  File.separator  +  "document-alignment")
+		data  =  new RDBMSDataStore(new H2DatabaseDriver(Type.Disk, dbpath, true), config)
+		model  =  new PSLModel(this, data)
 	}
 
 	/**
@@ -187,92 +187,96 @@ public class DocumentAligment
 	 */
 	public void setUpData()
 	{
-		GroundTerm classID = data.getUniqueID("class")
+		GroundTerm classID  =  data.getUniqueID("class")
 
 		/* Loads data */
-		dir = 'data' + java.io.File.separator + 'document' + java.io.File.separator
+		dir  =  'data'  +  java.io.File.separator  +  'document'  +  java.io.File.separator
 
 		/////////////////////////// train setup //////////////////////////////////
 
-		testDir = util.ConfigManager.getFilePath()+"PSL/test/"
-		trainDir = util.ConfigManager.getFilePath()+"PSL/train/"
+		testDir  =  util.ConfigManager.getFilePath() + "PSL/test/"
+		trainDir  =  util.ConfigManager.getFilePath() + "PSL/train/"
 
-		Partition trainObservations = new Partition(0)
-		Partition trainPredictions = new Partition(1)
-		Partition truth = new Partition(2)
+		Partition trainObservations  =  new Partition(0)
+		Partition trainPredictions  =  new Partition(1)
+		Partition truth  =  new Partition(2)
 
-		if(util.ConfigManager.getExecutionMethod()=="true"){
+		if(util.ConfigManager.getExecutionMethod() == "true"){
 
-			createGoldStandard(trainDir +"similar.txt")
+			createFiles(trainDir  + "similar.txt")
 
-			for (Predicate p : [hasDocument, hasAttribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasEClassIRDI, hasRoleClass, hasInternalElement, hasSystemUnitClass, hasInterfaceClass]){
+			for (Predicate p : [hasDocument, hasAttribute, hasRefSemantic, 
+				hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, 
+				hasEClassIRDI, hasRoleClass, hasInternalElement, hasSystemUnitClass, 
+				hasInterfaceClass]){
+					
+					createFiles(trainDir  +  p.getName().toLowerCase() +  ".txt")
+					
+			
 
-				def file1 = new File(trainDir + p.getName().toLowerCase()+ ".txt")
-				if(!file1.exists()){
-					file1.createNewFile()
-				}
-
-
-				def insert = data.getInserter(p, trainObservations)
-				InserterUtils.loadDelimitedData(insert, trainDir + p.getName().toLowerCase() + ".txt")
+				def insert  =  data.getInserter(p, trainObservations)
+				InserterUtils.loadDelimitedData(insert, trainDir  +  p.getName().toLowerCase()  +  ".txt")
 
 
 			}
 
 
-			def insert = data.getInserter(similar, truth)
-			InserterUtils.loadDelimitedDataTruth(insert, trainDir + "similar.txt")
+			def insert  =  data.getInserter(similar, truth)
+			InserterUtils.loadDelimitedDataTruth(insert, trainDir  +  "similar.txt")
 
-			trainDB = data.getDatabase(trainPredictions, [hasDocument, hasAttribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasEClassIRDI, hasRoleClass, hasInternalElement, hasSystemUnitClass, hasInterfaceClass]as Set, trainObservations)
+			trainDB  =  data.getDatabase(trainPredictions, [hasDocument, hasAttribute, hasRefSemantic, 
+			hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasEClassIRDI, 
+			hasRoleClass, hasInternalElement, hasSystemUnitClass, hasInterfaceClass]
+			as Set, trainObservations)
+			
 			populateSimilar(trainDB)
-			truthDB = data.getDatabase(truth, [similar] as Set)
+			truthDB  =  data.getDatabase(truth, [similar] as Set)
 
-			println "before train"+ model
+			println "before train" +  model
 
 			println "LEARNING WEIGHTS..."
-			MaxLikelihoodMPE weightLearning = new MaxLikelihoodMPE(model, trainDB, truthDB, config)
+			MaxLikelihoodMPE weightLearning  =  new MaxLikelihoodMPE(model, trainDB, truthDB, config)
 			weightLearning.learn()
 			weightLearning.close()
 			println "LEARNING WEIGHTS DONE"
-			println "after train"+ model
+			println "after train" +  model
 
 		}
 
 		/////////////////////////// test setup //////////////////////////////////
 
-		Partition testObservations = new Partition(3)
-		Partition testPredictions = new Partition(4)
+		Partition testObservations  =  new Partition(3)
+		Partition testPredictions  =  new Partition(4)
+
+		for (Predicate p : [hasDocument, hasAttribute, hasRefSemantic, hasID, hasInternalLink, 
+		hasEClassVersion, hasEClassClassificationClass, hasEClassIRDI, hasRoleClass, 
+		hasInternalElement, hasSystemUnitClass, hasInterfaceClass])
+		{
+			createFiles(testDir  +  p.getName().toLowerCase() +  ".txt")			
+		}
+		createFiles(testDir  +  "similar.txt")
+		createFiles(testDir  +  "GoldStandard.txt")
+		createFiles(testDir  +  "similarwithConfidence.txt")
 
 		for (Predicate p : [hasDocument, hasAttribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasEClassIRDI, hasRoleClass, hasInternalElement, hasSystemUnitClass, hasInterfaceClass])
 		{
-			def file1 = new File(testDir + p.getName().toLowerCase()+ ".txt")
-			if(!file1.exists()){
-				file1.createNewFile()
-			}
-		}
-		createGoldStandard(testDir +"similar.txt")
-		createGoldStandard(testDir +"GoldStandard.txt")
-		createGoldStandard(testDir +"similarwithConfidence.txt")
+			def insert  =  data.getInserter(p, testObservations)
 
-		for (Predicate p : [hasDocument, hasAttribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasEClassIRDI, hasRoleClass, hasInternalElement, hasSystemUnitClass, hasInterfaceClass])
-		{
-			def insert = data.getInserter(p, testObservations)
-
-			InserterUtils.loadDelimitedData(insert, testDir + p.getName().toLowerCase() + ".txt")
+			InserterUtils.loadDelimitedData(insert, testDir  +  p.getName().toLowerCase()  +  ".txt")
 
 		}
 
-		testDB = data.getDatabase(testPredictions, [hasDocument, hasAttribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasRoleClass, hasEClassIRDI, hasInternalElement, hasSystemUnitClass, hasInterfaceClass
+		testDB  =  data.getDatabase(testPredictions, [hasDocument, hasAttribute, hasRefSemantic, hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasRoleClass, hasEClassIRDI, hasInternalElement, hasSystemUnitClass, hasInterfaceClass
 		] as Set, testObservations)
 
 		populateSimilar(testDB)
 	}
 
-	public void createGoldStandard(String testDir){
+	public void createFiles(String testDir){
 
-		def file1 = new File(testDir)
-		if(!file1.exists()){
-			file1.createNewFile()
+		def dataFile  =  new File(testDir)
+		if(!dataFile.exists()){
+			dataFile.createNewFile()
 		}
 	}
 
@@ -280,30 +284,30 @@ public class DocumentAligment
 		/////////////////////////// test inference //////////////////////////////////
 		println "INFERRING..."
 
-		MPEInference inference = new MPEInference(model, testDB, config)
+		MPEInference inference  =  new MPEInference(model, testDB, config)
 		inference.mpeInference()
 		inference.close()
 
 		println "INFERENCE DONE"
-		def file1 = new File(testDir + 'similar.txt')
-		file1.write('')
-		def file2 = new File(testDir + 'similarwithConfidence.txt')
-		file2.write('')
-		DecimalFormat formatter = new DecimalFormat("#.##")
+		def matchResult  =  new File(testDir  +  'similar.txt')
+		matchResult.write('')
+		def resultConfidence  =  new File(testDir  +  'similarwithConfidence.txt')
+		resultConfidence.write('')
+		DecimalFormat formatter  =  new DecimalFormat("#.##")
 		for (GroundAtom atom : Queries.getAllAtoms(testDB, similar)){
-			println atom.toString() + ": " + formatter.format(atom.getValue())
+			println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 			// only writes if its equal to 1 or u can set the threshold
 			if(formatter.format(atom.getValue())>"0.3"){
 				println 'matches threshold writing to similar.txt'
 				// converting to format for evaluation
-				String result = atom.toString().replaceAll("SIMILAR","")
-				result = result.replaceAll("[()]","")
-				String[] text = result.split(",")
-				result= text[0] + "\t" + text[1]
-				String result2 = text[0] + "\t" + text[1] + " " + atom.getValue()
+				String result  =  atom.toString().replaceAll("SIMILAR","")
+				result  =  result.replaceAll("[()]","")
+				String[] text  =  result.split(",")
+				result =  text[0]  +  "\t"  +  text[1]
+				String result2  =  text[0]  +  "\t"  +  text[1]  +  " "  +  atom.getValue()
 
-				file1.append(result + '\n')
-				file2.append(result2 + '\n')
+				matchResult.append(result  +  '\n')
+				resultConfidence.append(result2  +  '\n')
 			}
 		}
 	}
@@ -313,62 +317,63 @@ public class DocumentAligment
 	 * Evaluates the results of inference versus expected truth values
 	 */
 	private void evalResults(Partition targetsPartition, Partition truthPartition) {
-		targetsPartition = new Partition(5)
-		truthPartition = new Partition(6)
+		targetsPartition  =  new Partition(5)
+		truthPartition  =  new Partition(6)
 
-		def insert = data.getInserter(eval, targetsPartition)
-		InserterUtils.loadDelimitedData(insert, testDir + "GoldStandard.txt")
+		def insert  =  data.getInserter(eval, targetsPartition)
+		InserterUtils.loadDelimitedData(insert, testDir  +  "GoldStandard.txt")
 
-		insert = data.getInserter(eval, truthPartition)
-		InserterUtils.loadDelimitedData(insert, testDir + "similar.txt")
+		insert  =  data.getInserter(eval, truthPartition)
+		InserterUtils.loadDelimitedData(insert, testDir  +  "similar.txt")
 
-		Database resultsDB = data.getDatabase(targetsPartition, [eval] as Set)
-		Database truthDB = data.getDatabase(truthPartition, [eval] as Set)
-		DiscretePredictionComparator dpc = new DiscretePredictionComparator(resultsDB)
+		Database resultsDB  =  data.getDatabase(targetsPartition, [eval] as Set)
+		Database truthDB  =  data.getDatabase(truthPartition, [eval] as Set)
+		DiscretePredictionComparator dpc  =  new DiscretePredictionComparator(resultsDB)
 		dpc.setBaseline(truthDB)
-		DiscretePredictionStatistics stats = dpc.compare(eval)
+		DiscretePredictionStatistics stats  =  dpc.compare(eval)
 
 
-		System.out.println("Accuracy:"+stats.getAccuracy())
-		System.out.println("Error:"+stats.getError())
-		System.out.println("Fmeasure:"+stats.getF1(DiscretePredictionStatistics.BinaryClass.POSITIVE))
-		System.out.println("True negative:"+stats.tn)
-		System.out.println("True Positive:"+stats.tp)
-		System.out.println("False Positive:"+stats.tp)
-		System.out.println("False Negative:"+stats.fp)
+		System.out.println("Accuracy:" + stats.getAccuracy())
+		System.out.println("Error:" + stats.getError())
+		System.out.println("Fmeasure:" + stats.getF1(DiscretePredictionStatistics.BinaryClass.POSITIVE))
+		System.out.println("True negative:" + stats.tn)
+		System.out.println("True Positive:" + stats.tp)
+		System.out.println("False Positive:" + stats.tp)
+		System.out.println("False Negative:" + stats.fp)
 
-		System.out.println("Precision (Positive):"+stats.getPrecision(DiscretePredictionStatistics.BinaryClass.POSITIVE))
-		System.out.println("Recall: (Positive)"+stats.getRecall(DiscretePredictionStatistics.BinaryClass.POSITIVE))
-		System.out.println("Precision:(Negative)"+stats.getPrecision(DiscretePredictionStatistics.BinaryClass.NEGATIVE))
-		System.out.println("Recall:(Negative)"+stats.getRecall(DiscretePredictionStatistics.BinaryClass.NEGATIVE))
+		System.out.println("Precision (Positive):" + stats.getPrecision(DiscretePredictionStatistics.BinaryClass.POSITIVE))
+		System.out.println("Recall: (Positive)" + stats.getRecall(DiscretePredictionStatistics.BinaryClass.POSITIVE))
+		System.out.println("Precision:(Negative)" + stats.getPrecision(DiscretePredictionStatistics.BinaryClass.NEGATIVE))
+		System.out.println("Recall:(Negative)" + stats.getRecall(DiscretePredictionStatistics.BinaryClass.NEGATIVE))
 
 		// Saving Precision and Recall result to file
 		def resultsFile
-		if(util.ConfigManager.getExecutionMethod() == "true"){
-			resultsFile = new File(testDir + "Precision/" + "PrecisionRecallWithTraining.txt")
+		
+		if(util.ConfigManager.getExecutionMethod()  ==  "true"){
+			resultsFile  =  new File(testDir + "Precision/" + "PrecisionRecallWithTraining.txt")
 		}
 		else{
-			resultsFile = new File(testDir + "Precision/" + "PrecisionRecallWithoutTraining.txt")
+			resultsFile  =  new File(testDir + "Precision/" + "PrecisionRecallWithoutTraining.txt")
 		}
 
 		resultsFile.createNewFile()
 		resultsFile.write("")
-		resultsFile.append("Accuracy:"+stats.getAccuracy()+ '\n')
-		resultsFile.append("Error:"+stats.getError()+ '\n')
-		resultsFile.append("Fmeasure:"+stats.getF1(DiscretePredictionStatistics.BinaryClass.POSITIVE)
-				+ '\n')
-		resultsFile.append("True negative:"+stats.tn+ '\n')
-		resultsFile.append("True Positive:"+stats.tp+ '\n')
-		resultsFile.append("False Positive:"+stats.tp+ '\n')
-		resultsFile.append("False Negative:"+stats.fp+ '\n')
-		resultsFile.append("Precision (Positive):"+stats.getPrecision(DiscretePredictionStatistics.
-				BinaryClass.POSITIVE)+ '\n')
-		resultsFile.append("Recall: (Positive)"+stats.getRecall(DiscretePredictionStatistics.
-				BinaryClass.POSITIVE)+ '\n')
-		resultsFile.append("Precision:(Negative)"+stats.getPrecision(DiscretePredictionStatistics.
-				BinaryClass.NEGATIVE)+ '\n')
-		resultsFile.append("Recall:(Negative)"+stats.getRecall(DiscretePredictionStatistics.
-				BinaryClass.NEGATIVE)+ '\n')
+		resultsFile.append("Accuracy:" + stats.getAccuracy() + '\n')
+		resultsFile.append("Error:" + stats.getError() + '\n')
+		resultsFile.append("Fmeasure:" + stats.getF1(DiscretePredictionStatistics.BinaryClass.POSITIVE)
+				 +  '\n')
+		resultsFile.append("True negative:" + stats.tn + '\n')
+		resultsFile.append("True Positive:" + stats.tp + '\n')
+		resultsFile.append("False Positive:" + stats.tp + '\n')
+		resultsFile.append("False Negative:" + stats.fp + '\n')
+		resultsFile.append("Precision (Positive):" + stats.getPrecision(DiscretePredictionStatistics.
+				BinaryClass.POSITIVE) +  '\n')
+		resultsFile.append("Recall: (Positive)" + stats.getRecall(DiscretePredictionStatistics.
+				BinaryClass.POSITIVE) + '\n')
+		resultsFile.append("Precision:(Negative)" + stats.getPrecision(DiscretePredictionStatistics.
+				BinaryClass.NEGATIVE) + '\n')
+		resultsFile.append("Recall:(Negative)" + stats.getRecall(DiscretePredictionStatistics.
+				BinaryClass.NEGATIVE) + '\n')
 
 		resultsDB.close()
 		truthDB.close()
@@ -383,9 +388,9 @@ public class DocumentAligment
 	 */
 	void populateSimilar(Database db) {
 		/* Collects the ontology concepts */
-		Set<GroundAtom> concepts = Queries.getAllAtoms(db, hasDocument)
-		Set<GroundTerm> o1 = new HashSet<GroundTerm>()
-		Set<GroundTerm> o2 = new HashSet<GroundTerm>()
+		Set<GroundAtom> concepts  =  Queries.getAllAtoms(db, hasDocument)
+		Set<GroundTerm> o1  =  new HashSet<GroundTerm>()
+		Set<GroundTerm> o2  =  new HashSet<GroundTerm>()
 		for (GroundAtom atom : concepts) {
 			if (atom.getArguments()[1].toString().equals("aml1"))
 				o1.add(atom.getArguments()[0])
