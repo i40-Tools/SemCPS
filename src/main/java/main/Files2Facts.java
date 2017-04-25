@@ -30,7 +30,7 @@ import util.ConfigManager;
 import util.StringUtil;
 
 /**
- * Reads the RDF files and convert them to Datalog facts or to PSL facts
+ * Reads the RDF files and convert them to Datalog or to PSL facts
  * 
  * @author Irlan 28.06.2016
  */
@@ -72,7 +72,6 @@ public class Files2Facts extends IndustryStandards {
 
 	/**
 	 * Read the RDF files of a given path
-	 * 
 	 * @param path
 	 * @return
 	 * @throws Exception
@@ -181,13 +180,11 @@ public class Files2Facts extends IndustryStandards {
 
 				} else {
 					buf.append(object);
-
 				}
 			}
 
 			buf.append("),true).");
 			buf.append(System.getProperty("line.separator"));
-
 		}
 
 		return buf.toString();
@@ -198,25 +195,25 @@ public class Files2Facts extends IndustryStandards {
 	 * 
 	 * @param file
 	 * @param number
+	 * @param standard
 	 * @return
 	 * @throws Exception
 	 */
 	public String createPSLPredicate(File file, int number, String standard) throws Exception {
-
+		
+		this.number = number;
+		InputStream inputStream = FileManager.get().open(file.getAbsolutePath());
+		model = ModelFactory.createDefaultModel();
+		model.read(new InputStreamReader(inputStream), null, "TURTLE");
+		StmtIterator iterator = model.listStatements();
+		subjectsToWrite = new LinkedHashSet<String>();
+		
 		switch (standard) {
 
 		case "aml":
 
-			this.number = number;
-			InputStream inputStream = FileManager.get().open(file.getAbsolutePath());
-			model = ModelFactory.createDefaultModel();
-			model.read(new InputStreamReader(inputStream), null, "TURTLE");
-			StmtIterator iterator = model.listStatements();
-
-			subjectsToWrite = new LinkedHashSet<String>();
-
 			while (iterator.hasNext()) {
-
+				
 				Statement stmt = iterator.nextStatement();
 				subject = stmt.getSubject();
 				predicate = stmt.getPredicate();
@@ -224,20 +221,15 @@ public class Files2Facts extends IndustryStandards {
 
 				if (predicate.asNode().getLocalName().toString().equals("type")) {
 					subjectsToWrite.add(object.asNode().getLocalName());
-
 				}
-
 				// all subjects are added according to ontology e.g aml
-				// hasDocument.txt
 				addSubjectURI(subject, "", number, "hasDocument");
-
 				addsDataforAML(number); // process required data for AML
 			}
 
 			// case "opcua":
 
 			writeData();
-
 		}
 		return "";
 	}
