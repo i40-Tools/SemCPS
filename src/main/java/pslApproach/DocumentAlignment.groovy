@@ -314,24 +314,24 @@ public class DocumentAligment
 		truthPartition  =  new Partition(6)
 
 		def insert  =  data.getInserter(eval, targetsPartition)
-		InserterUtils.loadDelimitedData(insert, testDir  +  "GoldStandard.txt")
+		InserterUtils.loadDelimitedData(insert, testDir + "GoldStandard.txt")
 
 		insert  =  data.getInserter(eval, truthPartition)
-		InserterUtils.loadDelimitedData(insert, testDir  +  "similar.txt")
+		InserterUtils.loadDelimitedData(insert, testDir + "similar.txt")
 
-		Database resultsDB  =  data.getDatabase(targetsPartition, [eval] as Set)
-		Database truthDB  =  data.getDatabase(truthPartition, [eval] as Set)
-		DiscretePredictionComparator dpc  =  new DiscretePredictionComparator(resultsDB)
+		Database resultsDB = data.getDatabase(targetsPartition, [eval] as Set)
+		Database truthDB = data.getDatabase(truthPartition, [eval] as Set)
+		DiscretePredictionComparator dpc = new DiscretePredictionComparator(resultsDB)
 		dpc.setBaseline(truthDB)
-		DiscretePredictionStatistics stats  =  dpc.compare(eval)
+		DiscretePredictionStatistics stats = dpc.compare(eval)
 
 		System.out.println("Accuracy:" + stats.getAccuracy())
 		System.out.println("Error:" + stats.getError())
 		System.out.println("Fmeasure:" + stats.getF1(DiscretePredictionStatistics.BinaryClass.POSITIVE))
-		System.out.println("True negative:" + stats.tn)
 		System.out.println("True Positive:" + stats.tp)
-		System.out.println("False Positive:" + stats.tp)
-		System.out.println("False Negative:" + stats.fp)
+		System.out.println("True Negative:" + stats.tn)
+		System.out.println("False Positive:" + stats.fp)
+		System.out.println("False Negative:" + stats.fn)
 
 		System.out.println("Precision (Positive):" + stats.getPrecision(DiscretePredictionStatistics.BinaryClass.POSITIVE))
 		System.out.println("Recall: (Positive)" + stats.getRecall(DiscretePredictionStatistics.BinaryClass.POSITIVE))
@@ -341,11 +341,11 @@ public class DocumentAligment
 		// Saving Precision and Recall results to file
 		def resultsFile
 		
-		if(util.ConfigManager.getExecutionMethod()  ==  "true"){
-			resultsFile  =  new File(testDir + "Precision/" + "PrecisionRecallWithTraining.txt")
+		if(util.ConfigManager.getExecutionMethod() == "true"){
+			resultsFile = new File(testDir + "Precision/" + "PrecisionRecallWithTraining.txt")
 		}
 		else{
-			resultsFile  =  new File(testDir + "Precision/" + "PrecisionRecallWithoutTraining.txt")
+			resultsFile = new File(testDir + "Precision/" + "PrecisionRecallWithoutTraining.txt")
 		}
 
 		resultsFile.createNewFile()
@@ -354,10 +354,11 @@ public class DocumentAligment
 		resultsFile.append("Error:" + stats.getError() + '\n')
 		resultsFile.append("Fmeasure:" + stats.getF1(DiscretePredictionStatistics.BinaryClass.POSITIVE)
 				 +  '\n')
-		resultsFile.append("True negative:" + stats.tn + '\n')
 		resultsFile.append("True Positive:" + stats.tp + '\n')
+		resultsFile.append("True Negative:" + stats.tn + '\n')
 		resultsFile.append("False Positive:" + stats.fp + '\n')
 		resultsFile.append("False Negative:" + stats.fn + '\n')
+		
 		resultsFile.append("Precision (Positive):" + stats.getPrecision(DiscretePredictionStatistics.
 				BinaryClass.POSITIVE) +  '\n')
 		resultsFile.append("Recall: (Positive)" + stats.getRecall(DiscretePredictionStatistics.
