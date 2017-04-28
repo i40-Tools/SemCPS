@@ -62,7 +62,7 @@ public class DocumentAligment
 		defineRules()
 		setUpData()
 		runInference()
-		evalResults(targetsPartition, truthPartition)
+		evalResults()
 	}
 
 	public void execute()
@@ -76,7 +76,7 @@ public class DocumentAligment
 		cm  =  ConfigManager.getManager()
 		config  =  cm.getBundle("document-alignment")
 		def defaultPath  =  System.getProperty("java.io.tmpdir")
-		String dbpath  =  config.getString("dbpath", defaultPath  +  File.separator  +  "document-alignment")
+		String dbpath  =  config.getString("dbpath", defaultPath  +  File.separator +  "document-alignment")
 		data  =  new RDBMSDataStore(new H2DatabaseDriver(Type.Disk, dbpath, true), config)
 		model  =  new PSLModel(this, data)
 	}
@@ -296,16 +296,16 @@ public class DocumentAligment
 		DecimalFormat formatter  =  new DecimalFormat("#.##")
 		for (GroundAtom atom : Queries.getAllAtoms(testDB, similar)){
 			println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
-			// only writes if its equal to 1 or u can set the threshold
+
+		// only writes if its equal to 1 or u can set the threshold
 			if(formatter.format(atom.getValue())>"0.3"){
 				println 'matches threshold writing to similar.txt'
 				// converting to format for evaluation
 				String result  =  atom.toString().replaceAll("SIMILAR","")
 				result  =  result.replaceAll("[()]","")
 				String[] text  =  result.split(",")
-				result =  text[0]  +  "\t"  +  text[1]
-				String result2  =  text[0]  +  "\t"  +  text[1]  +  " "  +  atom.getValue()
-
+				result =  text[0]  +  "\t"  +  text[1] +  "\t" + "1"
+				String result2  =  text[0]  +  "\t"  +  text[1]  + " " + atom.getValue()
 				matchResult.append(result  +  '\n')
 				resultConfidence.append(result2  +  '\n')
 			}
@@ -316,15 +316,15 @@ public class DocumentAligment
 	/**
 	 * Evaluates the results of inference versus expected truth values
 	 */
-	private void evalResults(Partition targetsPartition, Partition truthPartition) {
+	public void evalResults() {
 		targetsPartition  =  new Partition(5)
 		truthPartition  =  new Partition(6)
 
 		def insert  =  data.getInserter(eval, targetsPartition)
-		InserterUtils.loadDelimitedData(insert, testDir  +  "GoldStandard.txt")
+		InserterUtils.loadDelimitedDataTruth(insert, testDir  +  "similar.txt")
 
 		insert  =  data.getInserter(eval, truthPartition)
-		InserterUtils.loadDelimitedData(insert, testDir  +  "similar.txt")
+		InserterUtils.loadDelimitedDataTruth(insert, testDir  +  "GoldStandard.txt")
 
 		Database resultsDB  =  data.getDatabase(targetsPartition, [eval] as Set)
 		Database truthDB  =  data.getDatabase(truthPartition, [eval] as Set)
@@ -338,8 +338,8 @@ public class DocumentAligment
 		System.out.println("Fmeasure:" + stats.getF1(DiscretePredictionStatistics.BinaryClass.POSITIVE))
 		System.out.println("True negative:" + stats.tn)
 		System.out.println("True Positive:" + stats.tp)
-		System.out.println("False Positive:" + stats.tp)
-		System.out.println("False Negative:" + stats.fp)
+		System.out.println("False Positive:" + stats.fp)
+		System.out.println("False Negative:" + stats.fn)
 
 		System.out.println("Precision (Positive):" + stats.getPrecision(DiscretePredictionStatistics.BinaryClass.POSITIVE))
 		System.out.println("Recall: (Positive)" + stats.getRecall(DiscretePredictionStatistics.BinaryClass.POSITIVE))
@@ -364,8 +364,8 @@ public class DocumentAligment
 				 +  '\n')
 		resultsFile.append("True negative:" + stats.tn + '\n')
 		resultsFile.append("True Positive:" + stats.tp + '\n')
-		resultsFile.append("False Positive:" + stats.tp + '\n')
-		resultsFile.append("False Negative:" + stats.fp + '\n')
+		resultsFile.append("False Positive:" + stats.fp + '\n')
+		resultsFile.append("False Negative:" + stats.fn + '\n')
 		resultsFile.append("Precision (Positive):" + stats.getPrecision(DiscretePredictionStatistics.
 				BinaryClass.POSITIVE) +  '\n')
 		resultsFile.append("Recall: (Positive)" + stats.getRecall(DiscretePredictionStatistics.

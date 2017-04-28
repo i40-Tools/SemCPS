@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory
  *
  * @author Jay Pujara <jay@cs.umd.edu>
  */
+
 public class EasyLP
 {
 	private static final String PARTITION_OBSERVATIONS = "observations"
@@ -53,7 +54,7 @@ public class EasyLP
 
 			this.experimentName = cb.getString('experiment.name', 'default')
 			this.dbPath = cb.getString('experiment.dbpath', '/tmp')
-			this.dataPath = cb.getString('experiment.data.path', 'data/document/test')
+			this.dataPath = cb.getString('experiment.data.path', util.ConfigManager.getFilePath()+"PSL/test/")
 			this.outputPath = cb.getString('experiment.output.outputdir', Paths.get('data', this.experimentName).toString())
 		}
 	}
@@ -68,22 +69,25 @@ public class EasyLP
 
 		log = LoggerFactory.getLogger(this.class)
 		config = new PSLConfig(cb)
-		ds = new RDBMSDataStore(new H2DatabaseDriver(Type.Disk, Paths.get(config.dbPath, 'easylp').toString(), true), cb)
+		ds = new RDBMSDataStore(new H2DatabaseDriver(Type.Disk, Paths.get(config.dbPath, 'easylp').
+			toString(), true), cb)
 		model = new PSLModel(this, ds)
 
 
 		model.add predicate: "eval2", types: [ConstantType.UniqueID, ConstantType.UniqueID]
 
 
-
-		Partition targetsPartition = ds.getPartition("targets")
-		Partition truthPartition = ds.getPartition("truth")
+		Partition truthPartition = ds.getPartition("truthss")
+		
+		Partition targetsPartition = ds.getPartition("t")
 
 		def	inserter = ds.getInserter(eval2, targetsPartition)
-		InserterUtils.loadDelimitedData(inserter, Paths.get(config.dataPath, "similar.txt").toString())
+		InserterUtils.loadDelimitedDataTruth(inserter, Paths.get
+			(config.dataPath, "similar.txt").toString())
 
 		inserter = ds.getInserter(eval2, truthPartition)
-		InserterUtils.loadDelimitedDataTruth(inserter, Paths.get(config.dataPath, "GoldStandard.txt").toString())
+		InserterUtils.loadDelimitedDataTruth(inserter, Paths.get
+			(config.dataPath, "GoldStandard.txt").toString())
 
 
 		Database resultsDB = ds.getDatabase(targetsPartition, [eval2] as Set)
@@ -99,16 +103,21 @@ public class EasyLP
 		log.info("Accuracy {}, Error {}",stats.getAccuracy(), stats.getError())
 		System.out.println("Accuracy:"+stats.getAccuracy())
 		System.out.println("Error:"+stats.getError()+mse)
-		System.out.println("Fmeasure:"+stats.getF1(DiscretePredictionStatistics.BinaryClass.POSITIVE))
+		System.out.println("Fmeasure:"+stats.getF1
+			(DiscretePredictionStatistics.BinaryClass.POSITIVE))
 		System.out.println("True negative:"+stats.tn)
 		System.out.println("True Positive:"+stats.tp)
 		System.out.println("False Positive:"+stats.fp)
 		System.out.println("False Negative:"+stats.fn)
 
-		System.out.println("Precision (Positive):"+stats.getPrecision(DiscretePredictionStatistics.BinaryClass.POSITIVE))
-		System.out.println("Recall: (Positive)"+stats.getRecall(DiscretePredictionStatistics.BinaryClass.POSITIVE))
-		System.out.println("Precision:(Negative)"+stats.getPrecision(DiscretePredictionStatistics.BinaryClass.NEGATIVE))
-		System.out.println("Recall:(Negative)"+stats.getRecall(DiscretePredictionStatistics.BinaryClass.NEGATIVE))
+		System.out.println("Precision (Positive):"+stats.getPrecision
+			(DiscretePredictionStatistics.BinaryClass.POSITIVE))
+		System.out.println("Recall: (Positive)"+stats.getRecall
+			(DiscretePredictionStatistics.BinaryClass.POSITIVE))
+		System.out.println("Precision:(Negative)"+stats.getPrecision
+			(DiscretePredictionStatistics.BinaryClass.NEGATIVE))
+		System.out.println("Recall:(Negative)"+stats.getRecall
+			(DiscretePredictionStatistics.BinaryClass.NEGATIVE))
 
 		resultsDB.close()
 		truthDB.close()
