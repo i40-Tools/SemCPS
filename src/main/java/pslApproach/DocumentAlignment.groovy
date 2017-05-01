@@ -336,6 +336,20 @@ public class DocumentAligment
 				matchResult.append(result  +  '\n')
 				resultConfidence.append(result2  +  '\n')
 			}
+			else{
+
+				println 'matches threshold writing to similar.txt'
+				// converting to format for evaluation
+				String result  =  atom.toString().replaceAll("SIMILAR","")
+				result  =  result.replaceAll("[()]","")
+				String[] text  =  result.split(",")
+				result =  text[0]  +  "\t"  +  text[1] +  "\t" + "0"
+				String result2  =  text[0]  +  "\t"  +  text[1]  + " " + atom.getValue()
+				matchResult.append(result  +  '\n')
+				resultConfidence.append(result2  +  '\n')
+								
+			}
+			
 		}
 	}
 
