@@ -265,6 +265,15 @@ public class Files2Facts extends IndustryStandards {
 		}
 	}
 
+	boolean checkEclass(RDFNode object){
+		if (object.asLiteral().getLexicalForm().equals("eClassClassificationClass")
+				|| object.asLiteral().getLexicalForm().equals("eClassVersion")
+				|| object.asLiteral().getLexicalForm().equals("eClassIRDI")) {
+		return true;
+		}
+		return false;
+	}
+	
 	/**
 	 * Gets the class of object.
 	 * 
@@ -284,6 +293,20 @@ public class Files2Facts extends IndustryStandards {
 		return type;
 	}
 
+	public void addGenericObject(String firstPredicate,String secondPredicate ) throws FileNotFoundException{
+		
+		if (predicate.asNode().getLocalName().equals(firstPredicate)) {
+
+			// adds for attribute
+			addSubjectURI(subject, ":" + object.asNode().getLocalName(), number,
+					"has" + getType(subject));
+
+			// adds for refsemantic.txt
+			addGenericValue(predicate.asNode().getLocalName(),secondPredicate);
+		}
+
+	}
+	
 	/**
 	 * Automation ML part for data population
 	 * 
@@ -292,6 +315,41 @@ public class Files2Facts extends IndustryStandards {
 	private void addsDataforAML(int number) throws FileNotFoundException {
 		// RefSemantic part starts here
 
+		if (predicate.asNode().getLocalName().equals("hasAttributeName")) {
+			if (!checkEclass(object)) {
+
+			// gets all classes which hasAttribute relation
+			addSubjectURI(subject, ":" +predicate.asNode().getLocalName() , number,
+					"has" + getType(subject));
+
+
+			addSubjectURI(subject, ":remove" +object.asLiteral().getLexicalForm() , number,
+					predicate.asNode().getLocalName());
+			
+			}
+								
+		}
+
+		
+		
+		if (predicate.asNode().getLocalName().equals("hasAttributeValue")) {
+			if (!checkEclass(object)) {
+
+			// gets all classes which hasAttribute relation
+			addSubjectURI(subject, ":" +predicate.asNode().getLocalName() , number,
+					"has" + getType(subject));
+
+
+			addSubjectURI(subject, ":remove" +object.asLiteral().getLexicalForm() , number,
+					predicate.asNode().getLocalName());
+			
+			}
+								
+		}
+
+		
+		addGenericObject("hasExternalReference","refBaseClassPath" );
+
 		if (predicate.asNode().getLocalName().equals("hasAttribute")) {
 
 			// gets all classes which hasAttribute relation
@@ -299,24 +357,14 @@ public class Files2Facts extends IndustryStandards {
 					"has" + getType(subject));
 		}
 
-		if (predicate.asNode().getLocalName().equals("hasRefSemantic")) {
-
-			// adds for attribute
-			addSubjectURI(subject, ":" + object.asNode().getLocalName(), number,
-					"has" + getType(subject));
-
-			// adds for refsemantic.txt
-			addRefSemantic();
-		}
+		addGenericObject("hasRefSemantic","hasCorrespondingAttributePath");
 
 		/***
 		 * Eclass part starts here. TODO refactoring and functions only for test
 		 * purpose now
 		 */
 		if (object.isLiteral()) {
-			if (object.asLiteral().getLexicalForm().equals("eClassClassificationClass")
-					|| object.asLiteral().getLexicalForm().equals("eClassVersion")
-					|| object.asLiteral().getLexicalForm().equals("eClassIRDI")) {
+			if (checkEclass(object)) {
 				if (predicate.asNode().getLocalName().equals("hasAttributeName")) {
 					// adds for attribute.txt
 					addSubjectURI(subject, ":" + object.asLiteral().getLexicalForm(), number,
@@ -378,7 +426,7 @@ public class Files2Facts extends IndustryStandards {
 	 * 
 	 * @throws FileNotFoundException
 	 */
-	private void addRefSemantic() throws FileNotFoundException {
+	private void addGenericValue(String type,String predicate) throws FileNotFoundException {
 		StmtIterator stmts = model.listStatements(object.asResource(), null, (RDFNode) null);
 		while (stmts.hasNext()) {
 
@@ -386,11 +434,12 @@ public class Files2Facts extends IndustryStandards {
 			// remove because its a literal so we can identify. we dont need
 			// aml:
 			// opcua: tags
+			if(stmte.getPredicate().getLocalName().equals(predicate)){
 			if (stmte.getObject().isLiteral()) {
 				addSubjectURI(object, ":remove" + stmte.getObject().asLiteral().getLexicalForm(),
-						number, "hasRefSemantic");
+						number, type);
 			}
-		}
+		}}
 	}
 
 	/**

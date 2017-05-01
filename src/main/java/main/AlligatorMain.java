@@ -95,8 +95,8 @@ public class AlligatorMain {
 				return null;
 			}
 		};
-		 script.evaluate(new File("src/main/java/pslApproach/EasyLP.groovy"));
-//		script.evaluate(new File("src/main/java/pslApproach/DocumentAlignment.groovy"));
+//		 script.evaluate(new File("src/main/java/pslApproach/EasyLP.groovy"));
+		script.evaluate(new File("src/main/java/pslApproach/DocumentAlignment.groovy"));
 
 //		 Class scriptClass = new GroovyScriptEngine("")
 //		 .loadScriptByName("src/main/java/pslApproach/DocumentAlignment.groovy");
