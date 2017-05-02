@@ -135,32 +135,32 @@ public class DocumentAligment
 	public void defineRules()
 	{
 
-		// Two AML Caex files are same if they have same path
+		// Two AML CAEX files are the same if they have the same path
 		model.add rule : (hasCAEXFile(A,X) & hasCAEXFile(B,Y) & hasExternalReference(X,Z)
 		& hasExternalReference(Y,W) & similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) &
 		(O1-O2)) >> similar(X,Y) , weight : 8
 		
-		// Two AML hasAttributes are the same if its RefSemantic are the same
+		// Two AML hasAttributes are the same if their RefSemantic are the same
 		model.add rule : (hasAttribute(A,X) & hasAttribute(B,Y) & hasRefSemantic(X,Z)
 		& hasRefSemantic(Y,W) & similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) &
-		(O1-O2)) >> similar(A,B) , weight : 8
-	
-     	// Two AML Attributes are same if there names are same
-	    model.add rule : (hasAttribute(A,X) & hasAttribute(B,Y) & hasAttributeName(A,Z) & 
-		hasAttributeName(B,W) & similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) &
-	    (O1-O2)) >> similar(A,B) , weight : 8
-
-	    // Two AML Attributes are same if there values are same
-	    model.add rule : (hasAttribute(A,X) & hasAttribute(B,Y) & hasAttributeValue(A,Z) &
-		hasAttributeValue(B,W) & similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) &
-		(O1-O2)) >> similar(A,B) , weight : 8
-
+		(O1-O2)) >> similar(A,B) , weight : 10
 	
 		// Two AMl hasAttributes are the same if they share the same ID
 		model.add rule : (hasAttribute(A,X) & hasAttribute(B,Y) & hasID(A,Z) & hasID(B,W)
 		& similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
-		weight : 1
+		weight : 8
+	
+     	// Two AML Attributes are the same if they have the same name
+		model.add rule : (hasAttribute(A,X) & hasAttribute(B,Y) & hasAttributeName(A,Z) & 
+		hasAttributeName(B,W) & similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) &
+	    (O1-O2)) >> similar(A,B) , weight : 6
 
+	    // Two AML Attributes are the same if they have the same values 
+		model.add rule : (hasAttribute(A,X) & hasAttribute(B,Y) & hasAttributeValue(A,Z) &
+		hasAttributeValue(B,W) & similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) &
+		(O1-O2)) >> similar(A,B) , weight : 6
+
+	
 		// Two AMl hasInternalElement are the same if they share the same ID
 		model.add rule : (hasInternalElement(A,X) & hasInternalElement(B,Y) & hasID(A,Z) & hasID(B,W)
 		& similarValue(Z,W) &hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
@@ -173,7 +173,7 @@ public class DocumentAligment
 		hasEClassVersion(C1,M) & hasEClassVersion(D2,N) & similarValue(M,N)& hasRoleClass(A1,E1) &
 		hasRoleClass(A2,F2) &hasAttribute(E1,D) & hasAttribute(F2,K) & hasEClassVersion(E1,O) &
 		hasEClassVersion(F2,L) & similarValue(O,L)& hasDocument(A1,O1) & hasDocument(A2,O2) &
-		(O1-O2)) >> similar(A1,A2) , weight : 1
+		(O1-O2)) >> similar(A1,A2) , weight : 10
 
 		// Two Interface Class are same if its eclass,IRDI and classification class are the same
 		model.add rule :( hasInterfaceClass(A1,B1) & hasInterfaceClass(A2,B2) & hasAttribute(B1,X)
@@ -230,12 +230,25 @@ public class DocumentAligment
 
 			createFiles(trainDir + "similar.txt")
 
-			for (Predicate p : [hasDocument, hasAttribute, hasRefSemantic, 
-				hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, 
-				hasEClassIRDI, hasRoleClass, hasInternalElement, hasSystemUnitClass, 
-				hasInterfaceClass,hasAttributeValue,hasAttributeName,hasExternalReference,
-				hasCAEXFile]){
-					
+			for (Predicate p : [
+				hasDocument, 
+				hasAttribute, 
+				hasRefSemantic, 
+				hasID, 
+				hasInternalLink, 
+				hasEClassVersion, 
+				hasEClassClassificationClass, 
+				hasEClassIRDI, 
+				hasRoleClass, 
+				hasInternalElement, 
+				hasSystemUnitClass, 
+				hasInterfaceClass,
+				hasAttributeValue, 
+				hasAttributeName, 
+				hasExternalReference,
+				hasCAEXFile
+				]
+			){
 				createFiles(trainDir + p.getName().toLowerCase() + ".txt")
 				def insert = data.getInserter(p, trainObservations)
 				InserterUtils.loadDelimitedData(insert, trainDir + p.getName().toLowerCase()  +  ".txt")
@@ -244,10 +257,24 @@ public class DocumentAligment
 			def insert  =  data.getInserter(similar, truth)
 			InserterUtils.loadDelimitedDataTruth(insert, trainDir + "similar.txt")
 
-			trainDB = data.getDatabase(trainPredictions, [hasDocument, hasAttribute, hasRefSemantic, 
-			hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasEClassIRDI, 
-			hasRoleClass, hasInternalElement, hasSystemUnitClass, hasInterfaceClass,
-			hasAttributeValue,hasAttributeName,hasExternalReference,hasCAEXFile]
+			trainDB = data.getDatabase(trainPredictions, [
+			hasDocument, 
+			hasAttribute, 
+			hasRefSemantic, 
+			hasID, 
+			hasInternalLink, 
+			hasEClassVersion, 
+			hasEClassClassificationClass, 
+			hasEClassIRDI, 
+			hasRoleClass, 
+			hasInternalElement, 
+			hasSystemUnitClass, 
+			hasInterfaceClass,
+			hasAttributeValue, 
+			hasAttributeName, 
+			hasExternalReference, 
+			hasCAEXFile
+			]
 			as Set, trainObservations)
 			
 			populateSimilar(trainDB)
@@ -269,10 +296,24 @@ public class DocumentAligment
 		Partition testObservations = new Partition(3)
 		Partition testPredictions = new Partition(4)
 
-		for (Predicate p : [hasDocument, hasAttribute, hasRefSemantic, hasID, hasInternalLink, 
-       		hasEClassVersion, hasEClassClassificationClass, hasEClassIRDI, hasRoleClass, 
-		    hasInternalElement, hasSystemUnitClass, hasInterfaceClass,hasAttributeValue,
-		    hasAttributeName,hasExternalReference,hasCAEXFile])
+		for (Predicate p : [
+			hasDocument,
+			hasAttribute,
+			hasRefSemantic, 
+			hasID, 
+			hasInternalLink, 
+       		hasEClassVersion, 
+			hasEClassClassificationClass, 
+			hasEClassIRDI, 
+			hasRoleClass, 
+		    hasInternalElement, 
+			hasSystemUnitClass, 
+			hasInterfaceClass, 
+			hasAttributeValue,
+		    hasAttributeName, 
+			hasExternalReference, 
+			hasCAEXFile
+			])
 		{
 			createFiles(testDir + p.getName().toLowerCase() + ".txt")			
 		}
@@ -280,20 +321,47 @@ public class DocumentAligment
 		createFiles(testDir + "GoldStandard.txt")
 		createFiles(testDir + "similarwithConfidence.txt")
 
-		for (Predicate p : [hasDocument, hasAttribute, hasRefSemantic, hasID, hasInternalLink, 
-			hasEClassVersion, hasEClassClassificationClass, hasEClassIRDI, hasRoleClass, 
-			hasInternalElement, hasSystemUnitClass, hasInterfaceClass,hasAttributeValue,
-			hasAttributeName,hasExternalReference,hasCAEXFile])
+		for (Predicate p : [
+			hasDocument, 
+			hasAttribute, 
+			hasRefSemantic, 
+			hasID, 
+			hasInternalLink, 
+			hasEClassVersion, 
+			hasEClassClassificationClass, 
+			hasEClassIRDI, 
+			hasRoleClass, 
+			hasInternalElement, 
+			hasSystemUnitClass, 
+			hasInterfaceClass, 
+			hasAttributeValue,
+			hasAttributeName, 
+			hasExternalReference, 
+			hasCAEXFile
+			])
 		{
 			def insert  =  data.getInserter(p, testObservations)
 
 			InserterUtils.loadDelimitedData(insert, testDir  +  p.getName().toLowerCase()  +  ".txt")
 		}
 
-		testDB  =  data.getDatabase(testPredictions, [hasDocument, hasAttribute, hasRefSemantic, 
-			hasID, hasInternalLink, hasEClassVersion, hasEClassClassificationClass, hasRoleClass, 
-			hasEClassIRDI, hasInternalElement, hasSystemUnitClass, hasInterfaceClass,
-			hasAttributeValue,hasAttributeName,hasExternalReference,hasCAEXFile
+		testDB  =  data.getDatabase(testPredictions, [
+			hasDocument, 
+			hasAttribute, 
+			hasRefSemantic, 
+			hasID, 
+			hasInternalLink, 
+			hasEClassVersion, 
+			hasEClassClassificationClass, 
+			hasRoleClass, 
+			hasEClassIRDI, 
+			hasInternalElement, 
+			hasSystemUnitClass, 
+			hasInterfaceClass,
+			hasAttributeValue, 
+			hasAttributeName, 
+			hasExternalReference, 
+			hasCAEXFile
 		] as Set, testObservations)
 
 		populateSimilar(testDB)
@@ -382,8 +450,6 @@ public class DocumentAligment
 		System.out.println("False Negative:" + stats.fn)
 		System.out.println("Precision (Positive):" + stats.getPrecision(DiscretePredictionStatistics.BinaryClass.POSITIVE))
 		System.out.println("Recall: (Positive)" + stats.getRecall(DiscretePredictionStatistics.BinaryClass.POSITIVE))
-		System.out.println("Precision:(Negative)" + stats.getPrecision(DiscretePredictionStatistics.BinaryClass.NEGATIVE))
-		System.out.println("Recall:(Negative)" + stats.getRecall(DiscretePredictionStatistics.BinaryClass.NEGATIVE))
 
 		// Saving Precision and Recall results to file
 		def resultsFile
