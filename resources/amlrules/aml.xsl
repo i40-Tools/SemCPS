@@ -183,9 +183,7 @@
 	                  |CAEXFile/AdditionalInformation/WriterHeader/WriterProjectID
 	                  |CAEXFile/ExternalReference/@Path
 	                  |CAEXFile/ExternalReference/@Alias
-	                  |CAEXFile/InstanceHierarchy/@Name
 	                  |CAEXFile/InstanceHierarchy/@ID
-	                  |CAEXFile/InstanceHierarchy//InternalElement/@Name
 	                  |CAEXFile/InstanceHierarchy//InternalElement/@ID
 	                  |CAEXFile/InstanceHierarchy//InternalElement/@RefBaseSystemUnitPath
 	                  |CAEXFile/InstanceHierarchy//InternalElement//Attribute/@Name
@@ -194,6 +192,7 @@
 	                  |CAEXFile/InstanceHierarchy//InternalElement//Attribute/Value
 	                  |CAEXFile/InstanceHierarchy//InternalElement/ExternalInterface/@Name
 	                  |CAEXFile/InstanceHierarchy//InternalElement/ExternalInterface//Attribute/@Name
+	                  |CAEXFile/InstanceHierarchy//InternalElement/ExternalInterface//Attribute/@AttributeDataType
 	                  |CAEXFile/InstanceHierarchy//InternalElement/ExternalInterface//Attribute/@ID
 	                  |CAEXFile/InstanceHierarchy//InternalElement/ExternalInterface//Attribute/Value
 	                  |CAEXFile/InstanceHierarchy//InternalElement/ExternalInterface/@ID
@@ -203,31 +202,30 @@
 	                  |CAEXFile/InstanceHierarchy//InternalElement/InternalLink/@Name
 	                  |CAEXFile/InstanceHierarchy//InternalElement/InternalLink/@RefPartnerSideA
 	                  |CAEXFile/InstanceHierarchy//InternalElement/InternalLink/@RefPartnerSideB
-	                  
 	                  |CAEXFile/InterfaceClassLib/@Name
 	                  |CAEXFile/InterfaceClassLib//InterfaceClass/@Name
 	                  |CAEXFile/InterfaceClassLib//InterfaceClass/@RefBaseClassPath
 	                  |CAEXFile/InterfaceClassLib//InterfaceClass/Attribute/@ID
 	                  |CAEXFile/InterfaceClassLib//InterfaceClass/Attribute/@Name
+	                  |CAEXFile/InterfaceClassLib//InterfaceClass/Attribute/@AttributeDataType
 	                  |CAEXFile/InterfaceClassLib//InterfaceClass/Attribute/Value 
-	                  |CAEXFile/RoleClassLib/@Name
 	                  |CAEXFile/RoleClassLib/Version
-	                  |CAEXFile/RoleClassLib//RoleClass/@Name
 					  |CAEXFile/RoleClassLib//RoleClass//Attribute//@ID
 					  |CAEXFile/RoleClassLib//RoleClass//Attribute//@Name
+					  |CAEXFile/RoleClassLib//RoleClass//Attribute//@AttributeDataType
 					  |CAEXFile/RoleClassLib//RoleClass//Attribute//Value
 	                  |CAEXFile/RoleClassLib//RoleClass/@RefBaseClassPath
 	                  |CAEXFile/RoleClassLib//RoleClass/ExternalInterface/@Name
 	                  |CAEXFile/RoleClassLib//RoleClass/ExternalInterface/Attribute/@Name
+	                  |CAEXFile/RoleClassLib//RoleClass/ExternalInterface/Attribute/@AttributeDataType
 	                  |CAEXFile/RoleClassLib//RoleClass/ExternalInterface/Attribute/@ID
 	                  |CAEXFile/RoleClassLib//RoleClass/ExternalInterface/@ID
 	                  |CAEXFile/RoleClassLib//RoleClass/ExternalInterface/@RefBaseClassPath
-	                  |CAEXFile/SystemUnitClassLib/@Name
 	                  |CAEXFile/SystemUnitClassLib/Version
-	                  |CAEXFile/SystemUnitClassLib//SystemUnitClass//InternalElement/@Name
 	                  |CAEXFile/SystemUnitClassLib//SystemUnitClass//InternalElement/@ID
 	                  |CAEXFile/SystemUnitClassLib//SystemUnitClass//InternalElement/@RefBaseSystemUnitPath
 	                  |CAEXFile/SystemUnitClassLib//SystemUnitClass//InternalElement//Attribute/@Name
+	                  |CAEXFile/SystemUnitClassLib//SystemUnitClass//InternalElement//Attribute/@AttributeDataType
 	                  |CAEXFile/SystemUnitClassLib//SystemUnitClass//InternalElement//Attribute/@ID
 	                  |CAEXFile/SystemUnitClassLib//SystemUnitClass//InternalElement//Attribute/Value
 	                  |CAEXFile/SystemUnitClassLib//SystemUnitClass//InternalElement//ExternalInterface/@Name
@@ -238,10 +236,9 @@
 	                  |CAEXFile/SystemUnitClassLib//SystemUnitClass//InternalElement/InternalLink/@Name
 	                  |CAEXFile/SystemUnitClassLib//SystemUnitClass//InternalElement/InternalLink/@RefPartnerSideA
 	                  |CAEXFile/SystemUnitClassLib//SystemUnitClass//InternalElement/InternalLink/@RefPartnerSideB
-	               
-	                  |CAEXFile/SystemUnitClassLib//SystemUnitClass/@Name
 					  |CAEXFile/SystemUnitClassLib//SystemUnitClass//Attribute/@ID
 					  |CAEXFile/SystemUnitClassLib//SystemUnitClass//Attribute/@Name
+					  |CAEXFile/SystemUnitClassLib//SystemUnitClass//Attribute/@AttributeDataType
 					  |CAEXFile/SystemUnitClassLib//SystemUnitClass//Attribute/Value
 	                  |CAEXFile/SystemUnitClassLib//SystemUnitClass//ExternalInterface/@Name
 	                  |CAEXFile/SystemUnitClassLib//SystemUnitClass//ExternalInterface/@ID
@@ -273,5 +270,46 @@
   </xsl:call-template>
 </xsl:template>
 
+<xsl:template match="//InternalElement/@Name" mode="krextor:main">
+  <xsl:call-template name="krextor:add-literal-property">
+    <xsl:with-param name="property" select="'&aml;hasNameIE'"/>
+    <xsl:with-param name="datatype " select="'&xsd;string'"/>
+  </xsl:call-template>
+</xsl:template>
+
+<xsl:template match="//InstanceHierarchy/@Name" mode="krextor:main">
+  <xsl:call-template name="krextor:add-literal-property">
+    <xsl:with-param name="property" select="'&aml;hasNameIH'"/>
+    <xsl:with-param name="datatype " select="'&xsd;string'"/>
+  </xsl:call-template>
+</xsl:template>
+
+<xsl:template match="//RoleClass/@Name" mode="krextor:main">
+  <xsl:call-template name="krextor:add-literal-property">
+    <xsl:with-param name="property" select="'&aml;hasNameRC'"/>
+    <xsl:with-param name="datatype " select="'&xsd;string'"/>
+  </xsl:call-template>
+</xsl:template>
+
+<xsl:template match="//RoleClassLib/@Name" mode="krextor:main">
+  <xsl:call-template name="krextor:add-literal-property">
+    <xsl:with-param name="property" select="'&aml;hasNameRCL'"/>
+    <xsl:with-param name="datatype " select="'&xsd;string'"/>
+  </xsl:call-template>
+</xsl:template>
+
+<xsl:template match="//SystemUnitClass/@Name" mode="krextor:main">
+  <xsl:call-template name="krextor:add-literal-property">
+    <xsl:with-param name="property" select="'&aml;hasNameSUC'"/>
+    <xsl:with-param name="datatype " select="'&xsd;string'"/>
+  </xsl:call-template>
+</xsl:template>
+
+<xsl:template match="//SystemUnitClassLib/@Name" mode="krextor:main">
+  <xsl:call-template name="krextor:add-literal-property">
+    <xsl:with-param name="property" select="'&aml;hasNameSUCL'"/>
+    <xsl:with-param name="datatype " select="'&xsd;string'"/>
+  </xsl:call-template>
+</xsl:template>
 
 </xsl:transform>
