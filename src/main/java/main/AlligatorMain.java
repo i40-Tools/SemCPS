@@ -36,6 +36,7 @@ public class AlligatorMain {
 			// main.executeDatalogApproach();
 			main.generatePSLDataModel();
 			main.executePSLAproach();
+			
 			// main.integrate();
 			// main.executePSLAproach();
 			// main.integrate();
