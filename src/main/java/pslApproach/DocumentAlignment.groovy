@@ -212,8 +212,6 @@ public class DocumentAligment
 	 */
 	public void setUpData()
 	{
-		GroundTerm classID = data.getUniqueID("class")
-
 		/* Loads data */
 		dir = 'data' + java.io.File.separator + 'document' + java.io.File.separator
 
@@ -288,7 +286,6 @@ public class DocumentAligment
 			weightLearning.close()
 			println "LEARNING WEIGHTS DONE"
 			println "after training" + model
-
 		}
 
 		/////////////////////////// test setup //////////////////////////////////
@@ -417,7 +414,6 @@ public class DocumentAligment
 				resultConfidence.append(result2  +  '\n')
 								
 			}
-			
 		}
 	}
 
@@ -429,11 +425,11 @@ public class DocumentAligment
 		targetsPartition  =  new Partition(5)
 		truthPartition  =  new Partition(6)
 
-		def insert  =  data.getInserter(eval, targetsPartition)
-		InserterUtils.loadDelimitedDataTruth(insert, testDir  +  "similar.txt")
+		def insert = data.getInserter(eval, targetsPartition)
+		InserterUtils.loadDelimitedDataTruth(insert, testDir + "similar.txt")
 
 		insert  =  data.getInserter(eval, truthPartition)
-		InserterUtils.loadDelimitedDataTruth(insert, testDir  +  "GoldStandard.txt")
+		InserterUtils.loadDelimitedDataTruth(insert, testDir + "GoldStandard.txt")
 
 		Database resultsDB = data.getDatabase(targetsPartition, [eval] as Set)
 		Database truthDB = data.getDatabase(truthPartition, [eval] as Set)
@@ -448,8 +444,10 @@ public class DocumentAligment
 		System.out.println("True Negative:" + stats.tn)
 		System.out.println("False Positive:" + stats.fp)
 		System.out.println("False Negative:" + stats.fn)
-		System.out.println("Precision (Positive):" + stats.getPrecision(DiscretePredictionStatistics.BinaryClass.POSITIVE))
-		System.out.println("Recall: (Positive)" + stats.getRecall(DiscretePredictionStatistics.BinaryClass.POSITIVE))
+		System.out.println("Precision (Positive):" + stats.getPrecision(DiscretePredictionStatistics.
+							BinaryClass.POSITIVE))
+		System.out.println("Recall: (Positive)" + stats.getRecall(DiscretePredictionStatistics.
+							BinaryClass.POSITIVE))
 
 		// Saving Precision and Recall results to file
 		def resultsFile
@@ -465,25 +463,19 @@ public class DocumentAligment
 		resultsFile.write("")
 		resultsFile.append("Accuracy:" + stats.getAccuracy() + '\n')
 		resultsFile.append("Error:" + stats.getError() + '\n')
-		resultsFile.append("Fmeasure:" + stats.getF1(DiscretePredictionStatistics.BinaryClass.POSITIVE)
-				 +  '\n')
+		resultsFile.append("Fmeasure:" + stats.getF1(DiscretePredictionStatistics.
+			    BinaryClass.POSITIVE) +  '\n')
 		resultsFile.append("True Positive:" + stats.tp + '\n')
 		resultsFile.append("False Positive:" + stats.fp + '\n')
 		resultsFile.append("False Negative:" + stats.fn + '\n')
 		resultsFile.append("True Negative:" + stats.tn + '\n')
-		resultsFile.append("Precision (Positive):" + stats.getPrecision(DiscretePredictionStatistics.
+		resultsFile.append("Precision :" + stats.getPrecision(DiscretePredictionStatistics.
 				BinaryClass.POSITIVE) +  '\n')
-		resultsFile.append("Recall: (Positive)" + stats.getRecall(DiscretePredictionStatistics.
+		resultsFile.append("Recall: " + stats.getRecall(DiscretePredictionStatistics.
 				BinaryClass.POSITIVE) + '\n')
-		resultsFile.append("Precision:(Negative)" + stats.getPrecision(DiscretePredictionStatistics.
-				BinaryClass.NEGATIVE) + '\n')
-		resultsFile.append("Recall:(Negative)" + stats.getRecall(DiscretePredictionStatistics.
-				BinaryClass.NEGATIVE) + '\n')
-
 		resultsDB.close()
 		truthDB.close()
 	}
-
 
 	/**
 	 * Populates all the similar atoms between the concepts of two Documents using
