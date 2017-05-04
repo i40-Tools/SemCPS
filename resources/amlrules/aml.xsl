@@ -147,6 +147,7 @@
 		
 <!-- Attribute  -->
 		<AttributeDataType property="&aml;hasDataType" krextor:attribute="yes" datatype="&xsd;string"/>
+		<Unit property="&aml;hasUnit" krextor:attribute="yes" datatype="&xsd;string"/>
 		<Description property="&aml;hasDescription" krextor:attribute="yes" datatype="&xsd;string"/>
 		<Value property="&aml;hasAttributeValue" krextor:attribute="yes" datatype="&xsd;string"/>
 		<Name property="&aml;hasAttributeName" krextor:attribute="yes" datatype="&xsd;string"/>
@@ -187,11 +188,13 @@
 	                  |CAEXFile/InstanceHierarchy//InternalElement/@ID
 	                  |CAEXFile/InstanceHierarchy//InternalElement/@RefBaseSystemUnitPath
 	                  |CAEXFile/InstanceHierarchy//InternalElement//Attribute/@Name
+	                  |CAEXFile/InstanceHierarchy//InternalElement//Attribute/@Unit
 	                  |CAEXFile/InstanceHierarchy//InternalElement//Attribute/@AttributeDataType
 	                  |CAEXFile/InstanceHierarchy//InternalElement//Attribute/@ID
 	                  |CAEXFile/InstanceHierarchy//InternalElement//Attribute/Value
 	                  |CAEXFile/InstanceHierarchy//InternalElement/ExternalInterface/@Name
 	                  |CAEXFile/InstanceHierarchy//InternalElement/ExternalInterface//Attribute/@Name
+	                  |CAEXFile/InstanceHierarchy//InternalElement/ExternalInterface//Attribute/@Unit
 	                  |CAEXFile/InstanceHierarchy//InternalElement/ExternalInterface//Attribute/@AttributeDataType
 	                  |CAEXFile/InstanceHierarchy//InternalElement/ExternalInterface//Attribute/@ID
 	                  |CAEXFile/InstanceHierarchy//InternalElement/ExternalInterface//Attribute/Value
@@ -207,18 +210,21 @@
 	                  |CAEXFile/InterfaceClassLib//InterfaceClass/@RefBaseClassPath
 	                  |CAEXFile/InterfaceClassLib//InterfaceClass/Attribute/@ID
 	                  |CAEXFile/InterfaceClassLib//InterfaceClass/Attribute/@Name
+	                  |CAEXFile/InterfaceClassLib//InterfaceClass/Attribute/@Unit
 	                  |CAEXFile/InterfaceClassLib//InterfaceClass/Attribute/@AttributeDataType
 	                  |CAEXFile/InterfaceClassLib//InterfaceClass/Attribute/Value 
 	                  |CAEXFile/RoleClassLib/Version
 					  |CAEXFile/RoleClassLib//RoleClass//Attribute//@ID
 					  |CAEXFile/RoleClassLib//RoleClass//Attribute//@Name
 					  |CAEXFile/RoleClassLib//RoleClass//Attribute//@AttributeDataType
+					  |CAEXFile/RoleClassLib//RoleClass//Attribute//@Unit
 					  |CAEXFile/RoleClassLib//RoleClass//Attribute//Value
 	                  |CAEXFile/RoleClassLib//RoleClass/@RefBaseClassPath
 	                  |CAEXFile/RoleClassLib//RoleClass/ExternalInterface/@Name
 	                  |CAEXFile/RoleClassLib//RoleClass/ExternalInterface/Attribute/@Name
 	                  |CAEXFile/RoleClassLib//RoleClass/ExternalInterface/Attribute/@AttributeDataType
 	                  |CAEXFile/RoleClassLib//RoleClass/ExternalInterface/Attribute/@ID
+	                  |CAEXFile/RoleClassLib//RoleClass/ExternalInterface/Attribute/@Unit
 	                  |CAEXFile/RoleClassLib//RoleClass/ExternalInterface/@ID
 	                  |CAEXFile/RoleClassLib//RoleClass/ExternalInterface/@RefBaseClassPath
 	                  |CAEXFile/SystemUnitClassLib/Version
@@ -227,6 +233,7 @@
 	                  |CAEXFile/SystemUnitClassLib//SystemUnitClass//InternalElement//Attribute/@Name
 	                  |CAEXFile/SystemUnitClassLib//SystemUnitClass//InternalElement//Attribute/@AttributeDataType
 	                  |CAEXFile/SystemUnitClassLib//SystemUnitClass//InternalElement//Attribute/@ID
+	                  |CAEXFile/SystemUnitClassLib//SystemUnitClass//InternalElement//Attribute/@Unit
 	                  |CAEXFile/SystemUnitClassLib//SystemUnitClass//InternalElement//Attribute/Value
 	                  |CAEXFile/SystemUnitClassLib//SystemUnitClass//InternalElement//ExternalInterface/@Name
 	                  |CAEXFile/SystemUnitClassLib//SystemUnitClass//InternalElement//ExternalInterface/@ID
@@ -238,6 +245,7 @@
 	                  |CAEXFile/SystemUnitClassLib//SystemUnitClass//InternalElement/InternalLink/@RefPartnerSideB
 					  |CAEXFile/SystemUnitClassLib//SystemUnitClass//Attribute/@ID
 					  |CAEXFile/SystemUnitClassLib//SystemUnitClass//Attribute/@Name
+					  |CAEXFile/SystemUnitClassLib//SystemUnitClass//Attribute/@Unit
 					  |CAEXFile/SystemUnitClassLib//SystemUnitClass//Attribute/@AttributeDataType
 					  |CAEXFile/SystemUnitClassLib//SystemUnitClass//Attribute/Value
 	                  |CAEXFile/SystemUnitClassLib//SystemUnitClass//ExternalInterface/@Name
