@@ -134,7 +134,6 @@ public class DocumentAligment
 	public void defineFunctions()
 	{
 		model.add function: "similarValue"  , implementation: new DiceSimilarity()
-		model.add function: "notSimilarValue"  , implementation: new NonSimilarity()
 	}
 
 	public void defineRules()
@@ -156,15 +155,12 @@ public class DocumentAligment
 		weight : 8
 
 		// Two AML Attributes are the same if they have the same name
-		model.add rule : (hasAttribute(A,X) & hasAttribute(B,Y) & hasAttributeName(A,Z) &
-		hasAttributeName(B,W) & similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) &
-		(O1-O2)) >> similar(A,B) , weight : 6
+		model.add rule : (hasAttributeName(A,Z) & hasAttributeName(B,W) & similarValue(Z,W) & 
+			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 6
 
 		// Two AML Attributes are the same if they have the same values
-		model.add rule : (hasAttribute(A,X) & hasAttribute(B,Y) & hasAttributeValue(A,Z) &
-		hasAttributeValue(B,W) & similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) &
-		(O1-O2)) >> similar(A,B) , weight : 6
-
+		model.add rule : (hasAttributeValue(A,Z) & hasAttributeValue(B,W) & similarValue(Z,W) & 
+			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 6
 
 		// Two AMl hasInternalElement are the same if they share the same ID
 		model.add rule : (hasInternalElement(A,X) & hasInternalElement(B,Y) & hasID(A,Z) & hasID(B,W)
@@ -198,75 +194,63 @@ public class DocumentAligment
 		hasEClassVersion(E1,O) & hasEClassVersion(F2,L) & similarValue(O,L)
 		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 8
 
-
-	
         // rules for not similar
-	   // Two AML CAEX files are the not same if they have the not same path
+	    // Two AML CAEX files are the not same if they have the not same path
 		model.add rule : (hasCAEXFile(A,X) & hasCAEXFile(B,Y) & hasExternalReference(X,Z)
-		& hasExternalReference(Y,W) & notSimilarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) &
+		& hasExternalReference(Y,W) & ~similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) &
 		(O1-O2)) >> notSimilar(X,Y) , weight : 8
 
 		// Two AML hasAttributes are the not same if their RefSemantic are the not same
 		model.add rule : (hasAttribute(A,X) & hasAttribute(B,Y) & hasRefSemantic(X,Z)
-		& hasRefSemantic(Y,W) & notSimilarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) &
+		& hasRefSemantic(Y,W) & ~similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) &
 		(O1-O2)) >> notSimilar(A,B) , weight : 10
 
 		// Two AMl hasAttributes are the not same if they share the not same ID
 		model.add rule : (hasAttribute(A,X) & hasAttribute(B,Y) & hasID(A,Z) & hasID(B,W)
-		& notSimilarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) ,
+		& ~similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) ,
 		weight : 8
 
 		// Two AML Attributes are the not same if they have the not same name
-		model.add rule : (hasAttribute(A,X) & hasAttribute(B,Y) & hasAttributeName(A,Z) &
-		hasAttributeName(B,W) & notSimilarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) &
-		(O1-O2)) >> notSimilar(A,B) , weight : 6
+		model.add rule : (hasAttributeName(A,Z) & hasAttributeName(B,W) & ~similarValue(Z,W) & 
+			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) , weight : 6
 
 		// Two AML Attributes are the not same if they have the not same values
 		model.add rule : (hasAttribute(A,X) & hasAttribute(B,Y) & hasAttributeValue(A,Z) &
-		hasAttributeValue(B,W) & notSimilarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) &
+		hasAttributeValue(B,W) & ~similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) &
 		(O1-O2)) >> notSimilar(A,B) , weight : 6
-
 
 		// Two AMl hasInternalElement are the not same if they share the not same ID
 		model.add rule : (hasInternalElement(A,X) & hasInternalElement(B,Y) & hasID(A,Z) & hasID(B,W)
-		& notSimilarValue(Z,W) &hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) ,
+		& ~similarValue(Z,W) &hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) ,
 		weight : 4
 
 		// Two Roles Class are not same if its eclass,IRDI and classification class are the not same
 		model.add rule :( hasRoleClass(A1,B1) & hasRoleClass(A2,B2) & hasAttribute(B1,X) &
-		hasAttribute(B2,Y)& hasEClassIRDI(B1,Z) & hasEClassIRDI(B2,W) & notSimilarValue(Z,W)
+		hasAttribute(B2,Y)& hasEClassIRDI(B1,Z) & hasEClassIRDI(B2,W) & ~similarValue(Z,W)
 		& hasRoleClass(A1,C1) & hasRoleClass(A2,D2) & hasAttribute(C1,Q) & hasAttribute(D2,T) &
-		hasEClassVersion(C1,M) & hasEClassVersion(D2,N) & notSimilarValue(M,N)& hasRoleClass(A1,E1) &
+		hasEClassVersion(C1,M) & hasEClassVersion(D2,N) & ~similarValue(M,N)& hasRoleClass(A1,E1) &
 		hasRoleClass(A2,F2) &hasAttribute(E1,D) & hasAttribute(F2,K) & hasEClassVersion(E1,O) &
-		hasEClassVersion(F2,L) & notSimilarValue(O,L)& hasDocument(A1,O1) & hasDocument(A2,O2) &
+		hasEClassVersion(F2,L) & ~similarValue(O,L)& hasDocument(A1,O1) & hasDocument(A2,O2) &
 		(O1-O2)) >> notSimilar(A1,A2) , weight : 10
 
 		// Two Interface Class are not same if its eclass,IRDI and classification class are the not same
 		model.add rule :( hasInterfaceClass(A1,B1) & hasInterfaceClass(A2,B2) & hasAttribute(B1,X)
-		& hasAttribute(B2,Y)  & hasEClassIRDI(B1,Z) & hasEClassIRDI(B2,W) & notSimilarValue(Z,W)
+		& hasAttribute(B2,Y)  & hasEClassIRDI(B1,Z) & hasEClassIRDI(B2,W) & ~similarValue(Z,W)
 		& hasInterfaceClass(A1,C1) & hasInterfaceClass(A2,D2) & hasAttribute(C1,Q)
-		& hasAttribute(D2,T) & hasEClassVersion(C1,M) & hasEClassVersion(D2,N) & notSimilarValue(M,N)
+		& hasAttribute(D2,T) & hasEClassVersion(C1,M) & hasEClassVersion(D2,N) & ~similarValue(M,N)
 		& hasInterfaceClass(A1,E1) & hasInterfaceClass(A2,F2) &hasAttribute(E1,D)
-		& hasAttribute(F2,K)& hasEClassVersion(E1,O) & hasEClassVersion(F2,L) & notSimilarValue(O,L)
+		& hasAttribute(F2,K)& hasEClassVersion(E1,O) & hasEClassVersion(F2,L) & ~similarValue(O,L)
 		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> notSimilar(A1,A2) , weight : 8
 
 		// Two SystemUnit Class are not same if its eclass,IRDI and classification class are the not same
 		model.add rule :( hasSystemUnitClass(A1,B1) & hasSystemUnitClass(A2,B2) & hasAttribute(B1,X)
-		& hasAttribute(B2,Y)  & hasEClassIRDI(B1,Z) & hasEClassIRDI(B2,W) & notSimilarValue(Z,W)
+		& hasAttribute(B2,Y)  & hasEClassIRDI(B1,Z) & hasEClassIRDI(B2,W) & ~similarValue(Z,W)
 		& hasSystemUnitClass(A1,C1) & hasSystemUnitClass(A2,D2) & hasAttribute(C1,Q) & hasAttribute(D2,T)
-		& hasEClassVersion(C1,M) & hasEClassVersion(D2,N) & notSimilarValue(M,N)&
+		& hasEClassVersion(C1,M) & hasEClassVersion(D2,N) & ~similarValue(M,N)&
 		hasSystemUnitClass(A1,E1) & hasSystemUnitClass(A2,F2) &hasAttribute(E1,D) & hasAttribute(F2,K) &
-		hasEClassVersion(E1,O) & hasEClassVersion(F2,L) & notSimilarValue(O,L)
+		hasEClassVersion(E1,O) & hasEClassVersion(F2,L) & ~similarValue(O,L)
 		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> notSimilar(A1,A2) , weight : 8
 
-
-	
-	
-	
-	
-		//Two hasInternalElement are the same if its InternalLink is the same
-		//		model.add rule : (hasInternalElement(A,X) & hasInternalElement(B,Y)  & hasInternalLink(X,Z) & hasInternalLink(Y,W) &
-		//		similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 12;
 
 		// constraints
 		model.add PredicateConstraint.PartialFunctional , on : similar
@@ -275,9 +259,6 @@ public class DocumentAligment
 
 		// prior
 		model.add rule : ~similar(A,B), weight: 1
-		
-		
-		
 	}
 
 	/**
@@ -616,27 +597,5 @@ public class DocumentAligment
 
 	
 	}
-	
-	class NonSimilarity implements ExternalFunction {
-		
-		@Override
-		public int getArity() {
-			return 2;
-		}
-	
-		@Override
-		public ArgumentType[] getArgumentTypes() {
-			return [ArgumentType.String, ArgumentType.String].toArray();
-		}
-
-		@Override
-		public double getValue(ReadOnlyDatabase db, GroundTerm... args) {
-			// TODO Auto-generated method stub
-			return args[0].toString().equals(args[1].toString()) ? 0 : 1;
-		}
-		
-		
-	}
 		
 }
-
