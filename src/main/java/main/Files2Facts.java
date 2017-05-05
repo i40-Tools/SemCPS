@@ -292,6 +292,7 @@ public class Files2Facts extends IndustryStandards {
 		}
 		return type;
 	}
+		
 
 	public void addGenericObject(String firstPredicate,String secondPredicate ) throws FileNotFoundException{
 		
@@ -317,15 +318,16 @@ public class Files2Facts extends IndustryStandards {
 
 		if (predicate.asNode().getLocalName().equals("hasAttributeName")) {
 			if (!checkEclass(object)) {
+				if (!getType(subject).equals("Attribute")) {
+					addSubjectURI(subject, ":remove" + object.asLiteral().getLexicalForm(), number,
+							"has"+getType(subject) + predicate.asNode().getLocalName().replace("has", ""));
 
-			// gets all classes which hasAttribute relation
-			addSubjectURI(subject, ":" +predicate.asNode().getLocalName() , number,
-					"has" + getType(subject));
+				} else {
+					addSubjectURI(subject, ":remove" + object.asLiteral().getLexicalForm(), number,
+							predicate.asNode().getLocalName());
 
-
-			addSubjectURI(subject, ":remove" +object.asLiteral().getLexicalForm() , number,
-					predicate.asNode().getLocalName());
-			
+				}
+              
 			}
 								
 		}
@@ -334,10 +336,6 @@ public class Files2Facts extends IndustryStandards {
 		
 		if (predicate.asNode().getLocalName().equals("hasAttributeValue")) {
 			if (!checkEclass(object)) {
-
-			// gets all classes which hasAttribute relation
-			addSubjectURI(subject, ":" +predicate.asNode().getLocalName() , number,
-					"has" + getType(subject));
 
 
 			addSubjectURI(subject, ":remove" +object.asLiteral().getLexicalForm() , number,
@@ -365,12 +363,6 @@ public class Files2Facts extends IndustryStandards {
 		 */
 		if (object.isLiteral()) {
 			if (checkEclass(object)) {
-				if (predicate.asNode().getLocalName().equals("hasAttributeName")) {
-					// adds for attribute.txt
-					addSubjectURI(subject, ":" + object.asLiteral().getLexicalForm(), number,
-							"hasAttribute");
-				}
-
 				StmtIterator stmts = model.listStatements(subject.asResource(), null,
 						(RDFNode) null);
 				while (stmts.hasNext()) {
@@ -406,18 +398,10 @@ public class Files2Facts extends IndustryStandards {
 		// RefSemantic part starts here
 		if (predicate.asNode().getLocalName().equals("identifier")) {
 
-			// id is for internal Element goes in InternalElement file
-			if (subject.asNode().getLocalName().contains("InternalElement")) {
-				addSubjectURI(subject, ":" + predicate.asNode().getLocalName(), number,
-						"hasInternalElement");
-			} else {
-				// id is for attribute goes in hasAttribute
-				addSubjectURI(subject, ":" + predicate.asNode().getLocalName(), number,
-						"hasAttribute");
-			}
 			// gets the literal ID value and add it to hasID
+						
 			addSubjectURI(subject, ":remove" + object.asLiteral().getLexicalForm(), number,
-					"hasID");
+					"has" + getType(subject) + "ID");
 		}
 	}
 
