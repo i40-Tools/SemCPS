@@ -320,7 +320,8 @@ public class Files2Facts extends IndustryStandards {
 			if (!checkEclass(object)) {
 				if (!getType(subject).equals("Attribute")) {
 					addSubjectURI(subject, ":remove" + object.asLiteral().getLexicalForm(), number,
-							"has"+getType(subject) + predicate.asNode().getLocalName().replace("has", ""));
+							"has" + getType(subject) + predicate.asNode().getLocalName()
+							.replace("has", ""));
 
 				} else {
 					addSubjectURI(subject, ":remove" + object.asLiteral().getLexicalForm(), number,
