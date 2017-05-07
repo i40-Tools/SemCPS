@@ -259,6 +259,9 @@ public class Files2Facts extends IndustryStandards {
 				if (val.contains("opcua:remove")) {
 					val = val.replace("opcua:remove", "");
 				}
+				if (val.contains(":ConnectionPoint")) {
+					val = val.replace(":ConnectionPoint", "");
+				}
 				documentwriter.println(val);
 			}
 			documentwriter.close();
@@ -348,7 +351,9 @@ public class Files2Facts extends IndustryStandards {
 
 		
 		addGenericObject("hasExternalReference","refBaseClassPath" );
-
+		addGenericObject("hasInternalLink","hasRefPartnerSideB" );
+		addGenericObject("hasInternalLink","hasRefPartnerSideA" );
+		
 		if (predicate.asNode().getLocalName().equals("hasAttribute")) {
 
 			// gets all classes which hasAttribute relation

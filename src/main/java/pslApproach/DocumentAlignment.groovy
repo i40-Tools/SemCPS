@@ -213,6 +213,15 @@ public class DocumentAligment
 		& hasEClassVersion(E1,O) & hasEClassVersion(F2,L) & similarValue(O,L)
 		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 8
 
+        // Internal Elements Set is same if it has same InternalLink 			
+	    model.add rule : (hasInternalElement(A,Z) & hasInternalElement(B,W) 
+		& hasInternalLink(Z,C) & hasInternalElementID(B,D)  & similarValue(C,D)
+		& hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
+		weight : 4
+	   
+		   
+		
+		
         // rules for not similar
 	    // Two AML CAEX files are the not same if they have the not same path
 		model.add rule : (hasCAEXFile(A,X) & hasCAEXFile(B,Y) & hasExternalReference(X,Z)
@@ -258,6 +267,13 @@ public class DocumentAligment
 		& ~similarValue(Z,W) &hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) ,
 		weight : 4
 
+		// Internal Elements Set is not same if it has same InternalLink
+		model.add rule : (hasInternalElement(A,Z) & hasInternalElement(B,W)
+		& hasInternalLink(Z,C) & hasInternalElementID(B,D)  & ~similarValue(C,D)
+		& hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
+		weight : 4
+
+		
         // Two Roles Class are not same if its eclass,IRDI and classification class are the same
 		model.add rule :( hasRoleClass(A1,B1) & hasRoleClass(A2,B2)& hasEClassIRDI(B1,Z) 
 		& hasEClassIRDI(B2,W) & ~similarValue(Z,W) & hasRoleClass(A1,C1) & hasRoleClass(A2,D2) 
@@ -648,6 +664,7 @@ public class DocumentAligment
 				((RandomVariableAtom) db.getAtom(similar, o2Concept, o1Concept)).commitToDB()
 				((RandomVariableAtom) db.getAtom(notSimilar, o1Concept, o2Concept)).commitToDB()
 				((RandomVariableAtom) db.getAtom(notSimilar, o2Concept, o1Concept)).commitToDB()
+				
 			}
 		}
 
