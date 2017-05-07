@@ -262,6 +262,8 @@ public class Files2Facts extends IndustryStandards {
 				if (val.contains(":ConnectionPoint")) {
 					val = val.replace(":ConnectionPoint", "");
 				}
+				
+
 				documentwriter.println(val);
 			}
 			documentwriter.close();
@@ -340,7 +342,7 @@ public class Files2Facts extends IndustryStandards {
 		
 		if (predicate.asNode().getLocalName().equals("hasAttributeValue")) {
 			if (!checkEclass(object)) {
-
+				
 
 			addSubjectURI(subject, ":remove" +object.asLiteral().getLexicalForm() , number,
 					predicate.asNode().getLocalName());

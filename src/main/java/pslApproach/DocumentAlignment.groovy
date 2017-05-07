@@ -92,10 +92,14 @@ public class DocumentAligment
 		model.add predicate: "hasAttribute"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
 
 		model.add predicate: "hasInternalElement"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
-
+	
+		model.add predicate: "hasInstanceHierarchy"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
+		
 		model.add predicate: "hasRefSemantic"     , types: [ArgumentType.UniqueID, ArgumentType.String]
 
 		model.add predicate: "hasInternalElementID"     , types: [ArgumentType.UniqueID, ArgumentType.String]
+
+		model.add predicate: "hasInstanceHierarchyID"     , types: [ArgumentType.UniqueID, ArgumentType.String]
 		
 		model.add predicate: "hasAttributeID"     , types: [ArgumentType.UniqueID, ArgumentType.String]
 				
@@ -141,7 +145,11 @@ public class DocumentAligment
 
 	public void defineFunctions()
 	{
+		try{
 		model.add function: "similarValue"  , implementation: new DiceSimilarity()
+		}catch(Exception e){
+			
+		}
 	}
 
 	public void defineRules()
@@ -157,6 +165,7 @@ public class DocumentAligment
 		& hasRefSemantic(Y,W) & similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) &
 		(O1-O2)) >> similar(A,B) , weight : 10
 
+		
 		// Two AMl hasAttributes are the same if they share the same ID
 		model.add rule : (hasAttributeID(A,Z) & hasAttributeID(B,W) & similarValue(Z,W) 
 		& hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,weight : 8
@@ -187,6 +196,11 @@ public class DocumentAligment
 
 		// Two AMl InternalElement are the same if they share the same ID
 		model.add rule : (hasInternalElementID(A,Z) & hasInternalElementID(B,W)
+		& similarValue(Z,W) &hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
+		weight : 4
+
+		// Two AMl InstanceHierarchy are the same if they share the same ID
+		model.add rule : (hasInstanceHierarchyID(A,Z) & hasInstanceHierarchyID(B,W)
 		& similarValue(Z,W) &hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
 		weight : 4
 
@@ -231,7 +245,7 @@ public class DocumentAligment
 		// Two AML hasAttributes are the not same if their RefSemantic are the not same
 		model.add rule : (hasAttribute(A,X) & hasAttribute(B,Y) & hasRefSemantic(X,Z)
 		& hasRefSemantic(Y,W) & ~similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) &
-		(O1-O2)) >> notSimilar(A,B) , weight : 10
+		(O1-O2)) >> notSimilar(A,B) , weight : 5
 
 		// Two AMl hasAttributes are the not same if they share the not same ID
 		model.add rule : (hasAttributeID(A,Z) & hasAttributeID(B,W) & ~similarValue(Z,W) 
@@ -297,6 +311,12 @@ public class DocumentAligment
 		& hasEClassVersion(E1,O) & hasEClassVersion(F2,L) & ~similarValue(O,L)
 		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> notSimilar(A1,A2) , weight : 8
 
+	
+    	// Two AMl InstanceHierarchy are not the same if they share the same ID
+	    model.add rule : (hasInstanceHierarchyID(A,Z) & hasInstanceHierarchyID(B,W)
+	    & ~similarValue(Z,W) &hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
+	    weight : 4
+
 
 
 		// constraints
@@ -351,7 +371,9 @@ public class DocumentAligment
 				hasRoleClassAttributeName,
 				hasSystemUnitClassAttributeName,
 				hasExternalReference,
-				hasCAEXFile
+				hasCAEXFile,
+				hasInstanceHierarchyID,
+				hasInstanceHierarchy
 				]
 			){
 				createFiles(trainDir + p.getName().toLowerCase() + ".txt")
@@ -383,7 +405,9 @@ public class DocumentAligment
 			hasRoleClassAttributeName,
 			hasSystemUnitClassAttributeName,
 			hasExternalReference, 
-			hasCAEXFile
+			hasCAEXFile,
+			hasInstanceHierarchyID,
+			hasInstanceHierarchy			
 			]
 			as Set, trainObservations)
 			
@@ -427,6 +451,8 @@ public class DocumentAligment
 			hasSystemUnitClassAttributeName,
 			hasExternalReference, 
 			hasCAEXFile,
+			hasInstanceHierarchyID,
+			hasInstanceHierarchy
 			])
 		{
 			createFiles(testDir + p.getName().toLowerCase() + ".txt")			
@@ -457,6 +483,8 @@ public class DocumentAligment
 			hasSystemUnitClassAttributeName,
 			hasExternalReference, 
 			hasCAEXFile,
+			hasInstanceHierarchyID,
+			hasInstanceHierarchy
 			])
 		{
 			
@@ -487,7 +515,10 @@ public class DocumentAligment
 			hasRoleClassAttributeName,
 			hasSystemUnitClassAttributeName,
 			hasExternalReference, 
-			hasCAEXFile
+			hasCAEXFile,
+			hasInstanceHierarchyID,
+			hasInstanceHierarchy
+
 		] as Set, testObservations)
 
 		populateSimilar(testDB)
@@ -527,6 +558,9 @@ public class DocumentAligment
 		println "INFERENCE DONE"
 		def matchResult  =  new File(testDir  +  'similar.txt')
 		matchResult.write('')
+		def GoldStandard  =  new File(testDir  +  'GoldStandard.txt')
+		GoldStandard.write('')
+		
 		def resultConfidence  =  new File(testDir  +  'similarwithConfidence.txt')
 		resultConfidence.write('')
 		DecimalFormat formatter  =  new DecimalFormat("#.##")
@@ -547,6 +581,7 @@ public class DocumentAligment
 
 				if(flag==0){
 					matchResult.append(result  +  '\n')
+					GoldStandard.append(result  +  '\n')
 					resultConfidence.append(result2  +  '\n')
 				}
 
@@ -564,10 +599,13 @@ public class DocumentAligment
 				String[] text  =  result.split(",")
 				result =  text[0]  +  "\t"  +  text[1] +  "\t" + "0"
 				def symResult= text[1]  +  "\t"  +  text[0] +  "\t" + "0"
-				String result2  =  text[0]  +  "\t"  +  text[1]  + " " + atom.getValue()
-				def flag=removeSymetric(matchResult,symResult)
-
-				if(flag==0){
+				def trueResult= text[0]  +  "\t"  +  text[1] +  "\t" + "1"
+				def trueSymResult= text[1]  +  "\t"  +  text[0] +  "\t" + "1"				
+				String result2  =  text[0]  +  "\t"  +  text[1]  + " " + atom.getValue()			
+				
+				if(!removeSymetric(matchResult,symResult)&& 
+				   !removeSymetric(matchResult,trueSymResult)&&
+				   !removeSymetric(matchResult,trueResult)){
 					matchResult.append(result  +  '\n')
 					resultConfidence.append(result2  +  '\n')
 				}
