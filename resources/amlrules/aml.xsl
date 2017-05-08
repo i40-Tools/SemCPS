@@ -280,42 +280,42 @@
 
 <xsl:template match="//InternalElement/@Name" mode="krextor:main">
   <xsl:call-template name="krextor:add-literal-property">
-    <xsl:with-param name="property" select="'&aml;hasNameIE'"/>
+    <xsl:with-param name="property" select="'&aml;hasAttributeName'"/>
     <xsl:with-param name="datatype " select="'&xsd;string'"/>
   </xsl:call-template>
 </xsl:template>
 
 <xsl:template match="//InstanceHierarchy/@Name" mode="krextor:main">
   <xsl:call-template name="krextor:add-literal-property">
-    <xsl:with-param name="property" select="'&aml;hasNameIH'"/>
+    <xsl:with-param name="property" select="'&aml;hasAttributeName'"/>
     <xsl:with-param name="datatype " select="'&xsd;string'"/>
   </xsl:call-template>
 </xsl:template>
 
 <xsl:template match="//RoleClass/@Name" mode="krextor:main">
   <xsl:call-template name="krextor:add-literal-property">
-    <xsl:with-param name="property" select="'&aml;hasNameRC'"/>
+    <xsl:with-param name="property" select="'&aml;hasAttributeName'"/>
     <xsl:with-param name="datatype " select="'&xsd;string'"/>
   </xsl:call-template>
 </xsl:template>
 
 <xsl:template match="//RoleClassLib/@Name" mode="krextor:main">
   <xsl:call-template name="krextor:add-literal-property">
-    <xsl:with-param name="property" select="'&aml;hasNameRCL'"/>
+    <xsl:with-param name="property" select="'&aml;hasAttributeName'"/>
     <xsl:with-param name="datatype " select="'&xsd;string'"/>
   </xsl:call-template>
 </xsl:template>
 
 <xsl:template match="//SystemUnitClass/@Name" mode="krextor:main">
   <xsl:call-template name="krextor:add-literal-property">
-    <xsl:with-param name="property" select="'&aml;hasNameSUC'"/>
+    <xsl:with-param name="property" select="'&aml;hasAttributeName'"/>
     <xsl:with-param name="datatype " select="'&xsd;string'"/>
   </xsl:call-template>
 </xsl:template>
 
 <xsl:template match="//SystemUnitClassLib/@Name" mode="krextor:main">
   <xsl:call-template name="krextor:add-literal-property">
-    <xsl:with-param name="property" select="'&aml;hasNameSUCL'"/>
+    <xsl:with-param name="property" select="'&aml;hasAttributeName'"/>
     <xsl:with-param name="datatype " select="'&xsd;string'"/>
   </xsl:call-template>
 </xsl:template>

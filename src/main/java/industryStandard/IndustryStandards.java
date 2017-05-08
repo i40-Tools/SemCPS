@@ -30,9 +30,16 @@ public class IndustryStandards {
 
 	protected void addSubjectURI(RDFNode subject, String predicate, int number, String name) {
 
+		predicate=predicate.trim();
+		
+		
 		// checks if key is already there if not create a new one
 		if (generic.get(name) == null) {
 			generic.put(name, new LinkedHashSet<String>());
+		}
+		
+		if(predicate.equals(":remove")){
+			predicate=":remove"+"null";
 		}
 
 		// adds all data into generic hash map

@@ -29,21 +29,17 @@ public class AlligatorMain {
 	private Files2Facts standardFiles = new Files2Facts();
 
 	public static void main(String[] args) throws Throwable {
-		try {
-			AlligatorMain main = new AlligatorMain();
-			main.readConvertStandardFiles();
+		
 
-			// main.executeDatalogApproach();
+			AlligatorMain main = new AlligatorMain();
+			main.readConvertStandardFiles();	
 			main.generatePSLDataModel();
 			main.executePSLAproach();
-			
+		    // main.executeDatalogApproach();
 			// main.integrate();
 			// main.executePSLAproach();
 			// main.integrate();
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	/**
@@ -65,9 +61,13 @@ public class AlligatorMain {
 	 * @throws Exception
 	 */
 	public void generatePSLDataModel() throws Exception {
+		
+
 		ConfigManager.createDataPath();// creates folders if not there
 
 		standardFiles.generatePSLPredicates(ConfigManager.getFilePath());
+       
+		
 	}
 
 	/**

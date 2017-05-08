@@ -115,7 +115,7 @@ public class ConfigManager {
 		String filePath = loadConfig().getProperty(URI_NAMESPACE + "path");
 		return filePath;
 	}
-
+	
 	/**
 	 * Get the general file path where all the files are located
 	 * 
