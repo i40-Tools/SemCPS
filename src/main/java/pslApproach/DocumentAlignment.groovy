@@ -65,6 +65,10 @@ public class DocumentAligment
 		setUpData()
 		runInference()
 		evalResults()
+		if(util.ConfigManager.getExecutionMethod() == "true"){
+			defineOntoPredicates()
+			defineOntoRules()
+		}
 	}
 
 	public void execute()
@@ -259,6 +263,23 @@ public class DocumentAligment
 
 		// prior
 		model.add rule : ~similar(A,B), weight: 1
+	}
+	
+	/**
+	 * Defines typical ontology predicates 
+	 */
+	public void defineOntoPredicates(){
+		model.add predicate: "ValCat", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
+		model.add predicate: "Domain", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
+		model.add predicate: "Rel", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
+		model.add predicate: "Cat", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
+	}
+	
+	/**
+	 * Defines basic ontology rules
+	 */
+	public void defineOntoRules(){
+		model.add rule: (ValCat(A,C) &  Domain(R,C) & Rel(A,B,R) ) >> Cat(A,C), weight: 5;
 	}
 
 	/**
@@ -472,12 +493,12 @@ public class DocumentAligment
 				String result2  =  text[0]  +  "\t"  +  text[1]  + " " + atom.getValue()
 
 				def flag=removeSymetric(matchResult,symResult)
-
+				
+				//flag = 1 
 				if(flag==0){
 					matchResult.append(result  +  '\n')
 					resultConfidence.append(result2  +  '\n')
 				}
-
 			}
 		}
 

@@ -144,8 +144,22 @@ public class ConfigManager {
 		return filePath;
 	}
 
+	/**
+	 * Reads the configuration regarding the existence of a training set or not
+	 * @return true or false
+	 */
 	public static String getExecutionMethod() {
 		String filePath = loadConfig().getProperty(ONTO_NAMESPACE + "Training");
+		return filePath;
+	}
+	
+	/**
+	 * Reads the configuration to check whether the ontological predicates 
+	 * will be used or not
+	 * @return true or false
+	 */
+	public static String getOntoPredicates() {
+		String filePath = loadConfig().getProperty(ONTO_NAMESPACE + "ontoPredicates");
 		return filePath;
 	}
 
@@ -153,7 +167,6 @@ public class ConfigManager {
 	 * Get the general file path where all the test data files are located
 	 * 
 	 * @return
-	 * 
 	 */
 	public static String getTrainDataPath() {
 		String filePath = loadConfig().getProperty(URI_NAMESPACE + "trainDataPath");
