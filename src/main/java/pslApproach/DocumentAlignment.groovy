@@ -2,6 +2,8 @@
 package pslApproach
 import java.text.DecimalFormat
 
+import org.ujmp.core.util.R
+
 import edu.umd.cs.psl.application.inference.MPEInference
 import edu.umd.cs.psl.application.learning.weight.maxlikelihood.MaxLikelihoodMPE
 import edu.umd.cs.psl.config.*
@@ -171,11 +173,11 @@ public class DocumentAligment
 
 		
 		// Two AMl hasAttributes are the same if they share the same ID
-		model.add rule : (hasAttributeID(A,Z) & hasAttributeID(B,W) & similarValue(Z,W) 
+		model.add rule : (hasAttributeID(A,Z) & hasAttributeID(B,W) & similarValue(Z,W)
 		& hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,weight : 8
 
 		// Two AML Attributes are the same if they have the same name
-		model.add rule : (hasAttributeName(A,Z) & hasAttributeName(B,W) & similarValue(Z,W) & 
+		model.add rule : (hasAttributeName(A,Z) & hasAttributeName(B,W) & similarValue(Z,W) &
 			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 6
 
 		// Two InterfaceClass are the same if they have the same name
@@ -195,7 +197,7 @@ public class DocumentAligment
 			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 6
 
 		// Two AML Attributes are the same if they have the same values
-		model.add rule : (hasAttributeValue(A,Z) & hasAttributeValue(B,W) & similarValue(Z,W) & 
+		model.add rule : (hasAttributeValue(A,Z) & hasAttributeValue(B,W) & similarValue(Z,W) &
 			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 6
 
 		// Two AMl InternalElement are the same if they share the same ID
@@ -209,30 +211,30 @@ public class DocumentAligment
 		weight : 4
 
 		// Two Roles Class are same if its eclass,IRDI and classification class are the same
-		model.add rule :( hasRoleClass(A1,B1) & hasRoleClass(A2,B2)& hasEClassIRDI(B1,Z) 
-		& hasEClassIRDI(B2,W) & similarValue(Z,W) & hasRoleClass(A1,C1) & hasRoleClass(A2,D2) 
+		model.add rule :( hasRoleClass(A1,B1) & hasRoleClass(A2,B2)& hasEClassIRDI(B1,Z)
+		& hasEClassIRDI(B2,W) & similarValue(Z,W) & hasRoleClass(A1,C1) & hasRoleClass(A2,D2)
 		&hasEClassVersion(C1,M) & hasEClassVersion(D2,N) & similarValue(M,N)& hasRoleClass(A1,E1) &
 		hasRoleClass(A2,F2) & hasEClassVersion(E1,O) &hasEClassVersion(F2,L) & similarValue(O,L)
 		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 10
 
 		// Two Interface Class are same if its eclass,IRDI and classification class are the same
-		model.add rule :( hasInterfaceClass(A1,B1) & hasInterfaceClass(A2,B2)& hasEClassIRDI(B1,Z) 
-		& hasEClassIRDI(B2,W) & similarValue(Z,W)& hasInterfaceClass(A1,C1) 
-		& hasInterfaceClass(A2,D2)  & hasEClassVersion(C1,M) & hasEClassVersion(D2,N) 
-		& similarValue(M,N)& hasInterfaceClass(A1,E1) & hasInterfaceClass(A2,F2) 
+		model.add rule :( hasInterfaceClass(A1,B1) & hasInterfaceClass(A2,B2)& hasEClassIRDI(B1,Z)
+		& hasEClassIRDI(B2,W) & similarValue(Z,W)& hasInterfaceClass(A1,C1)
+		& hasInterfaceClass(A2,D2)  & hasEClassVersion(C1,M) & hasEClassVersion(D2,N)
+		& similarValue(M,N)& hasInterfaceClass(A1,E1) & hasInterfaceClass(A2,F2)
 		& hasEClassVersion(E1,O) & hasEClassVersion(F2,L) & similarValue(O,L)
 		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 8
 
 		// Two SystemUnit Class are same if its eclass,IRDI and classification class are the same
-		model.add rule :( hasSystemUnitClass(A1,B1) & hasSystemUnitClass(A2,B2) & hasEClassIRDI(B1,Z) 
-		& hasEClassIRDI(B2,W) & similarValue(Z,W) & hasSystemUnitClass(A1,C1) 
-		& hasSystemUnitClass(A2,D2) & hasEClassVersion(C1,M) & hasEClassVersion(D2,N) 
-		& similarValue(M,N)& hasSystemUnitClass(A1,E1) & hasSystemUnitClass(A2,F2) 
+		model.add rule :( hasSystemUnitClass(A1,B1) & hasSystemUnitClass(A2,B2) & hasEClassIRDI(B1,Z)
+		& hasEClassIRDI(B2,W) & similarValue(Z,W) & hasSystemUnitClass(A1,C1)
+		& hasSystemUnitClass(A2,D2) & hasEClassVersion(C1,M) & hasEClassVersion(D2,N)
+		& similarValue(M,N)& hasSystemUnitClass(A1,E1) & hasSystemUnitClass(A2,F2)
 		& hasEClassVersion(E1,O) & hasEClassVersion(F2,L) & similarValue(O,L)
 		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 8
 
-        // Internal Elements Set is same if it has same InternalLink 			
-	    model.add rule : (hasInternalElement(A,Z) & hasInternalElement(B,W) 
+		// Internal Elements Set is same if it has same InternalLink
+		model.add rule : (hasInternalElement(A,Z) & hasInternalElement(B,W)
 		& hasInternalLink(Z,C) & hasInternalElementID(B,D)  & similarValue(C,D)
 		& hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
 		weight : 4
@@ -240,8 +242,8 @@ public class DocumentAligment
 		   
 		
 		
-        // rules for not similar
-	    // Two AML CAEX files are the not same if they have the not same path
+		// rules for not similar
+		// Two AML CAEX files are the not same if they have the not same path
 		model.add rule : (hasCAEXFile(A,X) & hasCAEXFile(B,Y) & hasExternalReference(X,Z)
 		& hasExternalReference(Y,W) & ~similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) &
 		(O1-O2)) >> notSimilar(X,Y) , weight : 8
@@ -252,11 +254,11 @@ public class DocumentAligment
 		(O1-O2)) >> notSimilar(A,B) , weight : 5
 
 		// Two AMl hasAttributes are the not same if they share the not same ID
-		model.add rule : (hasAttributeID(A,Z) & hasAttributeID(B,W) & ~similarValue(Z,W) 
+		model.add rule : (hasAttributeID(A,Z) & hasAttributeID(B,W) & ~similarValue(Z,W)
 		& hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) ,weight : 8
 				
 		// Two AML Attributes are the not same if they have the not same name
-		model.add rule : (hasAttributeName(A,Z) & hasAttributeName(B,W) & ~similarValue(Z,W) & 
+		model.add rule : (hasAttributeName(A,Z) & hasAttributeName(B,W) & ~similarValue(Z,W) &
 			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) , weight : 6
 
 		// Two InterfaceClass are not the same if they have the same name
@@ -292,34 +294,34 @@ public class DocumentAligment
 		weight : 4
 
 		
-        // Two Roles Class are not same if its eclass,IRDI and classification class are the same
-		model.add rule :( hasRoleClass(A1,B1) & hasRoleClass(A2,B2)& hasEClassIRDI(B1,Z) 
-		& hasEClassIRDI(B2,W) & ~similarValue(Z,W) & hasRoleClass(A1,C1) & hasRoleClass(A2,D2) 
+		// Two Roles Class are not same if its eclass,IRDI and classification class are the same
+		model.add rule :( hasRoleClass(A1,B1) & hasRoleClass(A2,B2)& hasEClassIRDI(B1,Z)
+		& hasEClassIRDI(B2,W) & ~similarValue(Z,W) & hasRoleClass(A1,C1) & hasRoleClass(A2,D2)
 		&hasEClassVersion(C1,M) & hasEClassVersion(D2,N) & ~similarValue(M,N)& hasRoleClass(A1,E1) &
 		hasRoleClass(A2,F2) & hasEClassVersion(E1,O) &hasEClassVersion(F2,L) & ~similarValue(O,L)
 		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> notSimilar(A1,A2) , weight : 10
 
 		// Two Interface Class are not same if its eclass,IRDI and classification class are the same
-		model.add rule :( hasInterfaceClass(A1,B1) & hasInterfaceClass(A2,B2)& hasEClassIRDI(B1,Z) 
-		& hasEClassIRDI(B2,W) & ~similarValue(Z,W)& hasInterfaceClass(A1,C1) 
-		& hasInterfaceClass(A2,D2)  & hasEClassVersion(C1,M) & hasEClassVersion(D2,N) 
-		& ~similarValue(M,N)& hasInterfaceClass(A1,E1) & hasInterfaceClass(A2,F2) 
+		model.add rule :( hasInterfaceClass(A1,B1) & hasInterfaceClass(A2,B2)& hasEClassIRDI(B1,Z)
+		& hasEClassIRDI(B2,W) & ~similarValue(Z,W)& hasInterfaceClass(A1,C1)
+		& hasInterfaceClass(A2,D2)  & hasEClassVersion(C1,M) & hasEClassVersion(D2,N)
+		& ~similarValue(M,N)& hasInterfaceClass(A1,E1) & hasInterfaceClass(A2,F2)
 		& hasEClassVersion(E1,O) & hasEClassVersion(F2,L) & ~similarValue(O,L)
 		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> notSimilar(A1,A2) , weight : 8
 
 		// Two SystemUnit Class are not same if its eclass,IRDI and classification class are the same
-		model.add rule :( hasSystemUnitClass(A1,B1) & hasSystemUnitClass(A2,B2) & hasEClassIRDI(B1,Z) 
-		& hasEClassIRDI(B2,W) & ~similarValue(Z,W) & hasSystemUnitClass(A1,C1) 
-		& hasSystemUnitClass(A2,D2) & hasEClassVersion(C1,M) & hasEClassVersion(D2,N) 
-		& ~similarValue(M,N)& hasSystemUnitClass(A1,E1) & hasSystemUnitClass(A2,F2) 
+		model.add rule :( hasSystemUnitClass(A1,B1) & hasSystemUnitClass(A2,B2) & hasEClassIRDI(B1,Z)
+		& hasEClassIRDI(B2,W) & ~similarValue(Z,W) & hasSystemUnitClass(A1,C1)
+		& hasSystemUnitClass(A2,D2) & hasEClassVersion(C1,M) & hasEClassVersion(D2,N)
+		& ~similarValue(M,N)& hasSystemUnitClass(A1,E1) & hasSystemUnitClass(A2,F2)
 		& hasEClassVersion(E1,O) & hasEClassVersion(F2,L) & ~similarValue(O,L)
 		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> notSimilar(A1,A2) , weight : 8
 
 	
-    	// Two AMl InstanceHierarchy are not the same if they share the same ID
-	    model.add rule : (hasInstanceHierarchyID(A,Z) & hasInstanceHierarchyID(B,W)
-	    & ~similarValue(Z,W) &hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
-	    weight : 4
+		// Two AMl InstanceHierarchy are not the same if they share the same ID
+		model.add rule : (hasInstanceHierarchyID(A,Z) & hasInstanceHierarchyID(B,W)
+		& ~similarValue(Z,W) &hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
+		weight : 4
 
 
 
@@ -333,7 +335,7 @@ public class DocumentAligment
 	}
 	
 	/**
-	 * Defines typical ontology predicates 
+	 * Defines typical ontology predicates
 	 */
 	public void defineOntoPredicates(){
 		model.add predicate: "ValCat", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
@@ -372,20 +374,20 @@ public class DocumentAligment
 			createFiles(trainDir + "similar.txt")
 
 			for (Predicate p : [
-				hasDocument, 
-				hasAttribute, 
-				hasRefSemantic, 
-				hasInternalElementID, 
+				hasDocument,
+				hasAttribute,
+				hasRefSemantic,
+				hasInternalElementID,
 				hasAttributeID,
-				hasInternalLink, 
-				hasEClassVersion, 
-				hasEClassClassificationClass, 
-				hasEClassIRDI, 
-				hasRoleClass, 
-				hasInternalElement, 
-				hasSystemUnitClass, 
+				hasInternalLink,
+				hasEClassVersion,
+				hasEClassClassificationClass,
+				hasEClassIRDI,
+				hasRoleClass,
+				hasInternalElement,
+				hasSystemUnitClass,
 				hasInterfaceClass,
-				hasAttributeValue, 
+				hasAttributeValue,
 				hasAttributeName,
 				hasInterfaceClassAttributeName,
 				hasInternalElementAttributeName,
@@ -406,29 +408,29 @@ public class DocumentAligment
 			InserterUtils.loadDelimitedDataTruth(insert, trainDir + "similar.txt")
 
 			trainDB = data.getDatabase(trainPredictions, [
-			hasDocument, 
-			hasAttribute, 
-			hasRefSemantic, 
-			hasInternalElementID, 
+			hasDocument,
+			hasAttribute,
+			hasRefSemantic,
+			hasInternalElementID,
 			hasAttributeID,
-			hasInternalLink, 
-			hasEClassVersion, 
-			hasEClassClassificationClass, 
-			hasEClassIRDI, 
-			hasRoleClass, 
-			hasInternalElement, 
-			hasSystemUnitClass, 
+			hasInternalLink,
+			hasEClassVersion,
+			hasEClassClassificationClass,
+			hasEClassIRDI,
+			hasRoleClass,
+			hasInternalElement,
+			hasSystemUnitClass,
 			hasInterfaceClass,
-			hasAttributeValue, 
+			hasAttributeValue,
 			hasAttributeName,
 			hasInterfaceClassAttributeName,
 			hasInternalElementAttributeName,
 			hasRoleClassAttributeName,
 			hasSystemUnitClassAttributeName,
-			hasExternalReference, 
+			hasExternalReference,
 			hasCAEXFile,
 			hasInstanceHierarchyID,
-			hasInstanceHierarchy			
+			hasInstanceHierarchy
 			]
 			as Set, trainObservations)
 			
@@ -453,56 +455,56 @@ public class DocumentAligment
 		for (Predicate p : [
 			hasDocument,
 			hasAttribute,
-			hasRefSemantic, 
+			hasRefSemantic,
 			hasInternalElementID,
 			hasAttributeID,
-			hasInternalLink, 
-       		hasEClassVersion, 
-			hasEClassClassificationClass, 
-			hasEClassIRDI, 
-			hasRoleClass, 
-		    hasInternalElement, 
-			hasSystemUnitClass, 
-			hasInterfaceClass, 
-			hasAttributeValue,
-		    hasAttributeName,
-			hasInterfaceClassAttributeName,
-			hasInternalElementAttributeName,
-			hasRoleClassAttributeName,
-			hasSystemUnitClassAttributeName,
-			hasExternalReference, 
-			hasCAEXFile,
-			hasInstanceHierarchyID,
-			hasInstanceHierarchy
-			])
-		{
-			createFiles(testDir + p.getName().toLowerCase() + ".txt")			
-		}
-		createFiles(testDir + "similar.txt")
-		createFiles(testDir + "GoldStandard.txt")
-		createFiles(testDir + "similarwithConfidence.txt")
-
-		for (Predicate p : [
-			hasDocument, 
-			hasAttribute, 
-			hasRefSemantic, 
-			hasInternalElementID,
-			hasAttributeID,
-			hasInternalLink, 
-			hasEClassVersion, 
-			hasEClassClassificationClass, 
-			hasEClassIRDI, 
-			hasRoleClass, 
-			hasInternalElement, 
-			hasSystemUnitClass, 
-			hasInterfaceClass, 
+			hasInternalLink,
+			   hasEClassVersion,
+			hasEClassClassificationClass,
+			hasEClassIRDI,
+			hasRoleClass,
+			hasInternalElement,
+			hasSystemUnitClass,
+			hasInterfaceClass,
 			hasAttributeValue,
 			hasAttributeName,
 			hasInterfaceClassAttributeName,
 			hasInternalElementAttributeName,
 			hasRoleClassAttributeName,
 			hasSystemUnitClassAttributeName,
-			hasExternalReference, 
+			hasExternalReference,
+			hasCAEXFile,
+			hasInstanceHierarchyID,
+			hasInstanceHierarchy
+			])
+		{
+			createFiles(testDir + p.getName().toLowerCase() + ".txt")
+		}
+		createFiles(testDir + "similar.txt")
+		createFiles(testDir + "GoldStandard.txt")
+		createFiles(testDir + "similarwithConfidence.txt")
+
+		for (Predicate p : [
+			hasDocument,
+			hasAttribute,
+			hasRefSemantic,
+			hasInternalElementID,
+			hasAttributeID,
+			hasInternalLink,
+			hasEClassVersion,
+			hasEClassClassificationClass,
+			hasEClassIRDI,
+			hasRoleClass,
+			hasInternalElement,
+			hasSystemUnitClass,
+			hasInterfaceClass,
+			hasAttributeValue,
+			hasAttributeName,
+			hasInterfaceClassAttributeName,
+			hasInternalElementAttributeName,
+			hasRoleClassAttributeName,
+			hasSystemUnitClassAttributeName,
+			hasExternalReference,
 			hasCAEXFile,
 			hasInstanceHierarchyID,
 			hasInstanceHierarchy
@@ -516,26 +518,26 @@ public class DocumentAligment
 
 		
 		testDB  =  data.getDatabase(testPredictions, [
-			hasDocument, 
-			hasAttribute, 
-			hasRefSemantic, 
-			hasInternalElementID, 
-			hasAttributeID,		
-			hasInternalLink, 
-			hasEClassVersion, 
-			hasEClassClassificationClass, 
-			hasRoleClass, 
-			hasEClassIRDI, 
-			hasInternalElement, 
-			hasSystemUnitClass, 
+			hasDocument,
+			hasAttribute,
+			hasRefSemantic,
+			hasInternalElementID,
+			hasAttributeID,
+			hasInternalLink,
+			hasEClassVersion,
+			hasEClassClassificationClass,
+			hasRoleClass,
+			hasEClassIRDI,
+			hasInternalElement,
+			hasSystemUnitClass,
 			hasInterfaceClass,
-			hasAttributeValue, 
+			hasAttributeValue,
 			hasAttributeName,
 			hasInterfaceClassAttributeName,
 			hasInternalElementAttributeName,
 			hasRoleClassAttributeName,
 			hasSystemUnitClassAttributeName,
-			hasExternalReference, 
+			hasExternalReference,
 			hasCAEXFile,
 			hasInstanceHierarchyID,
 			hasInstanceHierarchy
@@ -586,7 +588,7 @@ public class DocumentAligment
 		resultConfidence.write('')
 		DecimalFormat formatter  =  new DecimalFormat("#.##")
 		for (GroundAtom atom : Queries.getAllAtoms(testDB, similar)){
-    	println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
+		println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 
 			// only writes if its equal to 1 or u can set the threshold
 			if(formatter.format(atom.getValue())>"0.3"){
@@ -600,7 +602,7 @@ public class DocumentAligment
 
 				def flag=removeSymetric(matchResult,symResult)
 				
-				//flag = 1 
+				//flag = 1
 				if(flag==0){
 					matchResult.append(result  +  '\n')
 					GoldStandard.append(result  +  '\n')
@@ -621,10 +623,10 @@ public class DocumentAligment
 				result =  text[0]  +  "\t"  +  text[1] +  "\t" + "0"
 				def symResult= text[1]  +  "\t"  +  text[0] +  "\t" + "0"
 				def trueResult= text[0]  +  "\t"  +  text[1] +  "\t" + "1"
-				def trueSymResult= text[1]  +  "\t"  +  text[0] +  "\t" + "1"				
-				String result2  =  text[0]  +  "\t"  +  text[1]  + " " + atom.getValue()			
+				def trueSymResult= text[1]  +  "\t"  +  text[0] +  "\t" + "1"
+				String result2  =  text[0]  +  "\t"  +  text[1]  + " " + atom.getValue()
 				
-				if(!removeSymetric(matchResult,symResult)&& 
+				if(!removeSymetric(matchResult,symResult)&&
 				   !removeSymetric(matchResult,trueSymResult)&&
 				   !removeSymetric(matchResult,trueResult)){
 					matchResult.append(result  +  '\n')
@@ -682,7 +684,7 @@ public class DocumentAligment
 		resultsFile.append("Accuracy:" + stats.getAccuracy() + '\n')
 		resultsFile.append("Error:" + stats.getError() + '\n')
 		resultsFile.append("Fmeasure:" + stats.getF1(DiscretePredictionStatistics.
-			    BinaryClass.POSITIVE) +  '\n')
+				BinaryClass.POSITIVE) +  '\n')
 		resultsFile.append("True Positive:" + stats.tp + '\n')
 		resultsFile.append("False Positive:" + stats.fp + '\n')
 		resultsFile.append("False Negative:" + stats.fn + '\n')

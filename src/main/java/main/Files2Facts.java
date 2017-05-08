@@ -328,30 +328,39 @@ public class Files2Facts extends IndustryStandards {
 							"has" + getType(subject) + predicate.asNode().getLocalName()
 							.replace("has", ""));
 
-			addSubjectURI(subject, ":remove" +object.asLiteral().getLexicalForm() , number,
-					predicate.asNode().getLocalName());
 				} else {
 					addSubjectURI(subject, ":remove" + object.asLiteral().getLexicalForm(), number,
 							predicate.asNode().getLocalName());
+
 				}
+              
 			}
+								
 		}
+
+		
 		
 		if (predicate.asNode().getLocalName().equals("hasAttributeValue")) {
 			if (!checkEclass(object)) {
-				addSubjectURI(subject, ":remove" +object.asLiteral().getLexicalForm() , number,
-				predicate.asNode().getLocalName());
+				
+
+			addSubjectURI(subject, ":remove" +object.asLiteral().getLexicalForm() , number,
+					predicate.asNode().getLocalName());
+			
 			}
+								
 		}
+
 		
 		addGenericObject("hasExternalReference","refBaseClassPath" );
 		addGenericObject("hasInternalLink","hasRefPartnerSideB" );
 		addGenericObject("hasInternalLink","hasRefPartnerSideA" );
 		
 		if (predicate.asNode().getLocalName().equals("hasAttribute")) {
+
 			// gets all classes which hasAttribute relation
 			addSubjectURI(subject, ":" + object.asNode().getLocalName(), number,
-						  "has" + getType(subject));
+					"has" + getType(subject));
 		}
 
 		addGenericObject("hasRefSemantic","hasCorrespondingAttributePath");
@@ -386,9 +395,12 @@ public class Files2Facts extends IndustryStandards {
 									":remove" + stmte.getObject().asLiteral().getLexicalForm(),
 									number, "hasEclassIRDI");
 						}
+
 					}
 				}
+
 			}
+
 		}
 
 		// RefSemantic part starts here
