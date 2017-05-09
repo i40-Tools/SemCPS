@@ -595,16 +595,22 @@ public class DocumentAligment
 				String[] text  =  result.split(",")
 				result =  text[0]  +  "\t"  +  text[1] +  "\t" + "1"
 				def symResult= text[1]  +  "\t"  +  text[0] +  "\t" + "1"
+				def symResult2= text[1]  +  "\t"  +  text[0] + " " + atom.getValue()				
 				String result2  =  text[0]  +  "\t"  +  text[1]  + " " + atom.getValue()
+			
+				// adding elements with aml1: at start for correctness
+				if(!removeSymetric(matchResult,symResult)&&
+				!removeSymetric(matchResult,result)){
+					if(text[0].toString().contains("aml1")){
+						matchResult.append(result  +  '\n')
+						resultConfidence.append(result2  +  '\n')
+					}
+					else{
+						matchResult.append(symResult  +  '\n')
+						resultConfidence.append(symResult2  +  '\n')
 
-				def flag=removeSymetric(matchResult,symResult)
-				
-				//flag = 1
-				if(flag==0){
-					matchResult.append(result  +  '\n')
-					resultConfidence.append(result2  +  '\n')
-				}
-			}
+					}
+				}}
 		}
 
 		for (GroundAtom atom : Queries.getAllAtoms(testDB, notSimilar)){
