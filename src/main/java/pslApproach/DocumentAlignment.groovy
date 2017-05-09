@@ -580,10 +580,7 @@ public class DocumentAligment
 
 		println "INFERENCE DONE"
 		def matchResult  =  new File(testDir  +  'similar.txt')
-		matchResult.write('')
-		def GoldStandard  =  new File(testDir  +  'GoldStandard.txt')
-		GoldStandard.write('')
-		
+		matchResult.write('')		
 		def resultConfidence  =  new File(testDir  +  'similarwithConfidence.txt')
 		resultConfidence.write('')
 		DecimalFormat formatter  =  new DecimalFormat("#.##")
@@ -605,7 +602,6 @@ public class DocumentAligment
 				//flag = 1
 				if(flag==0){
 					matchResult.append(result  +  '\n')
-					GoldStandard.append(result  +  '\n')
 					resultConfidence.append(result2  +  '\n')
 				}
 			}
