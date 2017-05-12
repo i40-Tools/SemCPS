@@ -51,6 +51,7 @@ public class AlligatorMain {
 	public void readConvertStandardFiles() throws Exception {
 		standardFiles.readFiles(ConfigManager.getFilePath(), ".aml", ".opcua", ".xml");
 		standardFiles.convert2RDF();
+		standardFiles = new Files2Facts();
 		standardFiles.readFiles(ConfigManager.getFilePath(), ".ttl", ".rdf", ".owl");
 		standardFiles.readFiles(ConfigManager.getOntoURIPath(), ".ttl", ".rdf", ".owl");
 		standardFiles.improveRDFOutputFormat();

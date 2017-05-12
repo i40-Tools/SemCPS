@@ -346,9 +346,13 @@ public class DocumentAligment
 	 */
 	public void defineOntoRules(){
 
-//		model.add rule : (hasDomain(S,A) & hasDomain(U,B) & hasType(W,A) & hasType(V,B)
-//		& similar(W,V) & hasDocument(W,O1)
-//		& hasDocument(V,O2) & (O1-O2) )>> similar(S,U), weight : 2
+//		model.add rule : (similar(U,W) & hasType(U,B) & hasType(W,C) &
+//		hasDomain(A,B) & hasDomain(D,C) & hasDocument(U,O1) & hasDocument(W,O2) 
+//		& (O1-O2))>> similar(A,D), weight : 2
+
+//		model.add rule : (hasDomain(A,B) & hasDomain(D,C) & hasType(U,B) &hasType(W,C) &
+//		similar(U,W) & hasDocument(U,O1)
+//		& hasDocument(W,O2) & (O1-O2))>> similar(A,D), weight : 2
 //		
 		model.add rule : (hasDomain(A,B) & hasDomain(D,C) & similar(B,C) & hasDocument(B,O1)
 		& hasDocument(C,O2) & (O1-O2))>> similar(A,D), weight : 2

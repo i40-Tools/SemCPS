@@ -47,7 +47,6 @@ public class Files2Facts extends IndustryStandards {
 
 	int number = 0;
 	private PrintWriter documentwriter;
-	
 	public Files2Facts(){
 		files = new ArrayList<File>();
 	}
@@ -233,6 +232,7 @@ public class Files2Facts extends IndustryStandards {
 				else{
 				addSubjectURI(subject, "", number, "hasDocument");
 				}
+
 				addsDataforAML(number); // process required data for AML
 			}
 
