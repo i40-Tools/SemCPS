@@ -85,17 +85,21 @@ aml:conf
      uri:URI "C:/Users/omar/Desktop/Alligator-master/resources/".
      
 ```
+Please note:  
+```
 uri:path refers to Heterogeneity path                    
 uri:URI refers to the ontology path                      
+```
 
 Just give path of AML heterogenity and folders will be created automatically.                  
 
 Then you can add GoldStandard and training data.                           
 
-To create folders manually before running, you can create and put Goldstandard.txt and training data.            
+To create folders manually before running, you can create and put Goldstandard.txt and training data.           
+```
 .../TestBed1/PSL/test/              
 .../TestBed1/PSL/train/                          
-
+```
 Please note in Similar.txt for training its a truth value. You must add 
 ```aml2:InterfaceClass1	 aml1:InterfaceClass1	 1
 aml1:InterfaceClass1	 aml2:InterfaceClass1	 1
