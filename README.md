@@ -1,6 +1,11 @@
 # Alligator: A Deductive Approach for the Integration of Industry 4.0 Standards
 
-This project contains the rules to integrate two AML files using a cannonical model and rules written in ProLog - **Rules4AMLIntegrator**.
+This project contains the rules to integrate heterogeneious AML files using rules written in ProLog and Porbabilistic Soft logic.         
+## What is Proglog ?                      
+Please read it here : https://en.wikipedia.org/wiki/Prolog                     
+
+## What is Porbabilistic Soft logic ?                      
+Please read it here : http://psl.linqs.org/                     
 
 ## Dependencies
 This tool depends on the following software
@@ -20,7 +25,9 @@ Donwload Eclipse groovy plugin: https://github.com/groovy/groovy-eclipse/wiki
 Makes sure to download plugin according to your ide version.
 
 ## IDE support Running Project in Eclipse
-The quick and easy way to start compiling, running and coding **Rules4AMLIntegrator** we provide a java project in Eclipse and we a Prolog Connector. Thus, you need to install tools:
+The quick and easy way to start compiling, running and coding **Alligator** is we provide a java project in Eclipse .
+
+Thus, you need to install tools:
 * Eclipse IDE: https://www.eclipse.org/downloads/
 
 In windows you need to add the following entries system PATH
@@ -28,6 +35,7 @@ In windows you need to add the following entries system PATH
     $ C:\Program Files\swipl\bin; C:\Program Files\swipl\lib\jpl.jar; C:\PrologConnectorJarFolder\org.cs3.prolog.connector_3.1.2.201504300958.jar;
 
 Donwload Eclipse groovy plugin: https://github.com/groovy/groovy-eclipse/wiki                                   
+
 Make sure you download correct version of plugin according to your eclipse otherwise it wont compile.                        
 
 Import the project in eclipse and click build. The maven dependancies will be downloaded automatically.                      
@@ -77,9 +85,13 @@ aml:conf
      uri:URI "C:/Users/omar/Desktop/Alligator-master/resources/".
      
 ```
+uri:path refers to Heterogeneity path                    
+uri:URI refers to the ontology path                      
 
 Just give path of AML heterogenity and folders will be created automatically.                  
+
 Then you can add GoldStandard and training data.                           
+
 To create folders manually before running, you can create and put Goldstandard.txt and training data.            
 .../TestBed1/PSL/test/              
 .../TestBed1/PSL/train/                          
