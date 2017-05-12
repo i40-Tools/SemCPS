@@ -52,7 +52,9 @@ public class AlligatorMain {
 		standardFiles.readFiles(ConfigManager.getFilePath(), ".aml", ".opcua", ".xml");
 		standardFiles.convert2RDF();
 		standardFiles.readFiles(ConfigManager.getFilePath(), ".ttl", ".rdf", ".owl");
+		standardFiles.readFiles(ConfigManager.getOntoURIPath(), ".ttl", ".rdf", ".owl");
 		standardFiles.improveRDFOutputFormat();
+		
 	}
 
 	/**

@@ -47,6 +47,10 @@ public class Files2Facts extends IndustryStandards {
 
 	int number = 0;
 	private PrintWriter documentwriter;
+	
+	public Files2Facts(){
+		files = new ArrayList<File>();
+	}
 
 	/**
 	 * Converts the file to turtle format based on Krextor
@@ -78,7 +82,7 @@ public class Files2Facts extends IndustryStandards {
 	 */
 	public ArrayList<File> readFiles(String path, String type, String type2, String type3)
 			throws Exception {
-		files = new ArrayList<File>();
+		
 		File originalFilesFolder = new File(path);
 		if (originalFilesFolder.isDirectory()) {
 			for (File amlFile : originalFilesFolder.listFiles()) {
@@ -222,8 +226,13 @@ public class Files2Facts extends IndustryStandards {
 				if (predicate.asNode().getLocalName().toString().equals("type")) {
 					subjectsToWrite.add(object.asNode().getLocalName());
 				}
+				if(number==3){
+					
+				}
 				// all subjects are added according to ontology e.g aml
+				else{
 				addSubjectURI(subject, "", number, "hasDocument");
+				}
 				addsDataforAML(number); // process required data for AML
 			}
 
@@ -321,6 +330,7 @@ public class Files2Facts extends IndustryStandards {
 	private void addsDataforAML(int number) throws FileNotFoundException {
 		// RefSemantic part starts here
 
+		
 		if (predicate.asNode().getLocalName().equals("hasAttributeName")) {
 			if (!checkEclass(object)) {
 				if (!getType(subject).equals("Attribute")) {
@@ -338,8 +348,26 @@ public class Files2Facts extends IndustryStandards {
 								
 		}
 
+		// Adds domain and range
+		if (predicate.asNode().getLocalName().equals("domain")
+				|| predicate.asNode().getLocalName().equals("range")) {
+			addSubjectURI(subject, ":" + object.asNode().getLocalName(), 1,
+					"has" + predicate.asNode().getLocalName());
+			addSubjectURI(subject, ":" + object.asNode().getLocalName(), 2,
+					"has" + predicate.asNode().getLocalName());
+			addSubjectURI(subject, "", 1, "hasDocument");
+			addSubjectURI(subject, "", 2, "hasDocument");
+			addSubjectURI(object, "", 1, "hasDocument");
+			addSubjectURI(object, "", 2, "hasDocument");			
+		}
+
 		
-		
+		if (predicate.asNode().getLocalName().equals("type")) {
+			if (number != 3)
+				addSubjectURI(subject, ":" + object.asNode().getLocalName(), number,
+						"has" + predicate.asNode().getLocalName());
+		}
+
 		if (predicate.asNode().getLocalName().equals("hasAttributeValue")) {
 			if (!checkEclass(object)) {
 				

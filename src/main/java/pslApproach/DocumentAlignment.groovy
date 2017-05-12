@@ -2,8 +2,6 @@
 package pslApproach
 import java.text.DecimalFormat
 
-import org.ujmp.core.util.R
-
 import edu.umd.cs.psl.application.inference.MPEInference
 import edu.umd.cs.psl.application.learning.weight.maxlikelihood.MaxLikelihoodMPE
 import edu.umd.cs.psl.config.*
@@ -60,15 +58,13 @@ public class DocumentAligment
 	{
 		config()
 		definePredicates()
+		defineOntoPredicates()
 		defineFunctions()
 		defineRules()
+		defineOntoRules()
 		setUpData()
 		runInference()
 		evalResults()
-		if(util.ConfigManager.getExecutionMethod() == "true"){
-			defineOntoPredicates()
-			defineOntoRules()
-		}
 	}
 
 	public void execute()
@@ -145,7 +141,10 @@ public class DocumentAligment
 		
 		model.add predicate: "hasExternalReference"     , types: [ArgumentType.UniqueID, ArgumentType.String]
 
+		model.add predicate: "hasType"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
+		
 		model.add predicate: "notSimilar"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
+		
 		
 	}
 
@@ -238,8 +237,7 @@ public class DocumentAligment
 		& hasInternalLink(Z,C) & hasInternalElementID(B,D)  & similarValue(C,D)
 		& hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
 		weight : 4
-	   
-		   
+
 		
 		
 		// rules for not similar
@@ -323,7 +321,7 @@ public class DocumentAligment
 		& ~similarValue(Z,W) &hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
 		weight : 4
 
-
+	
 
 		// constraints
 		model.add PredicateConstraint.PartialFunctional , on : similar
@@ -338,17 +336,34 @@ public class DocumentAligment
 	 * Defines typical ontology predicates
 	 */
 	public void defineOntoPredicates(){
-		model.add predicate: "ValCat", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
-		model.add predicate: "Domain", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
-		model.add predicate: "Rel", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
-		model.add predicate: "Cat", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
+		model.add predicate: "hasDomain", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
+	
+		model.add predicate: "hasRange", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]		
 	}
 	
 	/**
 	 * Defines basic ontology rules
 	 */
 	public void defineOntoRules(){
-		model.add rule: (ValCat(A,C) &  Domain(R,C) & Rel(A,B,R) ) >> Cat(A,C), weight: 5;
+
+//		model.add rule : (hasDomain(S,A) & hasDomain(U,B) & hasType(W,A) & hasType(V,B)
+//		& similar(W,V) & hasDocument(W,O1)
+//		& hasDocument(V,O2) & (O1-O2) )>> similar(S,U), weight : 2
+//		
+		model.add rule : (hasDomain(A,B) & hasDomain(D,C) & similar(B,C) & hasDocument(B,O1)
+		& hasDocument(C,O2) & (O1-O2))>> similar(A,D), weight : 2
+
+	    model.add rule : (hasRange(A,B)  & hasRange(C,D)  & similar(B,D)
+		& hasDocument(B,O1) & hasDocument(D,O2) & (O1-O2)) >> similar(A,C), weight : 2
+	
+		model.add rule : (hasDomain(A,B) & hasDomain(C,D) & similar(A,C)
+		& hasDocument(B,O1) & hasDocument(D,O2) & (O1-O2)) >> similar(B,D), weight : 2
+	
+		model.add rule : (hasRange(A,B)  & hasRange(C,D)  & similar(A,C)
+		& hasDocument(B,O1) & hasDocument(C,O2) & (O1-O2)) >> similar(B,C), weight : 2
+
+	
+			
 	}
 
 	/**
@@ -396,7 +411,10 @@ public class DocumentAligment
 				hasExternalReference,
 				hasCAEXFile,
 				hasInstanceHierarchyID,
-				hasInstanceHierarchy
+				hasInstanceHierarchy,
+				hasDomain,
+				hasRange,
+				hasType
 				]
 			){
 				createFiles(trainDir + p.getName().toLowerCase() + ".txt")
@@ -430,7 +448,10 @@ public class DocumentAligment
 			hasExternalReference,
 			hasCAEXFile,
 			hasInstanceHierarchyID,
-			hasInstanceHierarchy
+			hasInstanceHierarchy,
+			hasDomain,
+			hasRange,
+			hasType
 			]
 			as Set, trainObservations)
 			
@@ -459,7 +480,7 @@ public class DocumentAligment
 			hasInternalElementID,
 			hasAttributeID,
 			hasInternalLink,
-			   hasEClassVersion,
+			hasEClassVersion,
 			hasEClassClassificationClass,
 			hasEClassIRDI,
 			hasRoleClass,
@@ -475,7 +496,10 @@ public class DocumentAligment
 			hasExternalReference,
 			hasCAEXFile,
 			hasInstanceHierarchyID,
-			hasInstanceHierarchy
+			hasInstanceHierarchy,
+			hasDomain,
+			hasRange,
+			hasType
 			])
 		{
 			createFiles(testDir + p.getName().toLowerCase() + ".txt")
@@ -507,7 +531,10 @@ public class DocumentAligment
 			hasExternalReference,
 			hasCAEXFile,
 			hasInstanceHierarchyID,
-			hasInstanceHierarchy
+			hasInstanceHierarchy,
+			hasDomain,
+			hasRange,
+			hasType
 			])
 		{
 			
@@ -540,7 +567,10 @@ public class DocumentAligment
 			hasExternalReference,
 			hasCAEXFile,
 			hasInstanceHierarchyID,
-			hasInstanceHierarchy
+			hasInstanceHierarchy,
+			hasDomain,
+			hasRange,
+			hasType
 
 		] as Set, testObservations)
 
@@ -580,7 +610,8 @@ public class DocumentAligment
 
 		println "INFERENCE DONE"
 		def matchResult  =  new File(testDir  +  'similar.txt')
-		matchResult.write('')		
+		matchResult.write('')
+		
 		def resultConfidence  =  new File(testDir  +  'similarwithConfidence.txt')
 		resultConfidence.write('')
 		DecimalFormat formatter  =  new DecimalFormat("#.##")
@@ -591,12 +622,12 @@ public class DocumentAligment
 			if(formatter.format(atom.getValue())>"0.3"){
 				// converting to format for evaluation
 				String result  =  atom.toString().replaceAll("SIMILAR","")
-				result  =  result.replaceAll("[()]","")
-				String[] text  =  result.split(",")
-				result =  text[0]  +  "\t"  +  text[1] +  "\t" + "1"
-				def symResult= text[1]  +  "\t"  +  text[0] +  "\t" + "1"
-				def symResult2= text[1]  +  "\t"  +  text[0] + " " + atom.getValue()				
-				String result2  =  text[0]  +  "\t"  +  text[1]  + " " + atom.getValue()
+				result  = result.replaceAll("[()]","")
+				String[] text  = result.split(",")
+				result = text[0].trim()  +  "\t"  +  text[1].trim() +  "\t" + "1"
+				def symResult = text[1].trim()  +  "\t"  +  text[0].trim() +  "\t" + "1"
+				def symResult2 = text[1].trim()  +  "\t"  +  text[0].trim() + " " + atom.getValue()				
+				String result2 = text[0].trim()  +  "\t"  +  text[1].trim()  + " " + atom.getValue()
 			
 				// adding elements with aml1: at start for correctness
 				if(!removeSymetric(matchResult,symResult)&&
