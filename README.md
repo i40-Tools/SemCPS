@@ -51,6 +51,9 @@ give path to groovy script :
 		script.evaluate(new File("src/main/java/edu/umd/cs/example/OntologyAlignment.groovy"));
 
 
+You can find Heterogeneity examples at :                         
+https://github.com/i40-Tools/HeterogeneityExampleData                                
+
 To run the AML examples please create a file config.ttl in the main directory of the project. An example is show below:
 ```@prefix aml:     <http://vocab.cs.uni-bonn.de/aml#> .
 @prefix het:     <http://vocab.cs.uni-bonn.de/het#> .
