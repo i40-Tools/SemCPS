@@ -42,6 +42,20 @@ public class AlligatorMain {
 
 	}
 
+/**
+ * Models similar.txt in to GoldStandard format.
+ * @throws Exception 
+ */
+
+	public void modelSimilar() throws Exception {
+		// TODO Auto-generated method stub
+		standardFiles = new Files2Facts();
+		standardFiles.readFiles(ConfigManager.getFilePath(), ".ttl", ".rdf", ".owl");
+		standardFiles.convertSimilar();
+	}
+
+
+
 	/**
 	 * Method that read standard files and convert then to RDF
 	 * 
@@ -53,9 +67,9 @@ public class AlligatorMain {
 		standardFiles.convert2RDF();
 		standardFiles = new Files2Facts();
 		standardFiles.readFiles(ConfigManager.getFilePath(), ".ttl", ".rdf", ".owl");
-		standardFiles.readFiles(ConfigManager.getOntoURIPath(), ".ttl", ".rdf", ".owl");
+//		standardFiles.readFiles(ConfigManager.getOntoURIPath(), ".ttl", ".rdf", ".owl");
 		standardFiles.improveRDFOutputFormat();
-		
+		standardFiles.addGoldStandard();
 	}
 
 	/**
@@ -110,6 +124,8 @@ public class AlligatorMain {
 //		 new Object[] {});
 	}
 
+		
+	
 	/**
 	 * General method to execute the Datalog-based approach
 	 * 

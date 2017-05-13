@@ -24,6 +24,7 @@ import edu.umd.cs.psl.model.predicate.type.*
 import edu.umd.cs.psl.ui.functions.textsimilarity.*
 import edu.umd.cs.psl.ui.loading.InserterUtils
 import edu.umd.cs.psl.util.database.Queries
+import main.AlligatorMain
 
 /**
  * @author Omar Rana
@@ -64,6 +65,8 @@ public class DocumentAligment
 		defineOntoRules()
 		setUpData()
 		runInference()
+		AlligatorMain main = new AlligatorMain();
+    	main.modelSimilar()
 		evalResults()
 	}
 
@@ -354,17 +357,17 @@ public class DocumentAligment
 //		similar(U,W) & hasDocument(U,O1)
 //		& hasDocument(W,O2) & (O1-O2))>> similar(A,D), weight : 2
 //		
-		model.add rule : (hasDomain(A,B) & hasDomain(D,C) & similar(B,C) & hasDocument(B,O1)
-		& hasDocument(C,O2) & (O1-O2))>> similar(A,D), weight : 2
-
-	    model.add rule : (hasRange(A,B)  & hasRange(C,D)  & similar(B,D)
-		& hasDocument(B,O1) & hasDocument(D,O2) & (O1-O2)) >> similar(A,C), weight : 2
-	
-		model.add rule : (hasDomain(A,B) & hasDomain(C,D) & similar(A,C)
-		& hasDocument(B,O1) & hasDocument(D,O2) & (O1-O2)) >> similar(B,D), weight : 2
-	
-		model.add rule : (hasRange(A,B)  & hasRange(C,D)  & similar(A,C)
-		& hasDocument(B,O1) & hasDocument(C,O2) & (O1-O2)) >> similar(B,C), weight : 2
+//		model.add rule : (hasDomain(A,B) & hasDomain(D,C) & similar(B,C) & hasDocument(B,O1)
+//		& hasDocument(C,O2) & (O1-O2))>> similar(A,D), weight : 2
+//
+//	    model.add rule : (hasRange(A,B)  & hasRange(C,D)  & similar(B,D)
+//		& hasDocument(B,O1) & hasDocument(D,O2) & (O1-O2)) >> similar(A,C), weight : 2
+//	
+//		model.add rule : (hasDomain(A,B) & hasDomain(C,D) & similar(A,C)
+//		& hasDocument(B,O1) & hasDocument(D,O2) & (O1-O2)) >> similar(B,D), weight : 2
+//	
+//		model.add rule : (hasRange(A,B)  & hasRange(C,D)  & similar(A,C)
+//		& hasDocument(B,O1) & hasDocument(C,O2) & (O1-O2)) >> similar(B,C), weight : 2
 
 	
 			
@@ -615,7 +618,10 @@ public class DocumentAligment
 		println "INFERENCE DONE"
 		def matchResult  =  new File(testDir  +  'similar.txt')
 		matchResult.write('')
-		
+//		def GoldStandard  =  new File(testDir  +  'GoldStandard.txt')
+//		GoldStandard.write('')
+
+				
 		def resultConfidence  =  new File(testDir  +  'similarwithConfidence.txt')
 		resultConfidence.write('')
 		DecimalFormat formatter  =  new DecimalFormat("#.##")
@@ -628,8 +634,8 @@ public class DocumentAligment
 				String result  =  atom.toString().replaceAll("SIMILAR","")
 				result  = result.replaceAll("[()]","")
 				String[] text  = result.split(",")
-				result = text[0].trim()  +  "\t"  +  text[1].trim() +  "\t" + "1"
-				def symResult = text[1].trim()  +  "\t"  +  text[0].trim() +  "\t" + "1"
+				result = text[0].trim()  +  ","  +  text[1].trim() +  "," + "truth:1"
+				def symResult = text[1].trim()  +  ","  +  text[0].trim() +  "," + "truth:1"
 				def symResult2 = text[1].trim()  +  "\t"  +  text[0].trim() + " " + atom.getValue()				
 				String result2 = text[0].trim()  +  "\t"  +  text[1].trim()  + " " + atom.getValue()
 			
@@ -638,10 +644,13 @@ public class DocumentAligment
 				!removeSymetric(matchResult,result)){
 					if(text[0].toString().contains("aml1")){
 						matchResult.append(result  +  '\n')
+			//			GoldStandard.append(result  +  '\n')
 						resultConfidence.append(result2  +  '\n')
 					}
 					else{
 						matchResult.append(symResult  +  '\n')
+				//		GoldStandard.append(symResult  +  '\n')
+						
 						resultConfidence.append(symResult2  +  '\n')
 
 					}
@@ -657,18 +666,31 @@ public class DocumentAligment
 				String result  =  atom.toString().replaceAll("NOTSIMILAR","")
 				result  =  result.replaceAll("[()]","")
 				String[] text  =  result.split(",")
-				result =  text[0]  +  "\t"  +  text[1] +  "\t" + "0"
-				def symResult= text[1]  +  "\t"  +  text[0] +  "\t" + "0"
-				def trueResult= text[0]  +  "\t"  +  text[1] +  "\t" + "1"
-				def trueSymResult= text[1]  +  "\t"  +  text[0] +  "\t" + "1"
-				String result2  =  text[0]  +  "\t"  +  text[1]  + " " + atom.getValue()
+				result =  text[0].trim()  +  ","  +  text[1].trim() +  "," + "0"
+				def symResult= text[1].trim()  +  ","  +  text[0].trim() +  "," + "0"
+				def trueResult= text[0].trim()  +  ","  +  text[1].trim() +  "," + "truth:1"
+				def trueSymResult= text[1].trim()  +  ","  +  text[0].trim() +  "," + "truth:1"
+				String result2  =  text[0].trim()  +  "\t"  +  text[1].trim()  + " " + atom.getValue()
+				def symResult2= text[1].trim()  +  ","  +  text[0].trim() + " " + atom.getValue()
 				
 				if(!removeSymetric(matchResult,symResult)&&
-				   !removeSymetric(matchResult,trueSymResult)&&
-				   !removeSymetric(matchResult,trueResult)){
-					matchResult.append(result  +  '\n')
-					resultConfidence.append(result2  +  '\n')
+				!removeSymetric(matchResult,result)&&	
+				!removeSymetric(matchResult,trueSymResult)&&
+				!removeSymetric(matchResult,trueResult)){
+					if(text[0].toString().contains("aml1")){
+						matchResult.append(result  +  '\n')
+						resultConfidence.append(result2  +  '\n')
+					}
+
+					else{
+						matchResult.append(symResult  +  '\n')
+
+						resultConfidence.append(symResult2  +  '\n')
+
+					}
+
 				}
+				
 			}
 
 		}

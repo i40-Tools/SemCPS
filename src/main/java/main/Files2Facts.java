@@ -1,9 +1,11 @@
 
 package main;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -59,13 +61,19 @@ public class Files2Facts extends IndustryStandards {
 	 */
 	public void convert2RDF() {
 		int i = 0;
-		for (File file : files) {
+		Krextor krextor = new Krextor();
+		
+		for (File file : files) {			
 			if (file.getName().endsWith(".aml")) {
-				Krextor krextor = new Krextor();
-				krextor.convertRdf(file.getAbsolutePath(), "aml", "turtle",
-						ConfigManager.getFilePath() + "plfile" + i + ".ttl");
+				if (file.getName().equals("seed.aml")) {
+					krextor.convertRdf(file.getAbsolutePath(), "aml", "turtle",
+							ConfigManager.getFilePath() + "seed" + ".ttl");
+
+				} else {
+					krextor.convertRdf(file.getAbsolutePath(), "aml", "turtle",
+							ConfigManager.getFilePath() + "plfile" + i + ".ttl");
+				}
 			} else {
-				Krextor krextor = new Krextor();
 				krextor.convertRdf(file.getAbsolutePath(), "opcua", "turtle",
 						ConfigManager.getFilePath() + "plfile" + i + ".ttl");
 			}
@@ -90,7 +98,7 @@ public class Files2Facts extends IndustryStandards {
 								|| amlFile.getName().endsWith(type3))) {
 					if (amlFile.getName().endsWith(".aml")) {
 						String name = amlFile.getName().replace(".aml", "");
-						if (name.endsWith("0") || name.endsWith("1")) {
+						if (name.endsWith("0") || name.endsWith("1") || name.equals("seed")) {
 							files.add(amlFile);
 						}
 					}
@@ -137,6 +145,186 @@ public class Files2Facts extends IndustryStandards {
 		}
 	}
 
+	
+	/**
+	 * Adds a better turtle format for the obtained RDF files
+	 * 
+	 * @throws IOException
+	 */
+	public void addGoldStandard() throws IOException {
+
+		PrintWriter GoldStandard = new PrintWriter(
+				ConfigManager.getFilePath() + "PSL/test/GoldStandard.txt");
+		LinkedHashSet<String> goldStandardList = new LinkedHashSet<String>();
+		for (File file : files) {
+			if (file.getName().equals("seed.ttl")) {
+				InputStream inputStream = FileManager.get().open(file.getAbsolutePath());
+				Model model = null;
+				model = ModelFactory.createDefaultModel();
+
+				model.read(new InputStreamReader(inputStream), null, "TURTLE");
+				StmtIterator iterator = model.listStatements();
+
+				while (iterator.hasNext()) {
+					Statement stmt = iterator.nextStatement();
+					subject = stmt.getSubject();
+					predicate = stmt.getPredicate();
+					object = stmt.getObject();
+
+					if (predicate.asNode().getLocalName().equals("hasAttributeName")
+							|| predicate.asNode().getLocalName()
+									.equals("hasCorrespondingAttributePath")
+							|| predicate.asNode().getLocalName().equals("refBaseClassPath")
+							|| predicate.asNode().getLocalName().equals("hasFileName")
+						    || predicate.asNode().getLocalName().equals("identifier"))
+						
+
+					{
+						if (!object.asLiteral().toString().equals("eClassIRDI")
+								&& !object.asLiteral().toString()
+										.equals("eClassClassificationClass")
+								&& !object.asLiteral().toString().equals("eClassVersion")) {
+							goldStandardList.add("aml1:" + object.asLiteral().toString() + "\t"
+									+ "aml2:" + object.asLiteral().toString() + "\t" + "1");
+						}
+					}
+				}
+
+				for (String val : goldStandardList) {
+					// remove annotation to make it a literal value
+
+					GoldStandard.println(val);
+				}
+				GoldStandard.close();
+
+			}
+		}
+	}	
+	
+	/**
+	 * Adds a better turtle format for the obtained RDF files
+	 * 
+	 * @throws IOException
+	 */
+	public void convertSimilar() throws IOException {
+		ArrayList<String> aml1List = new ArrayList<String>();
+		ArrayList<String> aml2List = new ArrayList<String>();
+		ArrayList<String> aml1negList = new ArrayList<String>();
+		ArrayList<String> aml2negList = new ArrayList<String>();	
+		ArrayList<String> aml1Values = new ArrayList<String>();
+		ArrayList<String> aml2Values = new ArrayList<String>();
+		ArrayList<String> aml1negValues = new ArrayList<String>();
+		ArrayList<String> aml2negValues = new ArrayList<String>();
+
+		try (BufferedReader br = new BufferedReader(
+				new FileReader(new File(ConfigManager.getFilePath() + "PSL/test/similar.txt")))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				String values[] = line.split(",");
+				if (line.contains("truth:1")) {
+
+					aml1List.add(values[0].replaceAll("aml1:", ""));
+					aml2List.add(values[1].replaceAll("aml2:", ""));
+
+				}
+				else{
+					aml1negList.add(values[0].replaceAll("aml1:", ""));
+					aml2negList.add(values[1].replaceAll("aml2:", ""));
+				}
+				
+				
+			}
+		}
+		
+
+		PrintWriter similar = new PrintWriter(ConfigManager.getFilePath() + "PSL/test/similar.txt");
+
+		for (File file : files) {
+			InputStream inputStream = FileManager.get().open(file.getAbsolutePath());
+			model = ModelFactory.createDefaultModel();
+
+			model.read(new InputStreamReader(inputStream), null, "TURTLE");
+
+			if (file.getName().equals("plfile0.ttl")) {
+
+				addAmlValues(aml1List, aml1Values, "aml1:", "hasAttributeName");
+				addAmlValues(aml1List, aml1Values, "aml1:", "refBaseClassPath");
+				addAmlValues(aml1List, aml1Values, "aml1:", "identifier");
+				addAmlValues(aml1List, aml1Values, "aml1:", "hasCorrespondingAttributePath");
+
+				addAmlValues(aml1negList, aml1negValues, "aml1:", "hasAttributeName");
+				addAmlValues(aml1negList, aml1negValues, "aml1:", "refBaseClassPath");
+				addAmlValues(aml1negList, aml1negValues, "aml1:", "identifier");
+				addAmlValues(aml1negList, aml1negValues, "aml1:", "hasCorrespondingAttributePath");
+					
+
+			}
+
+			if (file.getName().equals("plfile1.ttl")) {
+				addAmlValues(aml2List, aml2Values, "aml2:", "hasAttributeName");
+				addAmlValues(aml2List, aml2Values, "aml2:", "refBaseClassPath");
+				addAmlValues(aml2List, aml2Values, "aml2:", "identifier");
+				addAmlValues(aml2List, aml2Values, "aml2:", "hasCorrespondingAttributePath");
+
+				addAmlValues(aml2negList, aml2negValues, "aml2:", "hasAttributeName");
+				addAmlValues(aml2negList, aml2negValues, "aml2:", "refBaseClassPath");
+				addAmlValues(aml2negList, aml2negValues, "aml2:", "identifier");
+				addAmlValues(aml2negList, aml2negValues, "aml2:", "hasCorrespondingAttributePath");
+
+			}
+
+		}
+
+		for (int j = 0; j < aml1Values.size(); j++) {
+			if (!aml1Values.get(j).equals("aml1:eClassIRDI")
+					&& !aml1Values.get(j).equals("aml1:eClassClassificationClass")
+					&& !aml1Values.get(j).equals("aml1:eClassVersion")) {
+	
+			similar.println(aml1Values.get(j) + "\t" + aml2Values.get(j) + "\t" + "1");
+			}
+		}
+		
+
+		for (int j = 0; j < aml1negValues.size(); j++) {
+			if (!aml1negValues.get(j).equals("aml1:eClassIRDI")
+					|| !aml1negValues.get(j).equals("aml1:eClassClassificationClass")
+					|| !aml1negValues.get(j).equals("aml1:eClassVersion")) {
+			similar.println(aml1negValues.get(j) + "\t" + aml2negValues.get(j) + "\t" + "0");
+			}
+		}
+		
+		
+		similar.close();
+
+	}
+
+/**
+ * Adds aml Values
+ * @param amlList
+ * @param amlValue
+ * @param aml
+ * @return
+ */
+ArrayList<String> addAmlValues(ArrayList<?> amlList,ArrayList<String> amlValue,String aml,String predicate){	
+		for(int i=0;i<amlList.size();i++){	
+			StmtIterator iterator = model.listStatements();
+			while (iterator.hasNext()) {
+				Statement stmt = iterator.nextStatement();
+				subject = stmt.getSubject();
+				if(subject.asResource().getLocalName().equals(amlList.get(i))){
+					
+					String value=getValue(subject,predicate);					
+					if(value!=null){
+					amlValue.add(aml +value);
+					break;
+					}
+			}
+		 }
+     }
+return amlValue;
+}
+	
+	
 	/**
 	 * Reads the turtle format RDF files and extract the contents for data log
 	 * conversion.
@@ -307,7 +495,26 @@ public class Files2Facts extends IndustryStandards {
 		return type;
 	}
 		
+    /**
+     * get predicate Value
+     * @param name
+     * @return
+     */
+	String getValue(RDFNode name, String predicate) {
+		String type = null;
+		StmtIterator stmts = model.listStatements(name.asResource(), null, (RDFNode) null);
+		while (stmts.hasNext()) {
+			Statement stmte = stmts.nextStatement();
 
+			if (stmte.getPredicate().asNode().getLocalName().toString().equals(predicate)) {
+				type = stmte.getObject().asLiteral().toString();
+			}
+		}
+		return type;
+	}
+
+	
+	
 	public void addGenericObject(String firstPredicate,String secondPredicate ) throws FileNotFoundException{
 		
 		if (predicate.asNode().getLocalName().equals(firstPredicate)) {
@@ -488,7 +695,9 @@ public class Files2Facts extends IndustryStandards {
 		int i = 1;
 		for (File file : files) {
 			// pass in the writers
+			if(!file.getName().equals("seed.ttl")){
 			createPSLPredicate(file, i++, ConfigManager.getStandard());
+			}
 		}
 	}
 
