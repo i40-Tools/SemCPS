@@ -1,6 +1,6 @@
 # Alligator: A Deductive Approach for the Integration of Industry 4.0 Standards
 
-This project contains the rules to integrate heterogeneious AML files using rules written in ProLog and Porbabilistic Soft logic.         
+This project contains the rules to integrate heterogeneious AML files using rules written in ProLog and Probabilistic Soft logic.         
 ## What is Prolog ?                      
 Please read it here : https://en.wikipedia.org/wiki/Prolog                     
 
