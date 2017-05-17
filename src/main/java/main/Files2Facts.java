@@ -37,15 +37,15 @@ import util.StringUtil;
  * @author Irlan 28.06.2016
  */
 public class Files2Facts extends IndustryStandards {
-	private RDFNode object;
-	private RDFNode predicate;
-	private RDFNode subject;
+	public RDFNode object;
+	public RDFNode predicate;
+	public RDFNode subject;
 
-	private ArrayList<File> files;
+	protected ArrayList<File> files;
 
 	private LinkedHashSet<String> subjectsToWrite;
 
-	private Model model;
+	public Model model;
 
 	int number = 0;
 	private PrintWriter documentwriter;
@@ -146,158 +146,8 @@ public class Files2Facts extends IndustryStandards {
 	}
 
 	
-	/**
-	 * Adds a better turtle format for the obtained RDF files
-	 * 
-	 * @throws IOException
-	 */
-	public void addGoldStandard() throws IOException {
-
-		PrintWriter GoldStandard = new PrintWriter(
-				ConfigManager.getFilePath() + "PSL/test/GoldStandard.txt");
-		LinkedHashSet<String> goldStandardList = new LinkedHashSet<String>();
-		for (File file : files) {
-			if (file.getName().equals("seed.ttl")) {
-				InputStream inputStream = FileManager.get().open(file.getAbsolutePath());
-				Model model = null;
-				model = ModelFactory.createDefaultModel();
-
-				model.read(new InputStreamReader(inputStream), null, "TURTLE");
-				StmtIterator iterator = model.listStatements();
-
-				while (iterator.hasNext()) {
-					Statement stmt = iterator.nextStatement();
-					subject = stmt.getSubject();
-					predicate = stmt.getPredicate();
-					object = stmt.getObject();
-
-					if (predicate.asNode().getLocalName().equals("hasAttributeName")
-							|| predicate.asNode().getLocalName()
-									.equals("hasCorrespondingAttributePath")
-							|| predicate.asNode().getLocalName().equals("refBaseClassPath")
-							|| predicate.asNode().getLocalName().equals("hasFileName")
-						    || predicate.asNode().getLocalName().equals("identifier"))
-						
-
-					{
-						if (!object.asLiteral().toString().equals("eClassIRDI")
-								&& !object.asLiteral().toString()
-										.equals("eClassClassificationClass")
-								&& !object.asLiteral().toString().equals("eClassVersion")) {
-							goldStandardList.add("aml1:" + object.asLiteral().toString() + "\t"
-									+ "aml2:" + object.asLiteral().toString() + "\t" + "1");
-						}
-					}
-				}
-
-				for (String val : goldStandardList) {
-					// remove annotation to make it a literal value
-
-					GoldStandard.println(val);
-				}
-				GoldStandard.close();
-
-			}
-		}
-	}	
 	
-	/**
-	 * Adds a better turtle format for the obtained RDF files
-	 * 
-	 * @throws IOException
-	 */
-	public void convertSimilar() throws IOException {
-		ArrayList<String> aml1List = new ArrayList<String>();
-		ArrayList<String> aml2List = new ArrayList<String>();
-		ArrayList<String> aml1negList = new ArrayList<String>();
-		ArrayList<String> aml2negList = new ArrayList<String>();	
-		ArrayList<String> aml1Values = new ArrayList<String>();
-		ArrayList<String> aml2Values = new ArrayList<String>();
-		ArrayList<String> aml1negValues = new ArrayList<String>();
-		ArrayList<String> aml2negValues = new ArrayList<String>();
-
-		try (BufferedReader br = new BufferedReader(
-				new FileReader(new File(ConfigManager.getFilePath() + "PSL/test/similar.txt")))) {
-			String line;
-			while ((line = br.readLine()) != null) {
-				String values[] = line.split(",");
-				if (line.contains("truth:1")) {
-
-					aml1List.add(values[0].replaceAll("aml1:", ""));
-					aml2List.add(values[1].replaceAll("aml2:", ""));
-
-				}
-				else{
-					aml1negList.add(values[0].replaceAll("aml1:", ""));
-					aml2negList.add(values[1].replaceAll("aml2:", ""));
-				}
-				
-				
-			}
-		}
-		
-
-		PrintWriter similar = new PrintWriter(ConfigManager.getFilePath() + "PSL/test/similar.txt");
-
-		for (File file : files) {
-			InputStream inputStream = FileManager.get().open(file.getAbsolutePath());
-			model = ModelFactory.createDefaultModel();
-
-			model.read(new InputStreamReader(inputStream), null, "TURTLE");
-
-			if (file.getName().equals("plfile0.ttl")) {
-
-				addAmlValues(aml1List, aml1Values, "aml1:", "hasAttributeName");
-				addAmlValues(aml1List, aml1Values, "aml1:", "refBaseClassPath");
-				addAmlValues(aml1List, aml1Values, "aml1:", "identifier");
-				addAmlValues(aml1List, aml1Values, "aml1:", "hasCorrespondingAttributePath");
-
-				addAmlValues(aml1negList, aml1negValues, "aml1:", "hasAttributeName");
-				addAmlValues(aml1negList, aml1negValues, "aml1:", "refBaseClassPath");
-				addAmlValues(aml1negList, aml1negValues, "aml1:", "identifier");
-				addAmlValues(aml1negList, aml1negValues, "aml1:", "hasCorrespondingAttributePath");
-					
-
-			}
-
-			if (file.getName().equals("plfile1.ttl")) {
-				addAmlValues(aml2List, aml2Values, "aml2:", "hasAttributeName");
-				addAmlValues(aml2List, aml2Values, "aml2:", "refBaseClassPath");
-				addAmlValues(aml2List, aml2Values, "aml2:", "identifier");
-				addAmlValues(aml2List, aml2Values, "aml2:", "hasCorrespondingAttributePath");
-
-				addAmlValues(aml2negList, aml2negValues, "aml2:", "hasAttributeName");
-				addAmlValues(aml2negList, aml2negValues, "aml2:", "refBaseClassPath");
-				addAmlValues(aml2negList, aml2negValues, "aml2:", "identifier");
-				addAmlValues(aml2negList, aml2negValues, "aml2:", "hasCorrespondingAttributePath");
-
-			}
-
-		}
-
-		for (int j = 0; j < aml1Values.size(); j++) {
-			if (!aml1Values.get(j).equals("aml1:eClassIRDI")
-					&& !aml1Values.get(j).equals("aml1:eClassClassificationClass")
-					&& !aml1Values.get(j).equals("aml1:eClassVersion")) {
 	
-			similar.println(aml1Values.get(j) + "\t" + aml2Values.get(j) + "\t" + "1");
-			}
-		}
-		
-
-		for (int j = 0; j < aml1negValues.size(); j++) {
-			if (!aml1negValues.get(j).equals("aml1:eClassIRDI")
-					|| !aml1negValues.get(j).equals("aml1:eClassClassificationClass")
-					|| !aml1negValues.get(j).equals("aml1:eClassVersion")) {
-			similar.println(aml1negValues.get(j) + "\t" + aml2negValues.get(j) + "\t" + "0");
-			}
-		}
-		
-		
-		similar.close();
-
-	}
-
 /**
  * Adds aml Values
  * @param amlList
