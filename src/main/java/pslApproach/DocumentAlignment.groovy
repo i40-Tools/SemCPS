@@ -60,9 +60,11 @@ public class DocumentAligment
 		config()
 		definePredicates()
 		defineOntoPredicates()
+		defineSetPredicates()
 		defineFunctions()
 		defineRules()
 		defineOntoRules()
+		defineSetRules()
 		setUpData()
 		runInference()
 		AlligatorMain main = new AlligatorMain();
@@ -89,8 +91,7 @@ public class DocumentAligment
 	/**
 	 * Defines the name and the arguments of predicates that are used in the rules
 	 */
-	public void definePredicates()
-	{
+	public void definePredicates(){
 
 		model.add predicate: "hasDocument", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
 
@@ -336,6 +337,24 @@ public class DocumentAligment
 	}
 	
 	/**
+	 * Predicates for set or or collective inference
+	 */
+	public void defineSetPredicates(){
+		model.add predicate: "sameIE", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
+		//model.add predicate: "similarAttributes", types: [ArgumentType.String, ArgumentType.String]
+		
+		model.add setcomparison: "similarAttributes", using: SetComparison.Equality, on : sameIE 
+	}
+	
+	/**
+	 * Rules for sets, or collective inference
+	 */
+	public void defineSetRules(){
+		model.add rule :  (sameIE(A,B) & (A ^ B )) >> similarAttributes( {A.hasInternalElement} , {B.hasInternalElement} ) , weight : 5
+	}
+	
+	
+	/**
 	 * Defines typical ontology predicates
 	 */
 	public void defineOntoPredicates(){
@@ -421,7 +440,8 @@ public class DocumentAligment
 				hasInstanceHierarchy,
 				hasDomain,
 				hasRange,
-				hasType
+				hasType,
+				sameIE
 				]
 			){
 				createFiles(trainDir + p.getName().toLowerCase() + ".txt")
@@ -458,7 +478,8 @@ public class DocumentAligment
 			hasInstanceHierarchy,
 			hasDomain,
 			hasRange,
-			hasType
+			hasType,
+			sameIE
 			]
 			as Set, trainObservations)
 			
@@ -506,7 +527,8 @@ public class DocumentAligment
 			hasInstanceHierarchy,
 			hasDomain,
 			hasRange,
-			hasType
+			hasType,
+			sameIE
 			])
 		{
 			createFiles(testDir + p.getName().toLowerCase() + ".txt")
@@ -541,7 +563,8 @@ public class DocumentAligment
 			hasInstanceHierarchy,
 			hasDomain,
 			hasRange,
-			hasType
+			hasType,
+			sameIE
 			])
 		{
 			
@@ -577,7 +600,8 @@ public class DocumentAligment
 			hasInstanceHierarchy,
 			hasDomain,
 			hasRange,
-			hasType
+			hasType,
+			sameIE
 
 		] as Set, testObservations)
 
@@ -688,14 +712,10 @@ public class DocumentAligment
 						resultConfidence.append(symResult2  +  '\n')
 
 					}
-
 				}
-				
 			}
-
 		}
 	}
-
 
 	/**
 	 * Evaluates the results of inference versus expected truth values
