@@ -1,10 +1,9 @@
-# Alligator: A Deductive Approach for the Integration of Industry 4.0 Standards
+# Alligator-PSL: Integrating Industry 4.0 Standards in Knowledge Graphs
 
-This project contains the rules to integrate heterogeneious AML files using rules written in ProLog and Probabilistic Soft logic.         
-## What is Prolog ?                      
-Please read it here : https://en.wikipedia.org/wiki/Prolog                     
+This project contains the PSL Models, i.e., rules to align heterogeneious Industry Standards using Probabilistic Soft logic.         
+The project has now AutomationML as focus but can be extended to other standards, e.g., OPC UA
 
-## What is Porbabilistic Soft logic ?                      
+## What is Probabilistic Soft logic ?                      
 Please read it here : http://psl.linqs.org/                     
 
 ## Dependencies
@@ -25,22 +24,22 @@ Donwload Eclipse groovy plugin: https://github.com/groovy/groovy-eclipse/wiki
 Makes sure to download plugin according to your ide version.
 
 ## IDE support Running Project in Eclipse
-The quick and easy way to start compiling, running and coding **Alligator** is we provide a java project in Eclipse .
+The quick and easy way to start compiling, running and coding **Alligator-PSL** is we provide a java project in Eclipse .
 
 Thus, you need to install tools:
 * Eclipse IDE: https://www.eclipse.org/downloads/
 
-In windows you need to add the following entries system PATH
+In windows you need to add the following entries system PATH, e.g.,
 
     $ C:\Program Files\swipl\bin; C:\Program Files\swipl\lib\jpl.jar; C:\PrologConnectorJarFolder\org.cs3.prolog.connector_3.1.2.201504300958.jar;
 
 Donwload Eclipse groovy plugin: https://github.com/groovy/groovy-eclipse/wiki                                   
 
-Make sure you download correct version of plugin according to your eclipse otherwise it wont compile.                        
+Make sure you download correct version of the plugin according to your eclipse otherwise it wont compile.                        
 
 Import the project in eclipse and click build. The maven dependancies will be downloaded automatically.                      
 
-Add config.ttl                 
+Add config.ttl to the root of your project. This file configures how the experiments will be run                
 
 Run alligatorMain.java                   
 
