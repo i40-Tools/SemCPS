@@ -60,9 +60,11 @@ public class DocumentAligment
 		config()
 		definePredicates()
 		defineOntoPredicates()
+		defineSetPredicates()
 		defineFunctions()
 		defineRules()
 		defineOntoRules()
+		defineSetRules()
 		setUpData()
 		runInference()
 		AlligatorMain main = new AlligatorMain();
@@ -89,8 +91,7 @@ public class DocumentAligment
 	/**
 	 * Defines the name and the arguments of predicates that are used in the rules
 	 */
-	public void definePredicates()
-	{
+	public void definePredicates(){
 
 		model.add predicate: "hasDocument", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
 
@@ -336,6 +337,24 @@ public class DocumentAligment
 	}
 	
 	/**
+	 * Predicates for set or or collective inference
+	 */
+	public void defineSetPredicates(){
+		model.add predicate: "sameIE", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
+		//model.add predicate: "similarAttributes", types: [ArgumentType.String, ArgumentType.String]
+		
+		model.add setcomparison: "similarAttributes", using: SetComparison.Equality, on : sameIE 
+	}
+	
+	/**
+	 * Rules for sets, or collective inference
+	 */
+	public void defineSetRules(){
+		model.add rule :  (sameIE(A,B) & (A ^ B )) >> similarAttributes( {A.hasInternalElement} , {B.hasInternalElement} ) , weight : 5
+	}
+	
+	
+	/**
 	 * Defines typical ontology predicates
 	 */
 	public void defineOntoPredicates(){
@@ -421,7 +440,8 @@ public class DocumentAligment
 				hasInstanceHierarchy,
 				hasDomain,
 				hasRange,
-				hasType
+				hasType,
+				sameIE
 				]
 			){
 				createFiles(trainDir + p.getName().toLowerCase() + ".txt")
@@ -458,7 +478,8 @@ public class DocumentAligment
 			hasInstanceHierarchy,
 			hasDomain,
 			hasRange,
-			hasType
+			hasType,
+			sameIE
 			]
 			as Set, trainObservations)
 			
@@ -506,13 +527,13 @@ public class DocumentAligment
 			hasInstanceHierarchy,
 			hasDomain,
 			hasRange,
-			hasType
+			hasType,
+			sameIE
 			])
 		{
 			createFiles(testDir + p.getName().toLowerCase() + ".txt")
 		}
 		createFiles(testDir + "similar.txt")
-		createFiles(testDir + "GoldStandard.txt")
 		createFiles(testDir + "similarwithConfidence.txt")
 
 		for (Predicate p : [
@@ -541,7 +562,8 @@ public class DocumentAligment
 			hasInstanceHierarchy,
 			hasDomain,
 			hasRange,
-			hasType
+			hasType,
+			sameIE
 			])
 		{
 			
@@ -577,7 +599,8 @@ public class DocumentAligment
 			hasInstanceHierarchy,
 			hasDomain,
 			hasRange,
-			hasType
+			hasType,
+			sameIE
 
 		] as Set, testObservations)
 
@@ -618,9 +641,6 @@ public class DocumentAligment
 		println "INFERENCE DONE"
 		def matchResult  =  new File(testDir  +  'similar.txt')
 		matchResult.write('')
-//		def GoldStandard  =  new File(testDir  +  'GoldStandard.txt')
-//		GoldStandard.write('')
-
 				
 		def resultConfidence  =  new File(testDir  +  'similarwithConfidence.txt')
 		resultConfidence.write('')
@@ -644,15 +664,11 @@ public class DocumentAligment
 				!removeSymetric(matchResult,result)){
 					if(text[0].toString().contains("aml1")){
 						matchResult.append(result  +  '\n')
-			//			GoldStandard.append(result  +  '\n')
 						resultConfidence.append(result2  +  '\n')
 					}
 					else{
 						matchResult.append(symResult  +  '\n')
-				//		GoldStandard.append(symResult  +  '\n')
-						
 						resultConfidence.append(symResult2  +  '\n')
-
 					}
 				}}
 		}
@@ -688,14 +704,10 @@ public class DocumentAligment
 						resultConfidence.append(symResult2  +  '\n')
 
 					}
-
 				}
-				
 			}
-
 		}
 	}
-
 
 	/**
 	 * Evaluates the results of inference versus expected truth values
@@ -708,6 +720,10 @@ public class DocumentAligment
 		InserterUtils.loadDelimitedDataTruth(insert, testDir + "similar.txt")
 
 		insert  =  data.getInserter(eval, truthPartition)
+		
+		def goldStandardFile = new File(testDir + "GoldStandard.txt")
+		assert goldStandardFile.exists() : "file not found"
+		
 		InserterUtils.loadDelimitedDataTruth(insert, testDir + "GoldStandard.txt")
 
 		Database resultsDB = data.getDatabase(targetsPartition, [eval] as Set)
@@ -723,9 +739,9 @@ public class DocumentAligment
 		System.out.println("True Negative:" + stats.tn)
 		System.out.println("False Positive:" + stats.fp)
 		System.out.println("False Negative:" + stats.fn)
-		System.out.println("Precision (Positive):" + stats.getPrecision(DiscretePredictionStatistics.
+		System.out.println("Precision:" + stats.getPrecision(DiscretePredictionStatistics.
 							BinaryClass.POSITIVE))
-		System.out.println("Recall: (Positive)" + stats.getRecall(DiscretePredictionStatistics.
+		System.out.println("Recall:" + stats.getRecall(DiscretePredictionStatistics.
 							BinaryClass.POSITIVE))
 
 		// Saving Precision and Recall results to file
@@ -745,11 +761,11 @@ public class DocumentAligment
 		resultsFile.append("Fmeasure:" + stats.getF1(DiscretePredictionStatistics.
 				BinaryClass.POSITIVE) +  '\n')
 		resultsFile.append("True Positive:" + stats.tp + '\n')
+		resultsFile.append("True Negative:" + stats.tn + '\n')
 		resultsFile.append("False Positive:" + stats.fp + '\n')
 		resultsFile.append("False Negative:" + stats.fn + '\n')
-		resultsFile.append("True Negative:" + stats.tn + '\n')
 		resultsFile.append("Precision :" + stats.getPrecision(DiscretePredictionStatistics.
-				BinaryClass.POSITIVE) +  '\n')
+				BinaryClass.POSITIVE) + '\n')
 		resultsFile.append("Recall: " + stats.getRecall(DiscretePredictionStatistics.
 				BinaryClass.POSITIVE) + '\n')
 		resultsDB.close()

@@ -27,34 +27,29 @@ public class AlligatorMain {
 
 	private Integration integration;
 	private Files2Facts standardFiles = new Files2Facts();
+	private GoldStandard goldStandard = new GoldStandard();
 
 	public static void main(String[] args) throws Throwable {
-		
 
-			AlligatorMain main = new AlligatorMain();
-			main.readConvertStandardFiles();	
-			main.generatePSLDataModel();
-			main.executePSLAproach();
-		    // main.executeDatalogApproach();
-			// main.integrate();
-			// main.executePSLAproach();
-			// main.integrate();
+		AlligatorMain main = new AlligatorMain();
+		main.readConvertStandardFiles();	
+		main.generatePSLDataModel();
+		main.executePSLAproach();
+		// main.executeDatalogApproach();
+		// main.integrate();
+		// main.executePSLAproach();
+		// main.integrate();
 
 	}
 
-/**
- * Models similar.txt in to GoldStandard format.
- * @throws Exception 
- */
-
+	/**
+	 * Models similar.txt in to GoldStandard format.
+	 * @throws Exception 
+	 */
 	public void modelSimilar() throws Exception {
-		// TODO Auto-generated method stub
-		standardFiles = new Files2Facts();
-		standardFiles.readFiles(ConfigManager.getFilePath(), ".ttl", ".rdf", ".owl");
-		standardFiles.convertSimilar();
+		goldStandard.readFiles(ConfigManager.getFilePath(), ".ttl", ".rdf", ".owl");
+		goldStandard.convertSimilar();
 	}
-
-
 
 	/**
 	 * Method that read standard files and convert then to RDF
@@ -66,9 +61,9 @@ public class AlligatorMain {
 		standardFiles.readFiles(ConfigManager.getFilePath(), ".aml", ".opcua", ".xml");
 		standardFiles.convert2RDF();
 		standardFiles = new Files2Facts();
-		standardFiles.readFiles(ConfigManager.getFilePath(), ".ttl", ".rdf", ".owl");
-//		standardFiles.readFiles(ConfigManager.getOntoURIPath(), ".ttl", ".rdf", ".owl");
 		standardFiles.improveRDFOutputFormat();
+		goldStandard.readFiles(ConfigManager.getFilePath(), ".ttl", ".rdf", ".owl");
+		//standardFiles.readFiles(ConfigManager.getOntoURIPath(), ".ttl", ".rdf", ".owl");
 	}
 
 	/**
@@ -77,13 +72,13 @@ public class AlligatorMain {
 	 * @throws Exception
 	 */
 	public void generatePSLDataModel() throws Exception {
-		
+
 
 		ConfigManager.createDataPath();// creates folders if not there
-		standardFiles.addGoldStandard();
+		goldStandard.addGoldStandard();
 		standardFiles.generatePSLPredicates(ConfigManager.getFilePath());
-       
-		
+
+
 	}
 
 	/**
@@ -102,9 +97,9 @@ public class AlligatorMain {
 	 * @throws ResourceException
 	 */
 	public void executePSLAproach() throws CompilationFailedException, IOException, ScriptException,
-			IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-			NoSuchMethodException, SecurityException, InstantiationException, ResourceException,
-			groovy.util.ScriptException {
+	IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+	NoSuchMethodException, SecurityException, InstantiationException, ResourceException,
+	groovy.util.ScriptException {
 		// Needed to run the PSL rules part
 		Script script = new Script() {
 			@Override
@@ -112,19 +107,19 @@ public class AlligatorMain {
 				return null;
 			}
 		};
-//		 script.evaluate(new File("src/main/java/pslApproach/EasyLP.groovy"));
+		//		 script.evaluate(new File("src/main/java/pslApproach/EasyLP.groovy"));
 		script.evaluate(new File("src/main/java/pslApproach/DocumentAlignment.groovy"));
 
-//		 Class scriptClass = new GroovyScriptEngine("")
-//		 .loadScriptByName("src/main/java/pslApproach/DocumentAlignment.groovy");
-//		 Object scriptInstance = scriptClass.newInstance();
-//		 scriptClass.getDeclaredMethod("evalResults", new Class[]
-//		 {}).invoke(scriptInstance,
-//		 new Object[] {});
+		//		 Class scriptClass = new GroovyScriptEngine("")
+		//		 .loadScriptByName("src/main/java/pslApproach/DocumentAlignment.groovy");
+		//		 Object scriptInstance = scriptClass.newInstance();
+		//		 scriptClass.getDeclaredMethod("evalResults", new Class[]
+		//		 {}).invoke(scriptInstance,
+		//		 new Object[] {});
 	}
 
-		
-	
+
+
 	/**
 	 * General method to execute the Datalog-based approach
 	 * 
@@ -157,10 +152,10 @@ public class AlligatorMain {
 		File file = new File(ConfigManager.getFilePath() + "integration/integration.aml");
 		if (file.exists()) {
 			if (!new XSDValidator(ConfigManager.getFilePath() + "integration/integration.aml")
-					.schemaValidate()) {
+			.schemaValidate()) {
 				System.out.println("Repairing Structure");
 				ModelRepair
-						.testRoundTrip(ConfigManager.getFilePath() + "integration/integration.aml");
+				.testRoundTrip(ConfigManager.getFilePath() + "integration/integration.aml");
 				System.out.println("Schema Validated");
 			}
 		}
