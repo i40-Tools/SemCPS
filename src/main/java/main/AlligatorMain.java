@@ -69,7 +69,6 @@ public class AlligatorMain {
 		standardFiles.readFiles(ConfigManager.getFilePath(), ".ttl", ".rdf", ".owl");
 //		standardFiles.readFiles(ConfigManager.getOntoURIPath(), ".ttl", ".rdf", ".owl");
 		standardFiles.improveRDFOutputFormat();
-		standardFiles.addGoldStandard();
 	}
 
 	/**
@@ -81,7 +80,7 @@ public class AlligatorMain {
 		
 
 		ConfigManager.createDataPath();// creates folders if not there
-
+		standardFiles.addGoldStandard();
 		standardFiles.generatePSLPredicates(ConfigManager.getFilePath());
        
 		

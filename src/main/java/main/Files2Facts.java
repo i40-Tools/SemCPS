@@ -222,14 +222,21 @@ public class Files2Facts extends IndustryStandards {
 			while ((line = br.readLine()) != null) {
 				String values[] = line.split(",");
 				if (line.contains("truth:1")) {
-
+				  if(!aml1List.contains(values[0].replaceAll("aml1:", ""))&&
+						  !aml2List.contains(values[1].replaceAll("aml2:", ""))){
 					aml1List.add(values[0].replaceAll("aml1:", ""));
 					aml2List.add(values[1].replaceAll("aml2:", ""));
 
+				  }
 				}
 				else{
+					if(!aml1negList.contains(values[0].replaceAll("aml1:", ""))&&
+					   !aml2negList.contains(values[1].replaceAll("aml2:", ""))&&
+					   !aml1List.contains(values[0].replaceAll("aml1:", ""))&&
+					   !aml2List.contains(values[1].replaceAll("aml2:", ""))){
 					aml1negList.add(values[0].replaceAll("aml1:", ""));
 					aml2negList.add(values[1].replaceAll("aml2:", ""));
+					}
 				}
 				
 				
