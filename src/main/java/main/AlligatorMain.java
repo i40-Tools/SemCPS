@@ -74,7 +74,7 @@ public class AlligatorMain {
 	public void generatePSLDataModel() throws Exception {
 		ConfigManager.createDataPath();// creates folders if not there
 		goldStandard.addGoldStandard();
-		standardFiles.generatePSLPredicates(ConfigManager.getFilePath());
+		goldStandard.generatePSLPredicates(ConfigManager.getFilePath());
 	}
 
 	/**

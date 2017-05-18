@@ -538,6 +538,7 @@ return amlValue;
 	 */
 	public void generatePSLPredicates(String path) throws Exception {
 		int i = 1;
+		System.out.println(files);
 		for (File file : files) {
 			// pass in the writers
 			if(!file.getName().equals("seed.ttl")){
