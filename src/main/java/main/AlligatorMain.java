@@ -72,13 +72,9 @@ public class AlligatorMain {
 	 * @throws Exception
 	 */
 	public void generatePSLDataModel() throws Exception {
-
-
 		ConfigManager.createDataPath();// creates folders if not there
 		goldStandard.addGoldStandard();
 		standardFiles.generatePSLPredicates(ConfigManager.getFilePath());
-
-
 	}
 
 	/**
@@ -109,22 +105,14 @@ public class AlligatorMain {
 		};
 		//		 script.evaluate(new File("src/main/java/pslApproach/EasyLP.groovy"));
 		script.evaluate(new File("src/main/java/pslApproach/DocumentAlignment.groovy"));
-
-		//		 Class scriptClass = new GroovyScriptEngine("")
-		//		 .loadScriptByName("src/main/java/pslApproach/DocumentAlignment.groovy");
-		//		 Object scriptInstance = scriptClass.newInstance();
-		//		 scriptClass.getDeclaredMethod("evalResults", new Class[]
-		//		 {}).invoke(scriptInstance,
-		//		 new Object[] {});
 	}
 
 
 
 	/**
 	 * General method to execute the Datalog-based approach
-	 * 
 	 * @throws Throwable
-	 *             TODO create more specific exceptions
+	 * TODO create more specific exceptions
 	 */
 	public void executeDatalogApproach() throws Throwable {
 		standardFiles.prologFilePath();
