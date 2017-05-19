@@ -90,11 +90,11 @@ public class Similar extends Files2Facts {
 
 		for (int j = 0; j < aml1Values.size(); j++) {
 			if (!aml1Values.get(j)
-					.equals("aml1:eClassIRDI^^http://www.w3.org/2001/XMLSchema#string")
+					.equals("aml1:eClassIRDI")
 					&& !aml1Values.get(j)
-							.equals("aml1:eClassClassificationClass^^http://www.w3.org/2001/XMLSchema#string")
+							.equals("aml1:eClassClassificationClass")
 					&& !aml1Values.get(j).equals(
-							"aml1:eClassVersion^^http://www.w3.org/2001/XMLSchema#string")) {
+							"aml1:eClassVersion")) {
 
 				if (!duplicateCheck
 						.contains(aml1Values.get(j) + "\t" + aml2Values.get(j) + "\t" + "1")) {
@@ -107,11 +107,11 @@ public class Similar extends Files2Facts {
 
 		for (int j = 0; j < aml1negValues.size(); j++) {
 			if (!aml1negValues.get(j)
-					.equals("aml1:eClassIRDI^^http://www.w3.org/2001/XMLSchema#string")
+					.equals("aml1:eClassIRDI")
 					|| !aml1negValues.get(j)
-							.equals("aml1:eClassClassificationClass^^http://www.w3.org/2001/XMLSchema#string")
+							.equals("aml1:eClassClassificationClass")
 					|| !aml1negValues.get(j).equals(
-							"aml1:eClassVersion^^http://www.w3.org/2001/XMLSchema#string")) {
+							"aml1:eClassVersion")) {
 				if (!duplicateCheck
 						.contains(aml1negValues.get(j) + "\t" + aml2negValues.get(j) + "\t" + "0")
 						&& !duplicateCheck.contains(
