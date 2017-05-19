@@ -535,7 +535,8 @@ public class DocumentAligment
 		}
 		createFiles(testDir + "similar.txt")
 		createFiles(testDir + "similarwithConfidence.txt")
-
+		createFiles(testDir + "GoldStandard.txt")
+		
 		for (Predicate p : [
 			hasDocument,
 			hasAttribute,

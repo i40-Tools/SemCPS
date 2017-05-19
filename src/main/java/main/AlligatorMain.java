@@ -27,7 +27,7 @@ public class AlligatorMain {
 
 	private Integration integration;
 	private Files2Facts standardFiles = new Files2Facts();
-	private GoldStandard goldStandard = new GoldStandard();
+	private Similar similar = new Similar();
 
 	public static void main(String[] args) throws Throwable {
 
@@ -47,8 +47,8 @@ public class AlligatorMain {
 	 * @throws Exception 
 	 */
 	public void modelSimilar() throws Exception {
-		goldStandard.readFiles(ConfigManager.getFilePath(), ".ttl", ".rdf", ".owl");
-		goldStandard.convertSimilar();
+		similar.readFiles(ConfigManager.getFilePath(), ".ttl", ".rdf", ".owl");
+		similar.convertSimilar();
 	}
 
 	/**
@@ -62,8 +62,7 @@ public class AlligatorMain {
 		standardFiles.convert2RDF();
 		standardFiles = new Files2Facts();
 		standardFiles.improveRDFOutputFormat();
-		goldStandard.readFiles(ConfigManager.getFilePath(), ".ttl", ".rdf", ".owl");
-		//standardFiles.readFiles(ConfigManager.getOntoURIPath(), ".ttl", ".rdf", ".owl");
+		similar.readFiles(ConfigManager.getFilePath(), ".ttl", ".rdf", ".owl");
 	}
 
 	/**
@@ -73,8 +72,7 @@ public class AlligatorMain {
 	 */
 	public void generatePSLDataModel() throws Exception {
 		ConfigManager.createDataPath();// creates folders if not there
-		goldStandard.addGoldStandard();
-		goldStandard.generatePSLPredicates(ConfigManager.getFilePath());
+		similar.generatePSLPredicates(ConfigManager.getFilePath());
 	}
 
 	/**
