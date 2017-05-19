@@ -60,7 +60,7 @@ public class Files2Facts extends IndustryStandards {
 	public void convert2RDF() {
 		int i = 0;
 		Krextor krextor = new Krextor();
-		
+
 		for (File file : files) {			
 			if (file.getName().endsWith(".aml")) {
 				if (file.getName().equals("seed.aml")) {
@@ -87,7 +87,7 @@ public class Files2Facts extends IndustryStandards {
 	 */
 	public ArrayList<File> readFiles(String path, String type, String type2, String type3)
 			throws Exception {
-		
+
 		File originalFilesFolder = new File(path);
 		if (originalFilesFolder.isDirectory()) {
 			for (File amlFile : originalFilesFolder.listFiles()) {
@@ -142,34 +142,35 @@ public class Files2Facts extends IndustryStandards {
 			}
 		}
 	}
-	
-/**
- * Adds aml Values
- * @param amlList
- * @param amlValue
- * @param aml
- * @return
- */
-ArrayList<String> addAmlValues(ArrayList<?> amlList,ArrayList<String> amlValue,String aml,String predicate){	
-		for(int i=0;i<amlList.size();i++){	
+
+	/**
+	 * Adds aml Values
+	 * @param amlList
+	 * @param amlValue
+	 * @param aml
+	 * @return
+	 */
+	ArrayList<String> addAmlValues(ArrayList<?> amlList,ArrayList<String> amlValue,String aml,
+			String predicate){	
+		for(int i = 0;i < amlList.size();i++){	
 			StmtIterator iterator = model.listStatements();
 			while (iterator.hasNext()) {
 				Statement stmt = iterator.nextStatement();
 				subject = stmt.getSubject();
+				
 				if(subject.asResource().getLocalName().equals(amlList.get(i))){
-					
-					String value=getValue(subject,predicate);					
-					if(value!=null){
-					amlValue.add(aml +value);
-					break;
+					String value = getValue(subject,predicate);					
+					if(value != null){
+						amlValue.add(aml + value);
+						break;
 					}
+				}
 			}
-		 }
-     }
-return amlValue;
-}
-	
-	
+		}
+		return amlValue;
+	}
+
+
 	/**
 	 * Reads the turtle format RDF files and extract the contents for data log
 	 * conversion.
@@ -255,15 +256,12 @@ return amlValue;
 				predicate = stmt.getPredicate();
 				object = stmt.getObject();
 
-				if (predicate.asNode().getLocalName().toString().equals("type")) {
-					subjectsToWrite.add(object.asNode().getLocalName());
-				}
-				if(number==3){
-					
+				if(number == 3){
+
 				}
 				// all subjects are added according to ontology e.g aml
 				else{
-				addSubjectURI(subject, "", number, "hasDocument");
+					addSubjectURI(subject, "", number, "hasDocument");
 				}
 
 				addsDataforAML(number); // process required data for AML
@@ -304,7 +302,7 @@ return amlValue;
 				if (val.contains(":ConnectionPoint")) {
 					val = val.replace(":ConnectionPoint", "");
 				}
-				
+
 
 				documentwriter.println(val);
 			}
@@ -316,11 +314,11 @@ return amlValue;
 		if (object.asLiteral().getLexicalForm().equals("eClassClassificationClass")
 				|| object.asLiteral().getLexicalForm().equals("eClassVersion")
 				|| object.asLiteral().getLexicalForm().equals("eClassIRDI")) {
-		return true;
+			return true;
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Gets the class of object.
 	 * 
@@ -339,12 +337,12 @@ return amlValue;
 		}
 		return type;
 	}
-		
-    /**
-     * get predicate Value
-     * @param name
-     * @return
-     */
+
+	/**
+	 * get predicate Value
+	 * @param name
+	 * @return
+	 */
 	String getValue(RDFNode name, String predicate) {
 		String type = null;
 		StmtIterator stmts = model.listStatements(name.asResource(), null, (RDFNode) null);
@@ -352,16 +350,16 @@ return amlValue;
 			Statement stmte = stmts.nextStatement();
 
 			if (stmte.getPredicate().asNode().getLocalName().toString().equals(predicate)) {
-				type = stmte.getObject().asLiteral().toString();
+				type = stmte.getObject().asLiteral().getLexicalForm();
 			}
 		}
 		return type;
 	}
 
-	
-	
+
+
 	public void addGenericObject(String firstPredicate,String secondPredicate ) throws FileNotFoundException{
-		
+
 		if (predicate.asNode().getLocalName().equals(firstPredicate)) {
 
 			// adds for attribute
@@ -373,7 +371,7 @@ return amlValue;
 		}
 
 	}
-	
+
 	/**
 	 * Automation ML part for data population
 	 * 
@@ -382,65 +380,54 @@ return amlValue;
 	private void addsDataforAML(int number) throws FileNotFoundException {
 		// RefSemantic part starts here
 
-		
 		if (predicate.asNode().getLocalName().equals("hasAttributeName")) {
 			if (!checkEclass(object)) {
 				if (!getType(subject).equals("Attribute")) {
 					addSubjectURI(subject, ":remove" + object.asLiteral().getLexicalForm(), number,
 							"has" + getType(subject) + predicate.asNode().getLocalName()
 							.replace("has", ""));
-
 				} else {
 					addSubjectURI(subject, ":remove" + object.asLiteral().getLexicalForm(), number,
-							predicate.asNode().getLocalName());
-
+							      predicate.asNode().getLocalName());
 				}
-              
 			}
-								
 		}
 
 		// Adds domain and range
-		if (predicate.asNode().getLocalName().equals("domain")
-				|| predicate.asNode().getLocalName().equals("range")) {
-			addSubjectURI(subject, ":" + object.asNode().getLocalName(), 1,
-					"has" + predicate.asNode().getLocalName());
-			addSubjectURI(subject, ":" + object.asNode().getLocalName(), 2,
-					"has" + predicate.asNode().getLocalName());
+		if (predicate.asNode().getLocalName().equals("domain")|| 
+				predicate.asNode().getLocalName().equals("range")) {
+			addSubjectURI(subject, ":" + object.asNode().getLocalName(), 1, "has" + 
+					predicate.asNode().getLocalName());
+			addSubjectURI(subject, ":" + object.asNode().getLocalName(), 2, "has" + 
+					predicate.asNode().getLocalName());
 			addSubjectURI(subject, "", 1, "hasDocument");
 			addSubjectURI(subject, "", 2, "hasDocument");
 			addSubjectURI(object, "", 1, "hasDocument");
 			addSubjectURI(object, "", 2, "hasDocument");			
 		}
 
-		
+
 		if (predicate.asNode().getLocalName().equals("type")) {
 			if (number != 3)
 				addSubjectURI(subject, ":" + object.asNode().getLocalName(), number,
-						"has" + predicate.asNode().getLocalName());
+						      "has" + predicate.asNode().getLocalName());
 		}
 
 		if (predicate.asNode().getLocalName().equals("hasAttributeValue")) {
 			if (!checkEclass(object)) {
-				
-
-			addSubjectURI(subject, ":remove" +object.asLiteral().getLexicalForm() , number,
-					predicate.asNode().getLocalName());
-			
+				addSubjectURI(subject, ":remove" +object.asLiteral().getLexicalForm(), number,
+						      predicate.asNode().getLocalName());
 			}
-								
 		}
 
-		
 		addGenericObject("hasExternalReference","refBaseClassPath" );
 		addGenericObject("hasInternalLink","hasRefPartnerSideB" );
 		addGenericObject("hasInternalLink","hasRefPartnerSideA" );
-		
-		if (predicate.asNode().getLocalName().equals("hasAttribute")) {
 
+		if (predicate.asNode().getLocalName().equals("hasAttribute")) {
 			// gets all classes which hasAttribute relation
 			addSubjectURI(subject, ":" + object.asNode().getLocalName(), number,
-					"has" + getType(subject));
+					      "has" + getType(subject));
 		}
 
 		addGenericObject("hasRefSemantic","hasCorrespondingAttributePath");
@@ -451,45 +438,41 @@ return amlValue;
 		 */
 		if (object.isLiteral()) {
 			if (checkEclass(object)) {
-				StmtIterator stmts = model.listStatements(subject.asResource(), null,
-						(RDFNode) null);
+				StmtIterator stmts = model.listStatements(subject.asResource(), null,(RDFNode) null);
 				while (stmts.hasNext()) {
 					Statement stmte = stmts.nextStatement();
 
 					if (stmte.getPredicate().asNode().getLocalName().equals("hasAttributeValue")) {
 
 						if (object.asLiteral().getLexicalForm()
-								.equals("eClassClassificationClass")) {
-							addSubjectURI(subject,
-									":remove" + stmte.getObject().asLiteral().getLexicalForm(),
-									number, "hasEClassClassificationClass");
+								  .equals("eClassClassificationClass")) {
+							addSubjectURI(subject,":remove" + 
+								          stmte.getObject().asLiteral().getLexicalForm(),
+									      number, "hasEClassClassificationClass");
 						}
 
 						if (object.asLiteral().getLexicalForm().equals("eClassVersion")) {
-							addSubjectURI(subject,
-									":remove" + stmte.getObject().asLiteral().getLexicalForm(),
-									number, "hasEclassVersion");
+							addSubjectURI(subject, ":remove" + 
+						                  stmte.getObject().asLiteral().getLexicalForm(),
+									      number, "hasEclassVersion");
 						}
+						
 						if (object.asLiteral().getLexicalForm().equals("eClassIRDI")) {
-							addSubjectURI(subject,
-									":remove" + stmte.getObject().asLiteral().getLexicalForm(),
-									number, "hasEclassIRDI");
+							addSubjectURI(subject, ":remove" + 
+						                  stmte.getObject().asLiteral().getLexicalForm(),
+									      number, "hasEclassIRDI");
 						}
 
 					}
 				}
-
 			}
-
 		}
 
 		// RefSemantic part starts here
 		if (predicate.asNode().getLocalName().equals("identifier")) {
-
 			// gets the literal ID value and add it to hasID
-						
 			addSubjectURI(subject, ":remove" + object.asLiteral().getLexicalForm(), number,
-					"has" + getType(subject) + "ID");
+					      "has" + getType(subject) + "ID");
 		}
 	}
 
@@ -501,17 +484,15 @@ return amlValue;
 	private void addGenericValue(String type,String predicate) throws FileNotFoundException {
 		StmtIterator stmts = model.listStatements(object.asResource(), null, (RDFNode) null);
 		while (stmts.hasNext()) {
-
 			Statement stmte = stmts.nextStatement();
-			// remove because its a literal so we can identify. we dont need
-			// aml:
-			// opcua: tags
+			// remove because its a literal so we can identify. we dont need aml: opcua: tags
 			if(stmte.getPredicate().getLocalName().equals(predicate)){
-			if (stmte.getObject().isLiteral()) {
-				addSubjectURI(object, ":remove" + stmte.getObject().asLiteral().getLexicalForm(),
-						number, type);
+				if (stmte.getObject().isLiteral()) {
+					addSubjectURI(object, ":remove" + stmte.getObject().asLiteral().getLexicalForm(),
+								  number, type);
+				}
 			}
-		}}
+		}
 	}
 
 	/**
@@ -541,7 +522,7 @@ return amlValue;
 		for (File file : files) {
 			// pass in the writers
 			if(!file.getName().equals("seed.ttl")){
-			createPSLPredicate(file, i++, ConfigManager.getStandard());
+				createPSLPredicate(file, i++, ConfigManager.getStandard());
 			}
 		}
 	}
