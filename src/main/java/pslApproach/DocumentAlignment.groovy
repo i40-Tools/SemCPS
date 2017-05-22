@@ -292,7 +292,7 @@ public class DocumentAligment
 		// Internal Elements Set is not same if it has same InternalLink
 		model.add rule : (hasInternalElement(A,Z) & hasInternalElement(B,W)
 		& hasInternalLink(Z,C) & hasInternalElementID(B,D)  & ~similarValue(C,D)
-		& hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
+		& hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) ,
 		weight : 4
 
 		
