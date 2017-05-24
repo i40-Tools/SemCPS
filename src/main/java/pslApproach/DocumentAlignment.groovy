@@ -669,11 +669,17 @@ public class DocumentAligment
 			while ((line = reader.readLine())!=null) {
 				if(line.replace("\t","").contains(symResult.replace("\t",""))){
 					String temp=line.replace(symResult,"").trim();
+					try{						
 					double trueValue = temp.toDouble()
 					if(trueValue>value){
 					return flag=1;
-					}
+				       }
+				   }catch(Exception e){
+				   
+			       }
+				
 				}
+				
 				lineNo++
 			}
 		}		
