@@ -72,6 +72,7 @@ To run the AML examples please create a file config.ttl in the main directory of
 @prefix xml:     <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
 @prefix uri:     <http://uri4uri.net/vocab.html/#>
+@prefix aml:     <https://w3id.org/i40/aml#> .
 @prefix sto:     <https://w3id.org/i40/sto#>.
 @prefix ontosec: <http://www.semanticweb.org/ontologies/2008/11/OntologySecurity.owl#>
 
