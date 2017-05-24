@@ -181,7 +181,7 @@ public class DocumentAligment
 
 		// Two AML Attributes are the same if they have the same name
 		model.add rule : (hasAttributeName(A,Z) & hasAttributeName(B,W) & similarValue(Z,W) &
-			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 6
+			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 0.1
 
 		// Two InterfaceClass are the same if they have the same name
 		model.add rule : (hasInterfaceClassAttributeName(A,Z) & hasInterfaceClassAttributeName(B,W) & similarValue(Z,W) &
@@ -340,17 +340,45 @@ public class DocumentAligment
 	 * Predicates for set or or collective inference
 	 */
 	public void defineSetPredicates(){
-		model.add predicate: "sameIE", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
-		//model.add predicate: "similarAttributes", types: [ArgumentType.String, ArgumentType.String]
-		
-		model.add setcomparison: "similarAttributes", using: SetComparison.Equality, on : sameIE 
+		model.add predicate: "setSimilar"     , types: [ArgumentType.UniqueID]
+		model.add predicate: "setNotSimilar"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
+		model.add setcomparison: "similarAttributes", using: SetComparison.Equality, on : setNotSimilar
+				
 	}
 	
 	/**
 	 * Rules for sets, or collective inference
 	 */
 	public void defineSetRules(){
-		model.add rule :  (sameIE(A,B) & (A ^ B )) >> similarAttributes( {A.hasInternalElement} , {B.hasInternalElement} ) , weight : 5
+	
+		// Two AML Attributes are the same if they have the same name
+//		model.add rule : (hasAttributeName(A,Z) & hasAttributeName(B,W) & similarValue(Z,W) &
+//		hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> setSimilar(A) , weight : 1
+
+//	    model.add rule : (hasAttributeName(A,Z) & hasAttributeName(B,W) & similarValue(Z,W) &
+//		hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> setSimilar(B) , weight : 1
+
+//		model.add rule : (hasInternalElement(A,Z) & hasInternalElement(B,W)& (A ^ B )&
+//			~setSimilar(Z) & ~setSimilar(W) ) >> setNotSimilar(A,B) , weight : 1
+
+		
+//	    model.add rule :  (setNotSimilar(A,B) & (A ^ B )) >> similarAttributes( {A.hasInternalElement} 
+//		    , {B.hasInternalElement} ) , weight : 5
+		
+			
+//      model.add rule : (hasInternalElement(A,Z) & hasInternalElement(B,W)&
+//        ~notSimilar(A,Z) &hasDocument(A,O1) & hasDocument(B,O2)
+//     	  & (O1-O2)) >> similar(A,B) , weight : 1
+
+	
+	//    model.add rule : (hasInternalElement(A,E) & hasInternalElement(B,D) & (A ^ B )
+	//		&hasAttributeName(E,Z) & hasAttributeName(D,W) & similarValue(Z,W)
+	//		)>> setNotSimilar(A,B) , weight : 1
+	
+	
+	
+
+	
 	}
 	
 	
@@ -440,8 +468,7 @@ public class DocumentAligment
 				hasInstanceHierarchy,
 				hasDomain,
 				hasRange,
-				hasType,
-				sameIE
+				hasType
 				]
 			){
 				createFiles(trainDir + p.getName().toLowerCase() + ".txt")
@@ -478,8 +505,7 @@ public class DocumentAligment
 			hasInstanceHierarchy,
 			hasDomain,
 			hasRange,
-			hasType,
-			sameIE
+			hasType
 			]
 			as Set, trainObservations)
 			
@@ -527,8 +553,7 @@ public class DocumentAligment
 			hasInstanceHierarchy,
 			hasDomain,
 			hasRange,
-			hasType,
-			sameIE
+			hasType
 			])
 		{
 			createFiles(testDir + p.getName().toLowerCase() + ".txt")
@@ -563,8 +588,7 @@ public class DocumentAligment
 			hasInstanceHierarchy,
 			hasDomain,
 			hasRange,
-			hasType,
-			sameIE
+			hasType
 			])
 		{
 			
@@ -600,9 +624,8 @@ public class DocumentAligment
 			hasInstanceHierarchy,
 			hasDomain,
 			hasRange,
-			hasType,
-			sameIE
-
+			hasType
+		
 		] as Set, testObservations)
 
 		populateSimilar(testDB)
@@ -631,6 +654,36 @@ public class DocumentAligment
 		return flag
 	}
 
+	/**
+	 * Function check if negative values have more confidence or not.
+	 * @param confResult
+	 * @param symResult
+	 * @param value
+	 * @return
+	 */
+	int checkConfidence(File confResult,String symResult,double value){
+		def flag=0
+		def lineNo = 1
+		def line
+		confResult.withReader{ reader ->
+			while ((line = reader.readLine())!=null) {
+				if(line.replace("\t","").contains(symResult.replace("\t",""))){
+					String temp=line.replace(symResult,"").trim();
+					double trueValue = temp.toDouble()
+					if(trueValue>value){
+					return flag=1;
+					}
+				}
+				lineNo++
+			}
+		}		
+		return flag
+	}
+
+	
+	
+	
+	
 	public void runInference(){
 		/////////////////////////// test inference //////////////////////////////////
 		println "INFERRING..."
@@ -646,6 +699,23 @@ public class DocumentAligment
 		def resultConfidence  =  new File(testDir  +  'similarwithConfidence.txt')
 		resultConfidence.write('')
 		DecimalFormat formatter  =  new DecimalFormat("#.##")
+		// populates values with confidence required to check if not similar has more confidence
+		for (GroundAtom atom : Queries.getAllAtoms(testDB, notSimilar)){
+			String result  =  atom.toString().replaceAll("NOTSIMILAR","")
+			result  =  result.replaceAll("[()]","")
+			String[] text  =  result.split(",")
+			String result2  =  text[0].trim()  +  "\t"  +  text[1].trim()  + " " + atom.getValue()
+			def symResult2= text[1].trim()  +  ","  +  text[0].trim() + " " + atom.getValue()
+			if(formatter.format(atom.getValue())>"0.3"){				
+				if(text[0].toString().contains("aml1")){
+						resultConfidence.append(result2  +  '\n')
+					}
+					else{
+						resultConfidence.append(symResult2  +  '\n')
+					}
+				}
+		}	
+		
 		for (GroundAtom atom : Queries.getAllAtoms(testDB, similar)){
 		println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 
@@ -657,19 +727,21 @@ public class DocumentAligment
 				String[] text  = result.split(",")
 				result = text[0].trim()  +  ","  +  text[1].trim() +  "," + "truth:1"
 				def symResult = text[1].trim()  +  ","  +  text[0].trim() +  "," + "truth:1"
-				def symResult2 = text[1].trim()  +  "\t"  +  text[0].trim() + " " + atom.getValue()				
-				String result2 = text[0].trim()  +  "\t"  +  text[1].trim()  + " " + atom.getValue()
-			
+				def symResult2 = text[1].trim()  +  "\t"  +  text[0].trim() 			
+				String result2 = text[0].trim()  +  "\t"  +  text[1].trim()
+							
 				// adding elements with aml1: at start for correctness
 				if(!removeSymetric(matchResult,symResult)&&
-				!removeSymetric(matchResult,result)){
+				!removeSymetric(matchResult,result)&&
+				!checkConfidence(resultConfidence,symResult2,atom.getValue())&&
+				!checkConfidence(resultConfidence,result2,atom.getValue())){
 					if(text[0].toString().contains("aml1")){
 						matchResult.append(result  +  '\n')
-						resultConfidence.append(result2  +  '\n')
+						resultConfidence.append(result2+ " " + atom.getValue()	  +  '\n')
 					}
 					else{
 						matchResult.append(symResult  +  '\n')
-						resultConfidence.append(symResult2  +  '\n')
+						resultConfidence.append(symResult2+ " " + atom.getValue()	  +  '\n')
 					}
 				}}
 		}
@@ -679,6 +751,7 @@ public class DocumentAligment
 
 			// only writes if its equal to 1 or u can set the threshold
 			if(formatter.format(atom.getValue())>"0.3"){
+								
 				// converting to format for evaluation
 				String result  =  atom.toString().replaceAll("NOTSIMILAR","")
 				result  =  result.replaceAll("[()]","")
@@ -687,22 +760,17 @@ public class DocumentAligment
 				def symResult= text[1].trim()  +  ","  +  text[0].trim() +  "," + "0"
 				def trueResult= text[0].trim()  +  ","  +  text[1].trim() +  "," + "truth:1"
 				def trueSymResult= text[1].trim()  +  ","  +  text[0].trim() +  "," + "truth:1"
-				String result2  =  text[0].trim()  +  "\t"  +  text[1].trim()  + " " + atom.getValue()
-				def symResult2= text[1].trim()  +  ","  +  text[0].trim() + " " + atom.getValue()
 				
 				if(!removeSymetric(matchResult,symResult)&&
-				!removeSymetric(matchResult,result)&&	
+				!removeSymetric(matchResult,result)	&&
 				!removeSymetric(matchResult,trueSymResult)&&
 				!removeSymetric(matchResult,trueResult)){
 					if(text[0].toString().contains("aml1")){
 						matchResult.append(result  +  '\n')
-						resultConfidence.append(result2  +  '\n')
 					}
 
 					else{
 						matchResult.append(symResult  +  '\n')
-
-						resultConfidence.append(symResult2  +  '\n')
 
 					}
 				}
@@ -801,7 +869,7 @@ public class DocumentAligment
 				((RandomVariableAtom) db.getAtom(similar, o2Concept, o1Concept)).commitToDB()
 				((RandomVariableAtom) db.getAtom(notSimilar, o1Concept, o2Concept)).commitToDB()
 				((RandomVariableAtom) db.getAtom(notSimilar, o2Concept, o1Concept)).commitToDB()
-				
+
 			}
 		}
 
