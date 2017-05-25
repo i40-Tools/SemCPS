@@ -806,18 +806,22 @@ public class DocumentAligment
 		DiscretePredictionComparator dpc = new DiscretePredictionComparator(resultsDB)
 		dpc.setBaseline(truthDB)
 		DiscretePredictionStatistics stats = dpc.compare(eval)
-
-		System.out.println("Accuracy:" + stats.getAccuracy())
+		
+		Double F1 = stats.getF1(DiscretePredictionStatistics.BinaryClass.POSITIVE)
+		Double precision = stats.getPrecision(DiscretePredictionStatistics.
+							BinaryClass.POSITIVE)
+		Double recall = stats.getRecall(DiscretePredictionStatistics.
+							BinaryClass.POSITIVE)
+		
+		System.out.println("Accuracy:" + stats.getAccuracy().round(2))
 		System.out.println("Error:" + stats.getError())
-		System.out.println("Fmeasure:" + stats.getF1(DiscretePredictionStatistics.BinaryClass.POSITIVE))
+		System.out.println("Fmeasure:" + F1.round(2))
 		System.out.println("True Positive:" + stats.tp)
 		System.out.println("True Negative:" + stats.tn)
 		System.out.println("False Positive:" + stats.fp)
 		System.out.println("False Negative:" + stats.fn)
-		System.out.println("Precision:" + stats.getPrecision(DiscretePredictionStatistics.
-							BinaryClass.POSITIVE))
-		System.out.println("Recall:" + stats.getRecall(DiscretePredictionStatistics.
-							BinaryClass.POSITIVE))
+		System.out.println("Precision:" + precision.round(2))
+		System.out.println("Recall:" + recall.round(2))
 
 		// Saving Precision and Recall results to file
 		def resultsFile
@@ -831,18 +835,15 @@ public class DocumentAligment
 
 		resultsFile.createNewFile()
 		resultsFile.write("")
-		resultsFile.append("Accuracy:" + stats.getAccuracy() + '\n')
+		resultsFile.append("Accuracy:" + stats.getAccuracy().round(2) + '\n')
 		resultsFile.append("Error:" + stats.getError() + '\n')
-		resultsFile.append("Fmeasure:" + stats.getF1(DiscretePredictionStatistics.
-				BinaryClass.POSITIVE) +  '\n')
+		resultsFile.append("Fmeasure:" + F1.round(2) +  '\n')
 		resultsFile.append("True Positive:" + stats.tp + '\n')
 		resultsFile.append("True Negative:" + stats.tn + '\n')
 		resultsFile.append("False Positive:" + stats.fp + '\n')
 		resultsFile.append("False Negative:" + stats.fn + '\n')
-		resultsFile.append("Precision :" + stats.getPrecision(DiscretePredictionStatistics.
-				BinaryClass.POSITIVE) + '\n')
-		resultsFile.append("Recall: " + stats.getRecall(DiscretePredictionStatistics.
-				BinaryClass.POSITIVE) + '\n')
+		resultsFile.append("Precision :" + precision.round(2) + '\n')
+		resultsFile.append("Recall: " + precision.round(2) + '\n')
 		resultsDB.close()
 		truthDB.close()
 	}
