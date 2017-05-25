@@ -843,7 +843,7 @@ public class DocumentAligment
 		resultsFile.append("False Positive:" + stats.fp + '\n')
 		resultsFile.append("False Negative:" + stats.fn + '\n')
 		resultsFile.append("Precision :" + precision.round(2) + '\n')
-		resultsFile.append("Recall: " + precision.round(2) + '\n')
+		resultsFile.append("Recall: " + recall.round(2) + '\n')
 		resultsDB.close()
 		truthDB.close()
 	}
