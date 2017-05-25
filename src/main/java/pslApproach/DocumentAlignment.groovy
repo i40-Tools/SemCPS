@@ -826,11 +826,18 @@ public class DocumentAligment
 		// Saving Precision and Recall results to file
 		def resultsFile
 		
+		//Creating an unique name for the file
+		def arrDir = testDir.split("/")
+		def het = arrDir[4]
+		def number = arrDir[5].split("-")
+		
 		if(util.ConfigManager.getExecutionMethod() == "true"){
-			resultsFile = new File(testDir + "Precision/" + "PrecisionRecallWithTraining.txt")
+			resultsFile = new File(testDir + "Precision/" + arrDir[4] + "-" + 
+				                   number[1] + "F1Training.txt")
 		}
 		else{
-			resultsFile = new File(testDir + "Precision/" + "PrecisionRecallWithoutTraining.txt")
+			resultsFile = new File(testDir + "Precision/" + arrDir[4] + "-" + 
+				                   number[1] + "F1NoTraining.txt")
 		}
 
 		resultsFile.createNewFile()
