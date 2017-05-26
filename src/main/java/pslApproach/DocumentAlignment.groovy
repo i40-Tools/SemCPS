@@ -65,6 +65,7 @@ public class DocumentAligment
 		defineRules()
 		defineOntoRules()
 		defineSetRules()
+		defineNotSimilarRules()
 		setUpData()
 		runInference()
 		AlligatorMain main = new AlligatorMain();
@@ -242,9 +243,20 @@ public class DocumentAligment
 		& hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
 		weight : 4
 
+		// constraints
+		model.add PredicateConstraint.PartialFunctional , on : similar
+		model.add PredicateConstraint.PartialInverseFunctional , on : similar
+		model.add PredicateConstraint.Symmetric , on : similar
+
+		// prior
+		model.add rule : ~similar(A,B), weight: 1
+	}
+	
+	/**
+	 * Rules for not similar
+	 */
+	public void defineNotSimilarRules(){
 		
-		
-		// rules for not similar
 		// Two AML CAEX files are the not same if they have the not same path
 		model.add rule : (hasCAEXFile(A,X) & hasCAEXFile(B,Y) & hasExternalReference(X,Z)
 		& hasExternalReference(Y,W) & ~similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) &
@@ -259,10 +271,6 @@ public class DocumentAligment
 		model.add rule : (hasAttributeID(A,Z) & hasAttributeID(B,W) & ~similarValue(Z,W)
 		& hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) ,weight : 8
 				
-		// Two AML Attributes are the not same if they have the not same name
-		model.add rule : (hasAttributeName(A,Z) & hasAttributeName(B,W) & ~similarValue(Z,W) &
-			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) , weight : 6
-
 		// Two InterfaceClass are not the same if they have the same name
 		model.add rule : (hasInterfaceClassAttributeName(A,Z) & hasInterfaceClassAttributeName(B,W) & ~similarValue(Z,W) &
 			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) , weight : 6
@@ -294,7 +302,6 @@ public class DocumentAligment
 		& hasInternalLink(Z,C) & hasInternalElementID(B,D)  & ~similarValue(C,D)
 		& hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) ,
 		weight : 4
-
 		
 		// Two Roles Class are not same if its eclass,IRDI and classification class are the same
 		model.add rule :( hasRoleClass(A1,B1) & hasRoleClass(A2,B2)& hasEClassIRDI(B1,Z)
@@ -319,22 +326,13 @@ public class DocumentAligment
 		& hasEClassVersion(E1,O) & hasEClassVersion(F2,L) & ~similarValue(O,L)
 		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> notSimilar(A1,A2) , weight : 8
 
-	
 		// Two AMl InstanceHierarchy are not the same if they share the same ID
 		model.add rule : (hasInstanceHierarchyID(A,Z) & hasInstanceHierarchyID(B,W)
 		& ~similarValue(Z,W) &hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
 		weight : 4
-
-	
-
-		// constraints
-		model.add PredicateConstraint.PartialFunctional , on : similar
-		model.add PredicateConstraint.PartialInverseFunctional , on : similar
-		model.add PredicateConstraint.Symmetric , on : similar
-
-		// prior
-		model.add rule : ~similar(A,B), weight: 1
-	}
+		
+		
+	} 
 	
 	/**
 	 * Predicates for set or or collective inference
@@ -723,7 +721,7 @@ public class DocumentAligment
 		}	
 		
 		for (GroundAtom atom : Queries.getAllAtoms(testDB, similar)){
-		println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
+		//println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 
 			// only writes if its equal to 1 or u can set the threshold
 			if(formatter.format(atom.getValue())>"0.3"){
@@ -815,13 +813,13 @@ public class DocumentAligment
 		
 		System.out.println("Accuracy:" + stats.getAccuracy().round(2))
 		System.out.println("Error:" + stats.getError())
-		System.out.println("Fmeasure:" + F1.round(2))
 		System.out.println("True Positive:" + stats.tp)
 		System.out.println("True Negative:" + stats.tn)
 		System.out.println("False Positive:" + stats.fp)
 		System.out.println("False Negative:" + stats.fn)
 		System.out.println("Precision:" + precision.round(2))
 		System.out.println("Recall:" + recall.round(2))
+		System.out.println("Fmeasure:" + F1.round(2))
 
 		// Saving Precision and Recall results to file
 		def resultsFile
