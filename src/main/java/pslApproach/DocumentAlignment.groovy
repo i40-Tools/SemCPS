@@ -175,44 +175,43 @@ public class DocumentAligment
 		& hasRefSemantic(Y,W) & similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) &
 		(O1-O2)) >> similar(A,B) , weight : 10
 
-		
 		// Two AMl hasAttributes are the same if they share the same ID
 		model.add rule : (hasAttributeID(A,Z) & hasAttributeID(B,W) & similarValue(Z,W)
-		& hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,weight : 8
+		& hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B), weight : 10
 
 		// Two AML Attributes are the same if they have the same name
 		model.add rule : (hasAttributeName(A,Z) & hasAttributeName(B,W) & similarValue(Z,W) &
-			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 0.1
+			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B), weight : 4
 
 		// Two InterfaceClass are the same if they have the same name
 		model.add rule : (hasInterfaceClassAttributeName(A,Z) & hasInterfaceClassAttributeName(B,W) & similarValue(Z,W) &
-			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 6
+			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 4
 
 		// Two InternalElement are the same if they have the same name
 		model.add rule : (hasInternalElementAttributeName(A,Z) & hasInternalElementAttributeName(B,W) & similarValue(Z,W) &
-			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 6
+			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 4
 
 		// Two RoleClass are the same if they have the same name
 		model.add rule : (hasRoleClassAttributeName(A,Z) & hasRoleClassAttributeName(B,W) & similarValue(Z,W) &
-			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 6
+			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 4
 
 		// Two SystemUnitClass are the same if they have the same name
 		model.add rule : (hasSystemUnitClassAttributeName(A,Z) & hasSystemUnitClassAttributeName(B,W) & similarValue(Z,W) &
-			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 6
+			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 4
 
 		// Two AML Attributes are the same if they have the same values
 		model.add rule : (hasAttributeValue(A,Z) & hasAttributeValue(B,W) & similarValue(Z,W) &
-			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 6
+			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 1
 
 		// Two AMl InternalElement are the same if they share the same ID
 		model.add rule : (hasInternalElementID(A,Z) & hasInternalElementID(B,W)
 		& similarValue(Z,W) &hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
-		weight : 4
+		weight : 10
 
 		// Two AMl InstanceHierarchy are the same if they share the same ID
 		model.add rule : (hasInstanceHierarchyID(A,Z) & hasInstanceHierarchyID(B,W)
 		& similarValue(Z,W) &hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
-		weight : 4
+		weight : 10
 
 		// Two Roles Class are same if its eclass,IRDI and classification class are the same
 		model.add rule :( hasRoleClass(A1,B1) & hasRoleClass(A2,B2)& hasEClassIRDI(B1,Z)
@@ -227,7 +226,7 @@ public class DocumentAligment
 		& hasInterfaceClass(A2,D2)  & hasEClassVersion(C1,M) & hasEClassVersion(D2,N)
 		& similarValue(M,N)& hasInterfaceClass(A1,E1) & hasInterfaceClass(A2,F2)
 		& hasEClassVersion(E1,O) & hasEClassVersion(F2,L) & similarValue(O,L)
-		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 8
+		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 10
 
 		// Two SystemUnit Class are same if its eclass,IRDI and classification class are the same
 		model.add rule :( hasSystemUnitClass(A1,B1) & hasSystemUnitClass(A2,B2) & hasEClassIRDI(B1,Z)
@@ -235,13 +234,13 @@ public class DocumentAligment
 		& hasSystemUnitClass(A2,D2) & hasEClassVersion(C1,M) & hasEClassVersion(D2,N)
 		& similarValue(M,N)& hasSystemUnitClass(A1,E1) & hasSystemUnitClass(A2,F2)
 		& hasEClassVersion(E1,O) & hasEClassVersion(F2,L) & similarValue(O,L)
-		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 8
+		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 10
 
 		// Internal Elements Set is same if it has same InternalLink
 		model.add rule : (hasInternalElement(A,Z) & hasInternalElement(B,W)
 		& hasInternalLink(Z,C) & hasInternalElementID(B,D)  & similarValue(C,D)
 		& hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
-		weight : 4
+		weight : 6
 
 		// constraints
 		model.add PredicateConstraint.PartialFunctional , on : similar
@@ -265,37 +264,37 @@ public class DocumentAligment
 		// Two AML hasAttributes are the not same if their RefSemantic are the not same
 		model.add rule : (hasAttribute(A,X) & hasAttribute(B,Y) & hasRefSemantic(X,Z)
 		& hasRefSemantic(Y,W) & ~similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) &
-		(O1-O2)) >> notSimilar(A,B) , weight : 5
+		(O1-O2)) >> notSimilar(A,B) , weight : 10
 
 		// Two AMl hasAttributes are the not same if they share the not same ID
 		model.add rule : (hasAttributeID(A,Z) & hasAttributeID(B,W) & ~similarValue(Z,W)
-		& hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) ,weight : 8
+		& hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) ,weight : 10
 				
 		// Two InterfaceClass are not the same if they have the same name
 		model.add rule : (hasInterfaceClassAttributeName(A,Z) & hasInterfaceClassAttributeName(B,W) & ~similarValue(Z,W) &
-			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) , weight : 6
+			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) , weight : 4
 
 		// Two InternalElement are not the same if they have the same name
 		model.add rule : (hasInternalElementAttributeName(A,Z) & hasInternalElementAttributeName(B,W) & ~similarValue(Z,W) &
-			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) , weight : 6
+			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) , weight : 4
 
 		// Two RoleClass are not the same if they have the same name
 		model.add rule : (hasRoleClassAttributeName(A,Z) & hasRoleClassAttributeName(B,W) & ~similarValue(Z,W) &
-			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notsimilar(A,B) , weight : 6
+			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notsimilar(A,B) , weight : 4
 
 		// Two SystemUnitClass are not the same if they have the same name
 		model.add rule : (hasSystemUnitClassAttributeName(A,Z) & hasSystemUnitClassAttributeName(B,W) & ~similarValue(Z,W) &
-			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) , weight : 6
+			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) , weight : 4
 
 		// Two AML Attributes are the not same if they have the not same values
 		model.add rule : (hasAttribute(A,X) & hasAttribute(B,Y) & hasAttributeValue(A,Z) &
 		hasAttributeValue(B,W) & ~similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) &
-		(O1-O2)) >> notSimilar(A,B) , weight : 6
+		(O1-O2)) >> notSimilar(A,B) , weight : 1
 
-		// Two AMl hasInternalElement are the not same if they share the not same ID
+		// Two AMl hasInternalElement are the not same if they have a different ID
 		model.add rule : (hasInternalElementID(A,Z) & hasInternalElementID(B,W)
 		& ~similarValue(Z,W) &hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) ,
-		weight : 4
+		weight : 10
 
 		// Internal Elements Set is not same if it has same InternalLink
 		model.add rule : (hasInternalElement(A,Z) & hasInternalElement(B,W)
@@ -306,7 +305,7 @@ public class DocumentAligment
 		// Two Roles Class are not same if its eclass,IRDI and classification class are the same
 		model.add rule :( hasRoleClass(A1,B1) & hasRoleClass(A2,B2)& hasEClassIRDI(B1,Z)
 		& hasEClassIRDI(B2,W) & ~similarValue(Z,W) & hasRoleClass(A1,C1) & hasRoleClass(A2,D2)
-		&hasEClassVersion(C1,M) & hasEClassVersion(D2,N) & ~similarValue(M,N)& hasRoleClass(A1,E1) &
+		&hasEClassVersion(C1,M) & hasEClassVersion(D2,N) & ~similarValue(M,N)& hasRoleClass(A1,E1)&
 		hasRoleClass(A2,F2) & hasEClassVersion(E1,O) &hasEClassVersion(F2,L) & ~similarValue(O,L)
 		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> notSimilar(A1,A2) , weight : 10
 
@@ -316,7 +315,7 @@ public class DocumentAligment
 		& hasInterfaceClass(A2,D2)  & hasEClassVersion(C1,M) & hasEClassVersion(D2,N)
 		& ~similarValue(M,N)& hasInterfaceClass(A1,E1) & hasInterfaceClass(A2,F2)
 		& hasEClassVersion(E1,O) & hasEClassVersion(F2,L) & ~similarValue(O,L)
-		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> notSimilar(A1,A2) , weight : 8
+		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> notSimilar(A1,A2) , weight : 10
 
 		// Two SystemUnit Class are not same if its eclass,IRDI and classification class are the same
 		model.add rule :( hasSystemUnitClass(A1,B1) & hasSystemUnitClass(A2,B2) & hasEClassIRDI(B1,Z)
@@ -324,12 +323,12 @@ public class DocumentAligment
 		& hasSystemUnitClass(A2,D2) & hasEClassVersion(C1,M) & hasEClassVersion(D2,N)
 		& ~similarValue(M,N)& hasSystemUnitClass(A1,E1) & hasSystemUnitClass(A2,F2)
 		& hasEClassVersion(E1,O) & hasEClassVersion(F2,L) & ~similarValue(O,L)
-		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> notSimilar(A1,A2) , weight : 8
+		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> notSimilar(A1,A2) , weight : 10
 
-		// Two AMl InstanceHierarchy are not the same if they share the same ID
+		// Two AML InstanceHierarchy are not the same if they do not share the same ID
 		model.add rule : (hasInstanceHierarchyID(A,Z) & hasInstanceHierarchyID(B,W)
-		& ~similarValue(Z,W) &hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
-		weight : 4
+		& ~similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
+		weight : 10
 		
 		
 	} 
