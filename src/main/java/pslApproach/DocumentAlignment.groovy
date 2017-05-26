@@ -65,10 +65,11 @@ public class DocumentAligment
 		defineRules()
 		defineOntoRules()
 		defineSetRules()
+		defineNotSimilarRules()
 		setUpData()
 		runInference()
 		AlligatorMain main = new AlligatorMain();
-    	main.modelSimilar()
+		main.modelSimilar()
 		evalResults()
 	}
 
@@ -174,44 +175,43 @@ public class DocumentAligment
 		& hasRefSemantic(Y,W) & similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) &
 		(O1-O2)) >> similar(A,B) , weight : 10
 
-		
 		// Two AMl hasAttributes are the same if they share the same ID
 		model.add rule : (hasAttributeID(A,Z) & hasAttributeID(B,W) & similarValue(Z,W)
-		& hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,weight : 8
+		& hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B), weight : 10
 
 		// Two AML Attributes are the same if they have the same name
 		model.add rule : (hasAttributeName(A,Z) & hasAttributeName(B,W) & similarValue(Z,W) &
-			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 0.1
+			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B), weight : 4
 
 		// Two InterfaceClass are the same if they have the same name
 		model.add rule : (hasInterfaceClassAttributeName(A,Z) & hasInterfaceClassAttributeName(B,W) & similarValue(Z,W) &
-			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 6
+			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 4
 
 		// Two InternalElement are the same if they have the same name
 		model.add rule : (hasInternalElementAttributeName(A,Z) & hasInternalElementAttributeName(B,W) & similarValue(Z,W) &
-			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 6
+			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 4
 
 		// Two RoleClass are the same if they have the same name
 		model.add rule : (hasRoleClassAttributeName(A,Z) & hasRoleClassAttributeName(B,W) & similarValue(Z,W) &
-			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 6
+			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 4
 
 		// Two SystemUnitClass are the same if they have the same name
 		model.add rule : (hasSystemUnitClassAttributeName(A,Z) & hasSystemUnitClassAttributeName(B,W) & similarValue(Z,W) &
-			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 6
+			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 4
 
 		// Two AML Attributes are the same if they have the same values
 		model.add rule : (hasAttributeValue(A,Z) & hasAttributeValue(B,W) & similarValue(Z,W) &
-			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 6
+			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 1
 
 		// Two AMl InternalElement are the same if they share the same ID
 		model.add rule : (hasInternalElementID(A,Z) & hasInternalElementID(B,W)
 		& similarValue(Z,W) &hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
-		weight : 4
+		weight : 10
 
 		// Two AMl InstanceHierarchy are the same if they share the same ID
 		model.add rule : (hasInstanceHierarchyID(A,Z) & hasInstanceHierarchyID(B,W)
 		& similarValue(Z,W) &hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
-		weight : 4
+		weight : 10
 
 		// Two Roles Class are same if its eclass,IRDI and classification class are the same
 		model.add rule :( hasRoleClass(A1,B1) & hasRoleClass(A2,B2)& hasEClassIRDI(B1,Z)
@@ -226,7 +226,7 @@ public class DocumentAligment
 		& hasInterfaceClass(A2,D2)  & hasEClassVersion(C1,M) & hasEClassVersion(D2,N)
 		& similarValue(M,N)& hasInterfaceClass(A1,E1) & hasInterfaceClass(A2,F2)
 		& hasEClassVersion(E1,O) & hasEClassVersion(F2,L) & similarValue(O,L)
-		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 8
+		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 10
 
 		// Two SystemUnit Class are same if its eclass,IRDI and classification class are the same
 		model.add rule :( hasSystemUnitClass(A1,B1) & hasSystemUnitClass(A2,B2) & hasEClassIRDI(B1,Z)
@@ -234,17 +234,28 @@ public class DocumentAligment
 		& hasSystemUnitClass(A2,D2) & hasEClassVersion(C1,M) & hasEClassVersion(D2,N)
 		& similarValue(M,N)& hasSystemUnitClass(A1,E1) & hasSystemUnitClass(A2,F2)
 		& hasEClassVersion(E1,O) & hasEClassVersion(F2,L) & similarValue(O,L)
-		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 8
+		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 10
 
 		// Internal Elements Set is same if it has same InternalLink
 		model.add rule : (hasInternalElement(A,Z) & hasInternalElement(B,W)
 		& hasInternalLink(Z,C) & hasInternalElementID(B,D)  & similarValue(C,D)
 		& hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
-		weight : 4
+		weight : 6
 
+		// constraints
+		model.add PredicateConstraint.PartialFunctional , on : similar
+		model.add PredicateConstraint.PartialInverseFunctional , on : similar
+		model.add PredicateConstraint.Symmetric , on : similar
+
+		// prior
+		model.add rule : ~similar(A,B), weight: 1
+	}
+	
+	/**
+	 * Rules for not similar
+	 */
+	public void defineNotSimilarRules(){
 		
-		
-		// rules for not similar
 		// Two AML CAEX files are the not same if they have the not same path
 		model.add rule : (hasCAEXFile(A,X) & hasCAEXFile(B,Y) & hasExternalReference(X,Z)
 		& hasExternalReference(Y,W) & ~similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) &
@@ -253,53 +264,48 @@ public class DocumentAligment
 		// Two AML hasAttributes are the not same if their RefSemantic are the not same
 		model.add rule : (hasAttribute(A,X) & hasAttribute(B,Y) & hasRefSemantic(X,Z)
 		& hasRefSemantic(Y,W) & ~similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) &
-		(O1-O2)) >> notSimilar(A,B) , weight : 5
+		(O1-O2)) >> notSimilar(A,B) , weight : 10
 
 		// Two AMl hasAttributes are the not same if they share the not same ID
 		model.add rule : (hasAttributeID(A,Z) & hasAttributeID(B,W) & ~similarValue(Z,W)
-		& hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) ,weight : 8
+		& hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) ,weight : 10
 				
-		// Two AML Attributes are the not same if they have the not same name
-		model.add rule : (hasAttributeName(A,Z) & hasAttributeName(B,W) & ~similarValue(Z,W) &
-			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) , weight : 6
-
 		// Two InterfaceClass are not the same if they have the same name
 		model.add rule : (hasInterfaceClassAttributeName(A,Z) & hasInterfaceClassAttributeName(B,W) & ~similarValue(Z,W) &
-			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) , weight : 6
+			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) , weight : 4
 
 		// Two InternalElement are not the same if they have the same name
 		model.add rule : (hasInternalElementAttributeName(A,Z) & hasInternalElementAttributeName(B,W) & ~similarValue(Z,W) &
-			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) , weight : 6
+			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) , weight : 4
 
 		// Two RoleClass are not the same if they have the same name
 		model.add rule : (hasRoleClassAttributeName(A,Z) & hasRoleClassAttributeName(B,W) & ~similarValue(Z,W) &
-			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notsimilar(A,B) , weight : 6
+			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notsimilar(A,B) , weight : 4
 
 		// Two SystemUnitClass are not the same if they have the same name
 		model.add rule : (hasSystemUnitClassAttributeName(A,Z) & hasSystemUnitClassAttributeName(B,W) & ~similarValue(Z,W) &
-			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) , weight : 6
+			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) , weight : 4
 
 		// Two AML Attributes are the not same if they have the not same values
 		model.add rule : (hasAttribute(A,X) & hasAttribute(B,Y) & hasAttributeValue(A,Z) &
 		hasAttributeValue(B,W) & ~similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) &
-		(O1-O2)) >> notSimilar(A,B) , weight : 6
+		(O1-O2)) >> notSimilar(A,B) , weight : 1
 
-		// Two AMl hasInternalElement are the not same if they share the not same ID
+		// Two AMl hasInternalElement are the not same if they have a different ID
 		model.add rule : (hasInternalElementID(A,Z) & hasInternalElementID(B,W)
 		& ~similarValue(Z,W) &hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) ,
-		weight : 4
+		weight : 10
 
 		// Internal Elements Set is not same if it has same InternalLink
 		model.add rule : (hasInternalElement(A,Z) & hasInternalElement(B,W)
 		& hasInternalLink(Z,C) & hasInternalElementID(B,D)  & ~similarValue(C,D)
 		& hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) ,
 		weight : 4
-
 		
 		// Two Roles Class are not same if its eclass,IRDI and classification class are the same
 		model.add rule :( hasRoleClass(A1,B1) & hasRoleClass(A2,B2)& hasEClassIRDI(B1,Z)
 		& hasEClassIRDI(B2,W) & ~similarValue(Z,W) & hasRoleClass(A1,C1) & hasRoleClass(A2,D2)
-		&hasEClassVersion(C1,M) & hasEClassVersion(D2,N) & ~similarValue(M,N)& hasRoleClass(A1,E1) &
+		&hasEClassVersion(C1,M) & hasEClassVersion(D2,N) & ~similarValue(M,N)& hasRoleClass(A1,E1)&
 		hasRoleClass(A2,F2) & hasEClassVersion(E1,O) &hasEClassVersion(F2,L) & ~similarValue(O,L)
 		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> notSimilar(A1,A2) , weight : 10
 
@@ -309,7 +315,7 @@ public class DocumentAligment
 		& hasInterfaceClass(A2,D2)  & hasEClassVersion(C1,M) & hasEClassVersion(D2,N)
 		& ~similarValue(M,N)& hasInterfaceClass(A1,E1) & hasInterfaceClass(A2,F2)
 		& hasEClassVersion(E1,O) & hasEClassVersion(F2,L) & ~similarValue(O,L)
-		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> notSimilar(A1,A2) , weight : 8
+		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> notSimilar(A1,A2) , weight : 10
 
 		// Two SystemUnit Class are not same if its eclass,IRDI and classification class are the same
 		model.add rule :( hasSystemUnitClass(A1,B1) & hasSystemUnitClass(A2,B2) & hasEClassIRDI(B1,Z)
@@ -317,23 +323,14 @@ public class DocumentAligment
 		& hasSystemUnitClass(A2,D2) & hasEClassVersion(C1,M) & hasEClassVersion(D2,N)
 		& ~similarValue(M,N)& hasSystemUnitClass(A1,E1) & hasSystemUnitClass(A2,F2)
 		& hasEClassVersion(E1,O) & hasEClassVersion(F2,L) & ~similarValue(O,L)
-		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> notSimilar(A1,A2) , weight : 8
+		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> notSimilar(A1,A2) , weight : 10
 
-	
-		// Two AMl InstanceHierarchy are not the same if they share the same ID
+		// Two AML InstanceHierarchy are not the same if they do not share the same ID
 		model.add rule : (hasInstanceHierarchyID(A,Z) & hasInstanceHierarchyID(B,W)
-		& ~similarValue(Z,W) &hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
-		weight : 4
-
-	
-
-		// constraints
-		model.add PredicateConstraint.PartialFunctional , on : similar
-		model.add PredicateConstraint.PartialInverseFunctional , on : similar
-		model.add PredicateConstraint.Symmetric , on : similar
-
-		// prior
-		model.add rule : ~similar(A,B), weight: 1
+		& ~similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
+		weight : 10
+		
+		
 	}
 	
 	/**
@@ -362,7 +359,7 @@ public class DocumentAligment
 //			~setSimilar(Z) & ~setSimilar(W) ) >> setNotSimilar(A,B) , weight : 1
 
 		
-//	    model.add rule :  (setNotSimilar(A,B) & (A ^ B )) >> similarAttributes( {A.hasInternalElement} 
+//	    model.add rule :  (setNotSimilar(A,B) & (A ^ B )) >> similarAttributes( {A.hasInternalElement}
 //		    , {B.hasInternalElement} ) , weight : 5
 		
 			
@@ -388,7 +385,7 @@ public class DocumentAligment
 	public void defineOntoPredicates(){
 		model.add predicate: "hasDomain", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
 	
-		model.add predicate: "hasRange", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]		
+		model.add predicate: "hasRange", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
 	}
 	
 	/**
@@ -397,22 +394,22 @@ public class DocumentAligment
 	public void defineOntoRules(){
 
 //		model.add rule : (similar(U,W) & hasType(U,B) & hasType(W,C) &
-//		hasDomain(A,B) & hasDomain(D,C) & hasDocument(U,O1) & hasDocument(W,O2) 
+//		hasDomain(A,B) & hasDomain(D,C) & hasDocument(U,O1) & hasDocument(W,O2)
 //		& (O1-O2))>> similar(A,D), weight : 2
 
 //		model.add rule : (hasDomain(A,B) & hasDomain(D,C) & hasType(U,B) &hasType(W,C) &
 //		similar(U,W) & hasDocument(U,O1)
 //		& hasDocument(W,O2) & (O1-O2))>> similar(A,D), weight : 2
-//		
+//
 //		model.add rule : (hasDomain(A,B) & hasDomain(D,C) & similar(B,C) & hasDocument(B,O1)
 //		& hasDocument(C,O2) & (O1-O2))>> similar(A,D), weight : 2
 //
 //	    model.add rule : (hasRange(A,B)  & hasRange(C,D)  & similar(B,D)
 //		& hasDocument(B,O1) & hasDocument(D,O2) & (O1-O2)) >> similar(A,C), weight : 2
-//	
+//
 //		model.add rule : (hasDomain(A,B) & hasDomain(C,D) & similar(A,C)
 //		& hasDocument(B,O1) & hasDocument(D,O2) & (O1-O2)) >> similar(B,D), weight : 2
-//	
+//
 //		model.add rule : (hasRange(A,B)  & hasRange(C,D)  & similar(A,C)
 //		& hasDocument(B,O1) & hasDocument(C,O2) & (O1-O2)) >> similar(B,C), weight : 2
 
@@ -669,20 +666,20 @@ public class DocumentAligment
 			while ((line = reader.readLine())!=null) {
 				if(line.replace("\t","").contains(symResult.replace("\t",""))){
 					String temp=line.replace(symResult,"").trim();
-					try{						
+					try{
 					double trueValue = temp.toDouble()
 					if(trueValue>value){
 					return flag=1;
-				       }
+					   }
 				   }catch(Exception e){
 				   
-			       }
+				   }
 				
 				}
 				
 				lineNo++
 			}
-		}		
+		}
 		return flag
 	}
 
@@ -712,7 +709,7 @@ public class DocumentAligment
 			String[] text  =  result.split(",")
 			String result2  =  text[0].trim()  +  "\t"  +  text[1].trim()  + " " + atom.getValue()
 			def symResult2= text[1].trim()  +  ","  +  text[0].trim() + " " + atom.getValue()
-			if(formatter.format(atom.getValue())>"0.3"){				
+			if(formatter.format(atom.getValue())>"0.3"){
 				if(text[0].toString().contains("aml1")){
 						resultConfidence.append(result2  +  '\n')
 					}
@@ -720,10 +717,10 @@ public class DocumentAligment
 						resultConfidence.append(symResult2  +  '\n')
 					}
 				}
-		}	
+		}
 		
 		for (GroundAtom atom : Queries.getAllAtoms(testDB, similar)){
-	//	println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
+		//println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 
 			// only writes if its equal to 1 or u can set the threshold
 			if(formatter.format(atom.getValue())>"0.3"){
@@ -733,7 +730,7 @@ public class DocumentAligment
 				String[] text  = result.split(",")
 				result = text[0].trim()  +  ","  +  text[1].trim() +  "," + "truth:1"
 				def symResult = text[1].trim()  +  ","  +  text[0].trim() +  "," + "truth:1"
-				def symResult2 = text[1].trim()  +  "\t"  +  text[0].trim() 			
+				def symResult2 = text[1].trim()  +  "\t"  +  text[0].trim()
 				String result2 = text[0].trim()  +  "\t"  +  text[1].trim()
 							
 				// adding elements with aml1: at start for correctness
@@ -753,7 +750,7 @@ public class DocumentAligment
 		}
 
 		for (GroundAtom atom : Queries.getAllAtoms(testDB, notSimilar)){
-//			println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
+			println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 
 			// only writes if its equal to 1 or u can set the threshold
 			if(formatter.format(atom.getValue())>"0.3"){
@@ -806,43 +803,51 @@ public class DocumentAligment
 		DiscretePredictionComparator dpc = new DiscretePredictionComparator(resultsDB)
 		dpc.setBaseline(truthDB)
 		DiscretePredictionStatistics stats = dpc.compare(eval)
-
-		System.out.println("Accuracy:" + stats.getAccuracy())
+		
+		Double F1 = stats.getF1(DiscretePredictionStatistics.BinaryClass.POSITIVE)
+		Double precision = stats.getPrecision(DiscretePredictionStatistics.
+							BinaryClass.POSITIVE)
+		Double recall = stats.getRecall(DiscretePredictionStatistics.
+							BinaryClass.POSITIVE)
+		
+		System.out.println("Accuracy:" + stats.getAccuracy().round(2))
 		System.out.println("Error:" + stats.getError())
-		System.out.println("Fmeasure:" + stats.getF1(DiscretePredictionStatistics.BinaryClass.POSITIVE))
 		System.out.println("True Positive:" + stats.tp)
 		System.out.println("True Negative:" + stats.tn)
 		System.out.println("False Positive:" + stats.fp)
 		System.out.println("False Negative:" + stats.fn)
-		System.out.println("Precision:" + stats.getPrecision(DiscretePredictionStatistics.
-							BinaryClass.POSITIVE))
-		System.out.println("Recall:" + stats.getRecall(DiscretePredictionStatistics.
-							BinaryClass.POSITIVE))
+		System.out.println("Precision:" + precision.round(2))
+		System.out.println("Recall:" + recall.round(2))
+		System.out.println("Fmeasure:" + F1.round(2))
 
 		// Saving Precision and Recall results to file
 		def resultsFile
 		
+		//Creating an unique name for the file
+		def arrDir = testDir.split("/")
+		def het = arrDir[4]
+		def number = arrDir[5].split("-")
+		
 		if(util.ConfigManager.getExecutionMethod() == "true"){
-			resultsFile = new File(testDir + "Precision/" + "PrecisionRecallWithTraining.txt")
+			resultsFile = new File(testDir + "Precision/" + arrDir[4] + "-" +
+								   number[1] + "F1Training.txt")
 		}
 		else{
-			resultsFile = new File(testDir + "Precision/" + "PrecisionRecallWithoutTraining.txt")
+			resultsFile = new File(testDir + "Precision/" + arrDir[4] + "-" +
+								   number[1] + "F1NoTraining.txt")
 		}
 
 		resultsFile.createNewFile()
 		resultsFile.write("")
-		resultsFile.append("Accuracy:" + stats.getAccuracy() + '\n')
+		resultsFile.append("Accuracy:" + stats.getAccuracy().round(2) + '\n')
 		resultsFile.append("Error:" + stats.getError() + '\n')
-		resultsFile.append("Fmeasure:" + stats.getF1(DiscretePredictionStatistics.
-				BinaryClass.POSITIVE) +  '\n')
+		resultsFile.append("Fmeasure:" + F1.round(2) +  '\n')
 		resultsFile.append("True Positive:" + stats.tp + '\n')
 		resultsFile.append("True Negative:" + stats.tn + '\n')
 		resultsFile.append("False Positive:" + stats.fp + '\n')
 		resultsFile.append("False Negative:" + stats.fn + '\n')
-		resultsFile.append("Precision :" + stats.getPrecision(DiscretePredictionStatistics.
-				BinaryClass.POSITIVE) + '\n')
-		resultsFile.append("Recall: " + stats.getRecall(DiscretePredictionStatistics.
-				BinaryClass.POSITIVE) + '\n')
+		resultsFile.append("Precision :" + precision.round(2) + '\n')
+		resultsFile.append("Recall: " + recall.round(2) + '\n')
 		resultsDB.close()
 		truthDB.close()
 	}
