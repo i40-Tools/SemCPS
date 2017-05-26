@@ -723,7 +723,7 @@ public class DocumentAligment
 		}	
 		
 		for (GroundAtom atom : Queries.getAllAtoms(testDB, similar)){
-		println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
+	//	println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 
 			// only writes if its equal to 1 or u can set the threshold
 			if(formatter.format(atom.getValue())>"0.3"){
@@ -753,7 +753,7 @@ public class DocumentAligment
 		}
 
 		for (GroundAtom atom : Queries.getAllAtoms(testDB, notSimilar)){
-			println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
+//			println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 
 			// only writes if its equal to 1 or u can set the threshold
 			if(formatter.format(atom.getValue())>"0.3"){
