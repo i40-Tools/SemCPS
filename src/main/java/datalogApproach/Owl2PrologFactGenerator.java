@@ -195,7 +195,7 @@ public class Owl2PrologFactGenerator {
 
 		Set<OWLDataPropertyRangeAxiom> dataPropRange = ont.getAxioms(AxiomType.DATA_PROPERTY_RANGE);
 		for (OWLDataPropertyRangeAxiom dataPropRangeAxiom : dataPropRange) {
-			System.out.println(((OWLNamedObject) dataPropRangeAxiom.getRange()) + " "
+			System.out.println((dataPropRangeAxiom.getRange()) + " "
 					+ ((OWLNamedObject) dataPropRangeAxiom.getProperty()).getIRI().getFragment());
 		}
 

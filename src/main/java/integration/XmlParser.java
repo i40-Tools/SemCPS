@@ -364,7 +364,7 @@ public class XmlParser {
 			// matches the parent in the integration document.
 
 			if (!list.item(m).getParentNode().getNodeName().equals("#document")) {
-				Object result = (Object) xpath.evaluate("//*[@*=\"" + seedNodes.get(i).getTextContent() + "\"]",
+				Object result = xpath.evaluate("//*[@*=\"" + seedNodes.get(i).getTextContent() + "\"]",
 						integration, XPathConstants.NODESET);
 				NodeList nodeList = (NodeList) result;
 				NodeList integ = (NodeList) xpath.evaluate("//" + list.item(m).getParentNode().getNodeName(),
@@ -503,7 +503,7 @@ public class XmlParser {
 
 		Object result;
 
-		result = (Object) xpath.evaluate("//*[@*=\"" + value + "\"]", seed, XPathConstants.NODESET);
+		result = xpath.evaluate("//*[@*=\"" + value + "\"]", seed, XPathConstants.NODESET);
 		NodeList nodeList = (NodeList) result;
 
 		if (nodeList.getLength() != 0) {

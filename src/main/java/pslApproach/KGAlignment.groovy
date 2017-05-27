@@ -69,7 +69,7 @@ public class DocumentAligment
 		setUpData()
 		runInference()
 		AlligatorMain main = new AlligatorMain();
-    	main.modelSimilar()
+		main.modelSimilar()
 		evalResults()
 	}
 
@@ -331,7 +331,7 @@ public class DocumentAligment
 		weight : 10
 		
 		
-	} 
+	}
 	
 	/**
 	 * Predicates for set or or collective inference
@@ -356,14 +356,14 @@ public class DocumentAligment
 	 */
 	public void defineOntoPredicates(){
 		model.add predicate: "hasDomain", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
-		model.add predicate: "hasRange", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]		
+	
+		model.add predicate: "hasRange", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
 	}
 	
 	/**
 	 * Defines basic ontology rules
 	 */
 	public void defineOntoRules(){
-		
 	}
 
 	/**
@@ -615,20 +615,20 @@ public class DocumentAligment
 			while ((line = reader.readLine())!=null) {
 				if(line.replace("\t","").contains(symResult.replace("\t",""))){
 					String temp=line.replace(symResult,"").trim();
-					try{						
+					try{
 					double trueValue = temp.toDouble()
 					if(trueValue>value){
 					return flag=1;
-				       }
+					   }
 				   }catch(Exception e){
 				   
-			       }
+				   }
 				
 				}
 				
 				lineNo++
 			}
-		}		
+		}
 		return flag
 	}
 
@@ -658,7 +658,7 @@ public class DocumentAligment
 			String[] text  =  result.split(",")
 			String result2  =  text[0].trim()  +  "\t"  +  text[1].trim()  + " " + atom.getValue()
 			def symResult2= text[1].trim()  +  ","  +  text[0].trim() + " " + atom.getValue()
-			if(formatter.format(atom.getValue())>"0.3"){				
+			if(formatter.format(atom.getValue())>"0.3"){
 				if(text[0].toString().contains("aml1")){
 						resultConfidence.append(result2  +  '\n')
 					}
@@ -666,7 +666,7 @@ public class DocumentAligment
 						resultConfidence.append(symResult2  +  '\n')
 					}
 				}
-		}	
+		}
 		
 		for (GroundAtom atom : Queries.getAllAtoms(testDB, similar)){
 		//println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
@@ -679,7 +679,7 @@ public class DocumentAligment
 				String[] text  = result.split(",")
 				result = text[0].trim()  +  ","  +  text[1].trim() +  "," + "truth:1"
 				def symResult = text[1].trim()  +  ","  +  text[0].trim() +  "," + "truth:1"
-				def symResult2 = text[1].trim()  +  "\t"  +  text[0].trim() 			
+				def symResult2 = text[1].trim()  +  "\t"  +  text[0].trim()
 				String result2 = text[0].trim()  +  "\t"  +  text[1].trim()
 							
 				// adding elements with aml1: at start for correctness
@@ -778,12 +778,12 @@ public class DocumentAligment
 		def number = arrDir[5].split("-")
 		
 		if(util.ConfigManager.getExecutionMethod() == "true"){
-			resultsFile = new File(testDir + "Precision/" + arrDir[4] + "-" + 
-				                   number[1] + "F1Training.txt")
+			resultsFile = new File(testDir + "Precision/" + arrDir[4] + "-" +
+								   number[1] + "F1Training.txt")
 		}
 		else{
-			resultsFile = new File(testDir + "Precision/" + arrDir[4] + "-" + 
-				                   number[1] + "F1NoTraining.txt")
+			resultsFile = new File(testDir + "Precision/" + arrDir[4] + "-" +
+								   number[1] + "F1NoTraining.txt")
 		}
 
 		resultsFile.createNewFile()
