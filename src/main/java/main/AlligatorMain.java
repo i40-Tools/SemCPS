@@ -101,11 +101,8 @@ public class AlligatorMain {
 				return null;
 			}
 		};
-		//		 script.evaluate(new File("src/main/java/pslApproach/EasyLP.groovy"));
-		script.evaluate(new File("src/main/java/pslApproach/DocumentAlignment.groovy"));
+		script.evaluate(new File("src/main/java/pslApproach/KGAlignment.groovy"));
 	}
-
-
 
 	/**
 	 * General method to execute the Datalog-based approach

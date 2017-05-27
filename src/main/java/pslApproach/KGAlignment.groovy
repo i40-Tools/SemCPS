@@ -348,34 +348,6 @@ public class DocumentAligment
 	 */
 	public void defineSetRules(){
 	
-		// Two AML Attributes are the same if they have the same name
-//		model.add rule : (hasAttributeName(A,Z) & hasAttributeName(B,W) & similarValue(Z,W) &
-//		hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> setSimilar(A) , weight : 1
-
-//	    model.add rule : (hasAttributeName(A,Z) & hasAttributeName(B,W) & similarValue(Z,W) &
-//		hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> setSimilar(B) , weight : 1
-
-//		model.add rule : (hasInternalElement(A,Z) & hasInternalElement(B,W)& (A ^ B )&
-//			~setSimilar(Z) & ~setSimilar(W) ) >> setNotSimilar(A,B) , weight : 1
-
-		
-//	    model.add rule :  (setNotSimilar(A,B) & (A ^ B )) >> similarAttributes( {A.hasInternalElement} 
-//		    , {B.hasInternalElement} ) , weight : 5
-		
-			
-//      model.add rule : (hasInternalElement(A,Z) & hasInternalElement(B,W)&
-//        ~notSimilar(A,Z) &hasDocument(A,O1) & hasDocument(B,O2)
-//     	  & (O1-O2)) >> similar(A,B) , weight : 1
-
-	
-	//    model.add rule : (hasInternalElement(A,E) & hasInternalElement(B,D) & (A ^ B )
-	//		&hasAttributeName(E,Z) & hasAttributeName(D,W) & similarValue(Z,W)
-	//		)>> setNotSimilar(A,B) , weight : 1
-	
-	
-	
-
-	
 	}
 	
 	
@@ -384,7 +356,6 @@ public class DocumentAligment
 	 */
 	public void defineOntoPredicates(){
 		model.add predicate: "hasDomain", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
-	
 		model.add predicate: "hasRange", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]		
 	}
 	
@@ -392,29 +363,7 @@ public class DocumentAligment
 	 * Defines basic ontology rules
 	 */
 	public void defineOntoRules(){
-
-//		model.add rule : (similar(U,W) & hasType(U,B) & hasType(W,C) &
-//		hasDomain(A,B) & hasDomain(D,C) & hasDocument(U,O1) & hasDocument(W,O2) 
-//		& (O1-O2))>> similar(A,D), weight : 2
-
-//		model.add rule : (hasDomain(A,B) & hasDomain(D,C) & hasType(U,B) &hasType(W,C) &
-//		similar(U,W) & hasDocument(U,O1)
-//		& hasDocument(W,O2) & (O1-O2))>> similar(A,D), weight : 2
-//		
-//		model.add rule : (hasDomain(A,B) & hasDomain(D,C) & similar(B,C) & hasDocument(B,O1)
-//		& hasDocument(C,O2) & (O1-O2))>> similar(A,D), weight : 2
-//
-//	    model.add rule : (hasRange(A,B)  & hasRange(C,D)  & similar(B,D)
-//		& hasDocument(B,O1) & hasDocument(D,O2) & (O1-O2)) >> similar(A,C), weight : 2
-//	
-//		model.add rule : (hasDomain(A,B) & hasDomain(C,D) & similar(A,C)
-//		& hasDocument(B,O1) & hasDocument(D,O2) & (O1-O2)) >> similar(B,D), weight : 2
-//	
-//		model.add rule : (hasRange(A,B)  & hasRange(C,D)  & similar(A,C)
-//		& hasDocument(B,O1) & hasDocument(C,O2) & (O1-O2)) >> similar(B,C), weight : 2
-
-	
-			
+		
 	}
 
 	/**
