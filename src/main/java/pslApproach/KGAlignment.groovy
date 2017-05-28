@@ -686,7 +686,7 @@ public class DocumentAligment
 				result = text[0].trim()  +  ","  +  text[1].trim() +  "," + "truth:1"
 				def symResult = text[1].trim()  +  ","  +  text[0].trim() +  "," + "truth:1"
 				def symResult2 = text[1].trim()  +  "\t"  +  text[0].trim()
-				String result2 = text[0].trim()  +  "\t"  +  text[1].trim()
+		 		String result2 = text[0].trim()  +  "\t"  +  text[1].trim()
 							
 				// adding elements with aml1: at start for correctness
 				if(!removeSymetric(matchResult,symResult)&&
