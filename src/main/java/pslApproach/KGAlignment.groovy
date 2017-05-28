@@ -643,7 +643,7 @@ public class DocumentAligment
 		MPEInference inference  =  new MPEInference(model, testDB, config)
 		inference.mpeInference()
 		inference.close()
-
+		
 		println "INFERENCE DONE"
 		def matchResult  =  new File(testDir  +  'similar.txt')
 		matchResult.write('')
@@ -658,7 +658,10 @@ public class DocumentAligment
 			String[] text  =  result.split(",")
 			String result2  =  text[0].trim()  +  "\t"  +  text[1].trim()  + " " + atom.getValue()
 			def symResult2= text[1].trim()  +  ","  +  text[0].trim() + " " + atom.getValue()
-			if(formatter.format(atom.getValue())>"0.3"){
+			if(formatter.format(atom.getValue())>"0.5"){
+				
+				println atom.getRegisteredGroundKernels();
+				
 				if(text[0].toString().contains("aml1")){
 						resultConfidence.append(result2  +  '\n')
 					}
@@ -666,13 +669,16 @@ public class DocumentAligment
 						resultConfidence.append(symResult2  +  '\n')
 					}
 				}
+			
 		}
+		
+		
 		
 		for (GroundAtom atom : Queries.getAllAtoms(testDB, similar)){
 		//println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 
 			// only writes if its equal to 1 or u can set the threshold
-			if(formatter.format(atom.getValue())>"0.3"){
+			if(formatter.format(atom.getValue())>"0.5"){
 				// converting to format for evaluation
 				String result  =  atom.toString().replaceAll("SIMILAR","")
 				result  = result.replaceAll("[()]","")
@@ -702,7 +708,7 @@ public class DocumentAligment
 			println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 
 			// only writes if its equal to 1 or u can set the threshold
-			if(formatter.format(atom.getValue())>"0.3"){
+			if(formatter.format(atom.getValue())>"0.5"){
 								
 				// converting to format for evaluation
 				String result  =  atom.toString().replaceAll("NOTSIMILAR","")
