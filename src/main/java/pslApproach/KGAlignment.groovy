@@ -632,7 +632,31 @@ public class DocumentAligment
 		return flag
 	}
 
+/**
+ * Adds rules explaination	
+ * @param predicate
+ * @param filename
+ */
 	
+	public void ruleExplaination(Predicate predicate,String filename){
+		
+		def matchResult  =  new File(testDir+"Precision/"+filename)
+		matchResult.write('')
+		
+		
+		for (GroundAtom atom : Queries.getAllAtoms(testDB, predicate)){
+			Iterator  igk = atom.getRegisteredGroundKernels().iterator();
+			while(igk.hasNext()) {
+			 Iterator<GroundAtom> iga = igk.next().getAtoms().iterator();
+			 while (iga.hasNext()) { //gets predicate
+			  GroundAtom gatom = iga.next();
+			  if(gatom.getValue()>0.5){
+			  matchResult.append(gatom.getRegisteredGroundKernels() + "\t" 
+				  + gatom.getValue() + "\n \n")
+			  }
+		  }}}
+		
+	}
 	
 	
 	
@@ -660,7 +684,7 @@ public class DocumentAligment
 			def symResult2= text[1].trim()  +  ","  +  text[0].trim() + " " + atom.getValue()
 			if(formatter.format(atom.getValue())>"0.5"){
 				
-				println atom.getRegisteredGroundKernels();
+		//		println atom.getRegisteredGroundKernels();
 				
 				if(text[0].toString().contains("aml1")){
 						resultConfidence.append(result2  +  '\n')
@@ -673,7 +697,7 @@ public class DocumentAligment
 		}
 		
 		
-		
+			
 		for (GroundAtom atom : Queries.getAllAtoms(testDB, similar)){
 		//println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 
@@ -696,16 +720,18 @@ public class DocumentAligment
 					if(text[0].toString().contains("aml1")){
 						matchResult.append(result  +  '\n')
 						resultConfidence.append(result2+ " " + atom.getValue()	  +  '\n')
+						println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 					}
 					else{
 						matchResult.append(symResult  +  '\n')
 						resultConfidence.append(symResult2+ " " + atom.getValue()	  +  '\n')
+						println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 					}
 				}}
 		}
 
 		for (GroundAtom atom : Queries.getAllAtoms(testDB, notSimilar)){
-			println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
+		//	println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 
 			// only writes if its equal to 1 or u can set the threshold
 			if(formatter.format(atom.getValue())>"0.5"){
@@ -725,17 +751,25 @@ public class DocumentAligment
 				!removeSymetric(matchResult,trueResult)){
 					if(text[0].toString().contains("aml1")){
 						matchResult.append(result  +  '\n')
+						println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 					}
 
 					else{
 						matchResult.append(symResult  +  '\n')
-
+						println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 					}
 				}
 			}
 		}
+		
+		
+		ruleExplaination(notSimilar,"notSimilarRules.txt");
+		ruleExplaination(similar,"SimilarRules.txt");
+		
 	}
 
+	
+	
 	/**
 	 * Evaluates the results of inference versus expected truth values
 	 */
