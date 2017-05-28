@@ -53,9 +53,8 @@ Make sure to add resources/ and libs/ folder to your build path.
 ## Running the examples
 To run the PSL examples please go to Main.java
 
-give path to groovy script :
-
-		script.evaluate(new File("src/main/java/edu/umd/cs/example/OntologyAlignment.groovy"));
+give path to groovy script : 
+		script.evaluate(new File("src/main/java/pslApproach/KGAlignment.groovy"));
 
 
 You can find Heterogeneity examples at :                         
@@ -122,5 +121,5 @@ Here you can update, remove or add rules for RDF conversion.
 
 ## License
 
-* Copyright (C) 2015-2016 EIS Uni-Bonn
+* Copyright (C) 2015-2017 EIS Uni-Bonn
 * Licensed under the Apache License
