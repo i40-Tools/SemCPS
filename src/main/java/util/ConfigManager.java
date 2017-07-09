@@ -35,6 +35,7 @@ public class ConfigManager {
 	private static RDFNode predicate;
 	private static ArrayList<RDFNode> literals, predicates;
 	private static Model model;
+	public static String filePath;
 
 	public final static String HET_NAMESPACE = "http://vocab.cs.uni-bonn.de/het#";
 	public final static String URI_NAMESPACE = "http://uri4uri.net/vocab.html/#";
@@ -112,6 +113,9 @@ public class ConfigManager {
 	 * @return
 	 */
 	public static String getFilePath() {
+		if(filePath!=null){
+			return filePath;
+		}
 		String filePath = loadConfig().getProperty(URI_NAMESPACE + "path");
 		return filePath;
 	}

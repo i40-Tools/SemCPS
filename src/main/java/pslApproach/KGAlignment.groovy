@@ -181,7 +181,7 @@ public class DocumentAligment
 
 		// Two AML Attributes are the same if they have the same name
 		model.add rule : (hasAttributeName(A,Z) & hasAttributeName(B,W) & similarValue(Z,W) &
-			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B), weight : 4
+			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B), weight : 1
 
 		// Two InterfaceClass are the same if they have the same name
 		model.add rule : (hasInterfaceClassAttributeName(A,Z) & hasInterfaceClassAttributeName(B,W) & similarValue(Z,W) &
@@ -189,7 +189,7 @@ public class DocumentAligment
 
 		// Two InternalElement are the same if they have the same name
 		model.add rule : (hasInternalElementAttributeName(A,Z) & hasInternalElementAttributeName(B,W) & similarValue(Z,W) &
-			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 4
+			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 1
 
 		// Two RoleClass are the same if they have the same name
 		model.add rule : (hasRoleClassAttributeName(A,Z) & hasRoleClassAttributeName(B,W) & similarValue(Z,W) &
@@ -266,6 +266,11 @@ public class DocumentAligment
 		& hasRefSemantic(Y,W) & ~similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) &
 		(O1-O2)) >> notSimilar(A,B) , weight : 10
 
+	    // Two AML Attributes are not the same if they have the same name
+    	model.add rule : (hasAttributeName(A,Z) & hasAttributeName(B,W) & ~similarValue(Z,W) &
+		hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> ~similar(A,B), weight : 10
+
+	
 		// Two AMl hasAttributes are the not same if they share the not same ID
 		model.add rule : (hasAttributeID(A,Z) & hasAttributeID(B,W) & ~similarValue(Z,W)
 		& hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) ,weight : 10
@@ -300,7 +305,7 @@ public class DocumentAligment
 		model.add rule : (hasInternalElement(A,Z) & hasInternalElement(B,W)
 		& hasInternalLink(Z,C) & hasInternalElementID(B,D)  & ~similarValue(C,D)
 		& hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) ,
-		weight : 4
+		weight : 10
 		
 		// Two Roles Class are not same if its eclass,IRDI and classification class are the same
 		model.add rule :( hasRoleClass(A1,B1) & hasRoleClass(A2,B2)& hasEClassIRDI(B1,Z)
@@ -763,8 +768,8 @@ public class DocumentAligment
 		}
 		
 		
-		ruleExplaination(notSimilar,"notSimilarRules.txt");
-		ruleExplaination(similar,"SimilarRules.txt");
+		 //ruleExplaination(notSimilar,"notSimilarRules.txt");
+	    //ruleExplaination(similar,"SimilarRules.txt");
 		
 	}
 
@@ -822,8 +827,7 @@ public class DocumentAligment
 								   number[1] + "F1Training.txt")
 		}
 		else{
-			resultsFile = new File(testDir + "Precision/" + arrDir[4] + "-" +
-								   number[1] + "F1NoTraining.txt")
+			resultsFile = new File(testDir + "Precision/" + "F1NoTraining.txt")
 		}
 
 		resultsFile.createNewFile()
@@ -837,6 +841,7 @@ public class DocumentAligment
 		resultsFile.append("False Negative:" + stats.fn + '\n')
 		resultsFile.append("Precision :" + precision.round(2) + '\n')
 		resultsFile.append("Recall: " + recall.round(2) + '\n')
+		resultsFile.close()
 		resultsDB.close()
 		truthDB.close()
 	}

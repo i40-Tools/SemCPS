@@ -1,6 +1,8 @@
 package main;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
@@ -32,9 +34,10 @@ public class AlligatorMain {
 	public static void main(String[] args) throws Throwable {
 
 		AlligatorMain main = new AlligatorMain();
-		main.readConvertStandardFiles();	
+		main.readConvertStandardFiles();
 		main.generatePSLDataModel();
 		main.executePSLAproach();
+
 		// main.executeDatalogApproach();
 		// main.integrate();
 		// main.executePSLAproach();
@@ -42,6 +45,76 @@ public class AlligatorMain {
 
 	}
 
+	/**
+	 * Provide root of the heterogeneity examples to reproduce the result of the
+	 * published paper.
+	 * @param root
+	 * @throws Exception
+	 */
+	static void getReport(String root) throws Exception {
+		int k = 2;
+		while (k <= 7) {
+			int i = 1;
+			while (i <= 10) {
+			    
+				ConfigManager.filePath = root+"M" + k + "/Testbeds-" + i + "/Generated/";
+
+				AlligatorMain main = new AlligatorMain();
+				main.readConvertStandardFiles();
+				main.generatePSLDataModel();
+				main.executePSLAproach();
+				i++;
+			}
+			k++;
+		}
+
+		getresults(root);
+	}	
+	
+	/**
+	 * Reads the result.txt and output results.
+	 * @param root
+	 * @throws IOException
+	 */
+	static void getresults(String root) throws IOException {
+		int k = 2;
+		while (k <= 7) {
+			int j = 1;
+			String line;
+			String precision = "Precision";
+			String recall = "Recall";
+			String fmeasure = "F-Measure";
+
+			while (j <= 10) {
+				BufferedReader br = new BufferedReader(
+						new FileReader(new File(root+"M" + k + "/Testbeds-" + j
+								+ "/Generated/PSL//test/Precision/F1NoTraining.txt")));
+
+				while ((line = br.readLine()) != null) {
+					if (line.contains("Precision :")) {
+						precision += line.replace("Precision :", " &");
+					}
+					if (line.contains("Recall:")) {
+						recall += line.replace("Recall:", " &");
+					}
+					if (line.contains("Fmeasure:")) {
+						fmeasure += line.replace("Fmeasure:", " &");
+					}
+
+				}
+
+				j++;
+			}
+			System.out.println("M" + k);
+			System.out.println(precision + "  \\\\  \\hline");
+			System.out.println(recall + "  \\\\  \\hline");
+			System.out.println(fmeasure + "  \\\\  \\hline");
+
+			k++;
+		}
+
+	}
+	
 	/**
 	 * Models similar.txt in to GoldStandard format.
 	 * @throws Exception 
@@ -101,7 +174,10 @@ public class AlligatorMain {
 				return null;
 			}
 		};
-		script.evaluate(new File("src/main/java/pslApproach/KGAlignment.groovy"));
+		try {
+			script.evaluate(new File("src/main/java/pslApproach/KGAlignment.groovy"));
+		} catch (Exception e) {
+		}
 	}
 
 	/**
