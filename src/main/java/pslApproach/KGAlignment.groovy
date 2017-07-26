@@ -63,7 +63,7 @@ public class DocumentAligment
 		defineSetPredicates()
 		defineFunctions()
 		defineRules()
-		defineOntoRules()
+		//defineOntoRules()
 		defineSetRules()
 		defineNotSimilarRules()
 		setUpData()
@@ -360,6 +360,8 @@ public class DocumentAligment
 	 * Defines typical ontology predicates
 	 */
 	public void defineOntoPredicates(){
+		model.add predicate: "subclass", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
+				
 		model.add predicate: "hasDomain", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
 	
 		model.add predicate: "hasRange", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
@@ -369,6 +371,23 @@ public class DocumentAligment
 	 * Defines basic ontology rules
 	 */
 	public void defineOntoRules(){
+		
+		model.add rule : (hasDomain(R,A) & hasDomain(T,B) & similar(A,B) & 
+			fromOntology(A,O1) & fromOntology(B,O2) & (O1-O2)) >> similar(R,T), weight : 2;
+			
+		model.add rule : (hasRange(R,A) & hasRange(T,B) & similar(A,B) & fromOntology(A,O1) & 
+			fromOntology(B,O2) & (O1-O2)) >> similar(R,T), weight : 2;
+			
+	    model.add rule : (hasDomain(R,A) & hasDomain(T,B) & similar(R,T) & fromOntology(A,O1) & 
+			fromOntology(B,O2) & (O1-O2)) >> similar(A,B), weight : 2;
+			
+		model.add rule : (hasRange(R,A)  & hasRange(T,B) & similar(R,T) & fromOntology(A,O1) & 
+			fromOntology(B,O2) & (O1-O2)) >> similar(A,B), weight : 2;
+			
+		GroundTerm classID = data.getUniqueID("class");
+		model.add rule : (similar(A,B) & hasType(A, classID) & hasType(B, classID) & subclass(A, S1) 
+			& subclass(B, S2)& fromOntology(A,O1) & fromOntology(B,O2) & 
+			(O1-O2)) >> similar(S1, S2), weight: 3;
 	}
 
 	/**
