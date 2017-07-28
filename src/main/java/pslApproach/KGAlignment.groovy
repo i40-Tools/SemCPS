@@ -369,7 +369,22 @@ public class DocumentAligment
 	 * Defines basic ontology rules
 	 */
 	public void defineOntoRules(){
-	}
+		
+		
+		model.add rule : (hasDomain(A,B) & hasDomain(D,C) & similar(B,C) & hasDocument(B,O1)
+		& hasDocument(C,O2) & (O1-O2))>> similar(A,D), weight : 2
+
+	    model.add rule : (hasRange(A,B)  & hasRange(C,D)  & similar(B,D)
+		& hasDocument(B,O1) & hasDocument(D,O2) & (O1-O2)) >> similar(A,C), weight : 2
+	
+		model.add rule : (hasDomain(A,B) & hasDomain(C,D) & similar(A,C)
+		& hasDocument(B,O1) & hasDocument(D,O2) & (O1-O2)) >> similar(B,D), weight : 2
+	
+		model.add rule : (hasRange(A,B)  & hasRange(C,D)  & similar(A,C)
+		& hasDocument(B,O1) & hasDocument(C,O2) & (O1-O2)) >> similar(B,C), weight : 2
+
+		
+			}
 
 	/**
 	 *
@@ -725,12 +740,12 @@ public class DocumentAligment
 					if(text[0].toString().contains("aml1")){
 						matchResult.append(result  +  '\n')
 						resultConfidence.append(result2+ " " + atom.getValue()	  +  '\n')
-						println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
+						//println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 					}
 					else{
 						matchResult.append(symResult  +  '\n')
 						resultConfidence.append(symResult2+ " " + atom.getValue()	  +  '\n')
-						println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
+					//	println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 					}
 				}}
 		}
@@ -756,12 +771,12 @@ public class DocumentAligment
 				!removeSymetric(matchResult,trueResult)){
 					if(text[0].toString().contains("aml1")){
 						matchResult.append(result  +  '\n')
-						println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
+						//println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 					}
 
 					else{
 						matchResult.append(symResult  +  '\n')
-						println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
+						//println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 					}
 				}
 			}

@@ -394,12 +394,13 @@ public class Files2Facts extends IndustryStandards {
 		}
 
 		// Adds domain and range
-		if (predicate.asNode().getLocalName().equals("domain")|| 
-				predicate.asNode().getLocalName().equals("range")) {
-			addSubjectURI(subject, ":" + object.asNode().getLocalName(), 1, "has" + 
-					predicate.asNode().getLocalName());
-			addSubjectURI(subject, ":" + object.asNode().getLocalName(), 2, "has" + 
-					predicate.asNode().getLocalName());
+		if (predicate.asNode().getLocalName().equals("domain")
+				|| predicate.asNode().getLocalName().equals("range")) {
+
+			addSubjectURI(subject, ":" + object.asNode().getLocalName(), 1,
+					"has" + predicate.asNode().getLocalName());
+			addSubjectURI(subject, ":" + object.asNode().getLocalName(), 2,
+					"has" + predicate.asNode().getLocalName());
 			addSubjectURI(subject, "", 1, "hasDocument");
 			addSubjectURI(subject, "", 2, "hasDocument");
 			addSubjectURI(object, "", 1, "hasDocument");

@@ -136,6 +136,8 @@ public class AlligatorMain {
 		standardFiles = new Files2Facts();
 		standardFiles.improveRDFOutputFormat();
 		similar.readFiles(ConfigManager.getFilePath(), ".ttl", ".rdf", ".owl");
+		similar.readFiles(ConfigManager.getOntoURIPath(), ".ttl", ".rdf", ".owl");
+
 	}
 
 	/**
