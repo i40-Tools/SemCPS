@@ -80,9 +80,7 @@ aml:conf
      rdfs:label "General Configuration"@en ;
      uri:path "C:/HeterogeneityExampleData/AutomationML/Single-Heterogeneity/M2/Testbeds-2/";
      sto:Standard "aml";
-     ontosec:Training "false";
-     uri:URI "C:/Users/omar/Desktop/Alligator-master/resources/".
-     
+     ontosec:Training "false";     
 ```
 Please note:  
 ```
@@ -99,11 +97,39 @@ To create folders manually before running, you can create and put Goldstandard.t
 .../TestBed1/PSL/test/              
 .../TestBed1/PSL/train/                          
 ```
-Please note in Similar.txt for training its a truth value. You must add 
-```aml2:InterfaceClass1	 aml1:InterfaceClass1	 1
-aml1:InterfaceClass1	 aml2:InterfaceClass1	 1
-aml1:Attribute5	 aml2:Attribute4	 0
-aml2:Attribute4	 aml1:Attribute5	 1
+If you want to reproduce the results from published paper , please point your path to the generated folder in config.ttl
+
+```@prefix aml:     <http://vocab.cs.uni-bonn.de/aml#> .
+@prefix het:     <http://vocab.cs.uni-bonn.de/het#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema:  <http://schema.org/> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix xml:     <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix uri:     <http://uri4uri.net/vocab.html/#>
+@prefix aml:     <https://w3id.org/i40/aml#> .
+@prefix sto:     <https://w3id.org/i40/sto#>.
+@prefix ontosec: <http://www.semanticweb.org/ontologies/2008/11/OntologySecurity.owl#>
+
+
+aml:conf 
+     rdfs:label "General Configuration"@en ;
+     uri:path "C:/HeterogeneityExampleData/AutomationML/Single-Heterogeneity/M2/Testbeds-1/";
+     sto:Standard "aml";
+     ontosec:Training "false";
+     uri:URI "C:/Users/omar/Desktop/SemCPS-/resources/".     
+```
+
+
+```
+If you want to get the report in one go you can run the function getReport(String root) in Alligator main.
+
+root is the base of the examples :
+e.g 
+
+C:/HeterogeneityExampleData/AutomationML/Single-Heterogeneity/
 ```
 
 
