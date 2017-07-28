@@ -63,7 +63,7 @@ public class DocumentAligment
 		defineSetPredicates()
 		defineFunctions()
 		defineRules()
-		//defineOntoRules()
+		defineOntoRules()
 		defineSetRules()
 		defineNotSimilarRules()
 		setUpData()
@@ -365,6 +365,8 @@ public class DocumentAligment
 		model.add predicate: "hasDomain", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
 	
 		model.add predicate: "hasRange", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
+		
+		model.add predicate: "fromOntology", types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
 	}
 	
 	/**
