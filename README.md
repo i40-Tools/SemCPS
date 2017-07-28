@@ -81,6 +81,7 @@ aml:conf
      uri:path "C:/HeterogeneityExampleData/AutomationML/Single-Heterogeneity/M2/Testbeds-2/";
      sto:Standard "aml";
      ontosec:Training "false";     
+     uri:URI "C:/Users/omar/Desktop/SemCPS-/resources/".     
 ```
 Please note:  
 ```
