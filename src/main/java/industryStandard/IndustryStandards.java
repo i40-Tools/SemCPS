@@ -36,19 +36,27 @@ public class IndustryStandards {
 			generic.put(name, new LinkedHashSet<String>());
 		}
 
-		if(predicate.equals(":remove")){
+		if (predicate.equals(":remove")) {
 			predicate = ":remove" + "null";
 		}
 
 		// adds all data into generic hash map
 		if (subject.asNode().getNameSpace().contains("aml")) {
 			// checks if its a literal or object
-			if (!predicate.contains("remove")) {
+
+			if (predicate.contains("decimal") || (predicate.contains("string"))
+					|| (predicate.contains("integer")) || (predicate.contains("float"))) {
 				generic.get(name).add("aml" + number + ":" + subject.asNode().getLocalName() + "\t"
-						+ "aml" + number + predicate);
+						+ "xsd" + predicate);
 			} else {
-				generic.get(name).add("aml" + number + ":" + subject.asNode().getLocalName() + "\t"
-						+ "aml" + predicate);
+
+				if (!predicate.contains("remove")) {
+					generic.get(name).add("aml" + number + ":" + subject.asNode().getLocalName()
+							+ "\t" + "aml" + number + predicate);
+				} else {
+					generic.get(name).add("aml" + number + ":" + subject.asNode().getLocalName()
+							+ "\t" + "aml" + predicate);
+				}
 			}
 		}
 	}
