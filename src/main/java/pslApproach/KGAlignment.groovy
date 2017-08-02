@@ -63,7 +63,7 @@ public class DocumentAligment
 		defineSetPredicates()
 		defineFunctions()
 		defineRules()
-		defineOntoRules()
+		//defineOntoRules()
 		defineSetRules()
 		defineNotSimilarRules()
 		setUpData()

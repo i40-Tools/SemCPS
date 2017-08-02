@@ -1,10 +1,11 @@
-package main;
+	package main;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.text.DecimalFormat;
 
 import javax.script.ScriptException;
 
@@ -32,7 +33,14 @@ public class AlligatorMain {
 	private Similar similar = new Similar();
 
 	public static void main(String[] args) throws Throwable {
+ 
+//		getresults("C:/Users/omar/Desktop/examples/run -2/");
+//     	getresults2("C:/HeterogeneityExampleData/AutomationML/Single-Heterogeneity/"); 
+//		getsize("C:/Users/omar/Desktop/examples/run -7/");
+//		System.exit(0);
 
+   	getReport("C:/Users/omar/Desktop/examples/run -2/");
+		System.exit(0);
 		AlligatorMain main = new AlligatorMain();
 		main.readConvertStandardFiles();
 		main.generatePSLDataModel();
@@ -52,68 +60,160 @@ public class AlligatorMain {
 	 * @throws Exception
 	 */
 	static void getReport(String root) throws Exception {
-		int k = 2;
-		while (k <= 7) {
-			int i = 1;
+		int k = 5;
+		while (k <=5) {
+			int i =6;
 			while (i <= 10) {
-			    
-				ConfigManager.filePath = root+"M" + k + "/Testbeds-" + i + "/Generated/";
+				if (k == 1) {
+//					ConfigManager.filePath = root + "M1/M1.1/Testbeds-" + i + "/Generated/";
+//					AlligatorMain main = new AlligatorMain();
+//					main.readConvertStandardFiles();
+//					main.generatePSLDataModel();
+//					main.executePSLAproach();
+					System.out.println(root + "M1/M1.1//Testbeds-" + i);
+					ConfigManager.filePath = root + "M1/M1.1//Testbeds-" + i + "/Generated/";
+					AlligatorMain main2 = new AlligatorMain();
+					main2.readConvertStandardFiles();
+					main2.generatePSLDataModel();
+					main2.executePSLAproach();
 
-				AlligatorMain main = new AlligatorMain();
-				main.readConvertStandardFiles();
-				main.generatePSLDataModel();
-				main.executePSLAproach();
+				}
+
+				else {
+					System.out.println(root + "M" + k + "/Testbeds-" + i);
+					
+					ConfigManager.filePath = root + "M" + k + "/Testbeds-" + i + "/Generated/";
+
+					AlligatorMain main = new AlligatorMain();
+					main.readConvertStandardFiles();
+					main.generatePSLDataModel();
+					main.executePSLAproach();
+				}
 				i++;
 			}
 			k++;
 		}
 
-		getresults(root);
-	}	
-	
+//		getresults(root);
+	}
+
 	/**
 	 * Reads the result.txt and output results.
 	 * @param root
 	 * @throws IOException
 	 */
 	static void getresults(String root) throws IOException {
-		int k = 2;
-		while (k <= 7) {
+		int k = 1;
+		while (k <= 1) {
 			int j = 1;
 			String line;
-			String precision = "Precision";
-			String recall = "Recall";
-			String fmeasure = "F-Measure";
+			String precision = "";
+			String recall = "";
+			String fmeasure = "";
 
 			while (j <= 10) {
 				BufferedReader br = new BufferedReader(
-						new FileReader(new File(root+"M" + k + "/Testbeds-" + j
+						new FileReader(new File("C:/Users/omar/Desktop/examples/run -6/"+"M"+k+"/Testbeds-" + j
 								+ "/Generated/PSL//test/Precision/F1NoTraining.txt")));
+						
+//						new FileReader(new File(root+"M"+k+"/M1.1/Testbeds-" + j
+//								+ "/Generated/PSL//test/Precision/F1NoTraining.txt")));
 
 				while ((line = br.readLine()) != null) {
 					if (line.contains("Precision :")) {
-						precision += line.replace("Precision :", " &");
+						precision += line.replace("Precision :", "")+"\n";
 					}
 					if (line.contains("Recall:")) {
-						recall += line.replace("Recall:", " &");
+						recall += line.replace("Recall:", "")+"\n";
 					}
 					if (line.contains("Fmeasure:")) {
-						fmeasure += line.replace("Fmeasure:", " &");
+						fmeasure += line.replace("Fmeasure:", "")+"\n";
 					}
 
 				}
 
 				j++;
 			}
-			System.out.println("M" + k);
-			System.out.println(precision + "  \\\\  \\hline");
-			System.out.println(recall + "  \\\\  \\hline");
-			System.out.println(fmeasure + "  \\\\  \\hline");
+		//	System.out.println("M" + k);
+			System.out.print(precision);
+			System.out.print(recall);
+			System.out.print(fmeasure );
 
 			k++;
 		}
 
 	}
+
+	
+	static void getsize(String root) throws IOException {
+		int k = 1;
+		while (k <= 7) {
+			int j = 1;
+
+			String filesize="";
+			while (j <= 10) {
+//				BufferedReader br = new BufferedReader(
+//						new FileReader(new File(root+"M"+k+"/Testbeds-" + j
+//								+ "/Generated/seed.aml")));
+						if(k==1){
+						File f=new File(root+"M"+k+"/M1.1/Testbeds-" + j
+								+ "/Generated/seed.aml");
+						filesize+= new DecimalFormat("#.#").format(((double)f.length()/ 1024))+"\n"; 
+						}
+						
+						else{
+							File f=new File(root+"M"+k+"/Testbeds-" + j
+									+ "/Generated/seed.aml");
+							filesize+= new DecimalFormat("#.#").format(((double)f.length()/ 1024))+"\n"; 
+								
+						}
+						
+
+				j++;
+			}
+		//	System.out.println("M" + k);
+//			System.out.print(precision);
+		//	System.out.print(recall);
+		//	System.out.print(fmeasure );
+			System.out.print(filesize);
+
+			k++;
+		}
+}
+	
+	
+	
+	
+	
+	static void getresults2(String root) throws IOException {
+		int k = 1;
+		while (k <= 1) {
+			int j = 1;
+			String line;
+			String precision = "";
+			String recall = "Recall";
+			String fmeasure = "F-Measure";
+			System.out.println("M" + k);
+
+			while (j <= 10) {
+				BufferedReader br = new BufferedReader(
+						new FileReader(new File(root+"M1/M1.1/Testbeds-" + j
+								+ "/Generated/PSL//test/Precision/multi.txt")));
+			
+				while ((line = br.readLine()) != null) {
+					    precision += line;
+						System.out.print(line+",");
+						
+				}
+				System.out.print("\n");
+
+				j++;
+			}
+			k++;
+		}
+
+	}
+
 	
 	/**
 	 * Models similar.txt in to GoldStandard format.
@@ -136,8 +236,6 @@ public class AlligatorMain {
 		standardFiles = new Files2Facts();
 		standardFiles.improveRDFOutputFormat();
 		similar.readFiles(ConfigManager.getFilePath(), ".ttl", ".rdf", ".owl");
-		similar.readFiles(ConfigManager.getOntoURIPath(), ".ttl", ".rdf", ".owl");
-
 	}
 
 	/**
@@ -179,6 +277,7 @@ public class AlligatorMain {
 		try {
 			script.evaluate(new File("src/main/java/pslApproach/KGAlignment.groovy"));
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 		}
 	}
 
