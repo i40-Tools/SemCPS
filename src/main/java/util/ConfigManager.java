@@ -181,5 +181,14 @@ public class ConfigManager {
 		String standard = loadConfig().getProperty(STO_NAMESPACE + "Standard");
 		return standard;
 	}
+	
+	/**
+	 * Reads the configuration of the experiment folder 
+	 * @return true or false
+	 */
+	public static String getExperimentFolder() {
+		String filePath = loadConfig().getProperty(URI_NAMESPACE + "experimentFolder");
+		return filePath;
+	}
 
 }

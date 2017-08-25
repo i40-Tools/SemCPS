@@ -79,6 +79,7 @@ To run the AML examples please create a file config.ttl in the main directory of
 aml:conf 
      rdfs:label "General Configuration"@en ;
      uri:path "C:/HeterogeneityExampleData/AutomationML/Single-Heterogeneity/M2/Testbeds-2/";
+	 uri:experimentFolder "E:/ExperimentsToKCAP/Experiment1/run -1/";
      sto:Standard "aml";
      ontosec:Training "false";     
      uri:URI "C:/Users/omar/Desktop/SemCPS-/resources/".     
@@ -98,7 +99,7 @@ To create folders manually before running, you can create and put Goldstandard.t
 .../TestBed1/PSL/test/              
 .../TestBed1/PSL/train/                          
 ```
-If you want to reproduce the results from published paper , please point your path to the generated folder in config.ttl
+If you want to reproduce the results, please point your path to the generated folder in config.ttl
 
 ```@prefix aml:     <http://vocab.cs.uni-bonn.de/aml#> .
 @prefix het:     <http://vocab.cs.uni-bonn.de/het#> .
@@ -137,7 +138,8 @@ C:/HeterogeneityExampleData/AutomationML/Single-Heterogeneity/
 ## Updating Krextor Rules 
 ### What is Krextor?
 
-Krextor is a an extensible XSLT-based framework for extracting RDF from XML.                 
+Krextor is a an extensible XSLT-based framework for extracting RDF from XML.
+Please note that the resources folder should be added to the project in order to run Krextor.
 
 Read more at : https://github.com/EIS-Bonn/krextor
 
