@@ -131,50 +131,5 @@ public class Similar extends Files2Facts {
 
 		}		
 		similar.close();
-		
-		
-//		ArrayList neg = new ArrayList();
-//		BufferedReader br = new BufferedReader(new FileReader(
-//				new File(ConfigManager.getFilePath() + "PSL/test/GoldStandard.txt")));
-//
-//		String line;
-//		String line2;
-//		int flag = 2;
-//		while ((line = br.readLine()) != null) {
-//			BufferedReader br1 = new BufferedReader(
-//					new FileReader(new File(ConfigManager.getFilePath() + "PSL/test/similar.txt")));
-//
-//			while ((line2 = br1.readLine()) != null) {
-//				if (line.equals(line2.trim())|| line.replace("	1", "	0").
-//						trim().equals(line2.trim())) {
-//					flag = 1;
-//					break;
-//				} else {
-//					flag = 0;
-//				}
-//
-//			}
-//
-//			if (flag == 0) {
-//
-//				neg.add(line);
-//			}
-//
-//		}
-//
-//		ArrayList negValues = new ArrayList();
-//		for (int i = 0; i < neg.size(); i++) {
-//			negValues.add(neg.get(i).toString().replace("	1", "	0"));
-//		}
-//
-//		similar = new PrintWriter(new BufferedWriter(
-//				new FileWriter(ConfigManager.getFilePath() + "PSL/test/similar.txt", true)));
-//		for (int i = 0; i < negValues.size(); i++) {
-//			similar.println(negValues.get(i));
-//		}
-//
-//		similar.close();
-
 	}
-
 }

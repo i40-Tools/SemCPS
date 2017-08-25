@@ -5,14 +5,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
-
 import com.hp.hpl.jena.rdf.model.RDFNode;
 
 /**
- * Common methods for Industry 4.0 standards come here
- * 
+ * This class contains common methods to produce the conversion of Industry 4.0 standards 
+ * information models to a canonical model, i.e., RDF
  * @author omar
- *
  */
 
 public class IndustryStandards {

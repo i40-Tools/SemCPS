@@ -6,15 +6,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
-
 import javax.script.ScriptException;
-
 import org.codehaus.groovy.control.CompilationFailedException;
-
-import Test.ModelRepair;
 import groovy.lang.Script;
 import groovy.util.ResourceException;
-import integration.XSDValidator;
 import util.ConfigManager;
 
 /**
@@ -37,7 +32,6 @@ public class SemCPSMain {
 		main.generatePSLDataModel();
 		main.executePSLAproach();
 
-		// main.executeDatalogApproach();
 		// main.integrate();
 		// main.executePSLAproach();
 		// main.integrate();
@@ -84,7 +78,7 @@ public class SemCPSMain {
 	 * @param root
 	 * @throws IOException
 	 */
-	static void getresults(String root) throws IOException {
+	static void getResults(String root) throws IOException {
 		int k = 1;
 		while (k <= 1) {
 			int j = 1;
@@ -148,7 +142,7 @@ public class SemCPSMain {
 	}
 
 
-	static void getresults2(String root) throws IOException {
+	static void getResults2(String root) throws IOException {
 		int k = 1;
 		while (k <= 1) {
 			int j = 1;
@@ -188,9 +182,8 @@ public class SemCPSMain {
 
 	/**
 	 * Method that read standard files and convert then to RDF
-	 * 
-	 * @throws Exception
-	 *             TODO create more specific exceptions
+	 * @throws Exception 
+	 * TODO create more specific exceptions
 	 */
 	public void readConvertStandardFiles() throws Exception {
 		standardFiles.readFiles(ConfigManager.getFilePath(), ".aml", ".opcua", ".xml");
