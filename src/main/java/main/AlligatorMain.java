@@ -34,13 +34,13 @@ public class AlligatorMain {
 
 	public static void main(String[] args) throws Throwable {
  
-//		getresults("C:/Users/omar/Desktop/examples/run -2/");
+//	getresults("C:/Users/omar/Desktop/examples/run -6/");
 //     	getresults2("C:/HeterogeneityExampleData/AutomationML/Single-Heterogeneity/"); 
-//		getsize("C:/Users/omar/Desktop/examples/run -7/");
+//	getsize("C:/Users/omar/Desktop/examples/run -6/");
 //		System.exit(0);
 
-   	getReport("C:/Users/omar/Desktop/examples/run -2/");
-		System.exit(0);
+  //	getReport("C:/Users/omar/Desktop/examples/run -6/");
+  //     System.exit(0);
 		AlligatorMain main = new AlligatorMain();
 		main.readConvertStandardFiles();
 		main.generatePSLDataModel();
@@ -62,8 +62,8 @@ public class AlligatorMain {
 	static void getReport(String root) throws Exception {
 		int k = 5;
 		while (k <=5) {
-			int i =6;
-			while (i <= 10) {
+			int i =7;
+			while (i <=10) {
 				if (k == 1) {
 //					ConfigManager.filePath = root + "M1/M1.1/Testbeds-" + i + "/Generated/";
 //					AlligatorMain main = new AlligatorMain();
@@ -104,7 +104,7 @@ public class AlligatorMain {
 	 */
 	static void getresults(String root) throws IOException {
 		int k = 1;
-		while (k <= 1) {
+		while (k <=1) {
 			int j = 1;
 			String line;
 			String precision = "";
@@ -112,13 +112,17 @@ public class AlligatorMain {
 			String fmeasure = "";
 
 			while (j <= 10) {
-				BufferedReader br = new BufferedReader(
-						new FileReader(new File("C:/Users/omar/Desktop/examples/run -6/"+"M"+k+"/Testbeds-" + j
+				BufferedReader br ;
+				if(k!=1){
+				br = new BufferedReader(
+						new FileReader(new File("C:/Users/omar/Desktop/0.8/run -6/"+"M"+k+"/Testbeds-" + j
 								+ "/Generated/PSL//test/Precision/F1NoTraining.txt")));
-						
-//						new FileReader(new File(root+"M"+k+"/M1.1/Testbeds-" + j
-//								+ "/Generated/PSL//test/Precision/F1NoTraining.txt")));
-
+				}
+				else{
+					br = new BufferedReader(
+						new FileReader(new File("C:/Users/omar/Desktop/0.8/run -6/"+"M"+k+"/M1.1/Testbeds-" + j
+								+ "/Generated/PSL//test/Precision/F1NoTraining.txt")));
+				}
 				while ((line = br.readLine()) != null) {
 					if (line.contains("Precision :")) {
 						precision += line.replace("Precision :", "")+"\n";
@@ -135,8 +139,8 @@ public class AlligatorMain {
 				j++;
 			}
 		//	System.out.println("M" + k);
-			System.out.print(precision);
-			System.out.print(recall);
+		//System.out.print(precision);
+		//System.out.print(recall);
 			System.out.print(fmeasure );
 
 			k++;

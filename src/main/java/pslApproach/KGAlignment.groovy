@@ -65,7 +65,7 @@ public class DocumentAligment
 		defineRules()
 		//defineOntoRules()
 		defineSetRules()
-		defineNotSimilarRules()
+		//defineNotSimilarRules()
 		setUpData()
 		runInference()
 		AlligatorMain main = new AlligatorMain();
@@ -132,6 +132,8 @@ public class DocumentAligment
 		
 		model.add predicate: "hasAttributeName"     , types: [ArgumentType.UniqueID, ArgumentType.String]
 		
+		model.add predicate: "hasInstanceHierarchyAttributeName"     , types: [ArgumentType.UniqueID, ArgumentType.String]
+		
 		model.add predicate: "hasInterfaceClassAttributeName"     , types: [ArgumentType.UniqueID, ArgumentType.String]
 		
 		model.add predicate: "hasInternalElementAttributeName"     , types: [ArgumentType.UniqueID, ArgumentType.String]
@@ -187,6 +189,12 @@ public class DocumentAligment
 		model.add rule : (hasInterfaceClassAttributeName(A,Z) & hasInterfaceClassAttributeName(B,W) & similarValue(Z,W) &
 			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 4
 
+		// Two InstanceHierarichy  are the same if they have the same name
+		model.add rule : (hasInstanceHierarchyAttributeName(A,Z) & hasInstanceHierarchyAttributeName(B,W) & similarValue(Z,W) &
+			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 4
+
+		
+		
 		// Two InternalElement are the same if they have the same name
 		model.add rule : (hasInternalElementAttributeName(A,Z) & hasInternalElementAttributeName(B,W) & similarValue(Z,W) &
 			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 1
@@ -440,7 +448,8 @@ public class DocumentAligment
 				hasInstanceHierarchy,
 				hasDomain,
 				hasRange,
-				hasType
+				hasType,
+				hasInstanceHierarchyAttributeName				
 				]
 			){
 				createFiles(trainDir + p.getName().toLowerCase() + ".txt")
@@ -477,7 +486,8 @@ public class DocumentAligment
 			hasInstanceHierarchy,
 			hasDomain,
 			hasRange,
-			hasType
+			hasType,
+			hasInstanceHierarchyAttributeName			
 			]
 			as Set, trainObservations)
 			
@@ -525,7 +535,9 @@ public class DocumentAligment
 			hasInstanceHierarchy,
 			hasDomain,
 			hasRange,
-			hasType
+			hasType,
+			hasInstanceHierarchyAttributeName
+			
 			])
 		{
 			createFiles(testDir + p.getName().toLowerCase() + ".txt")
@@ -560,7 +572,8 @@ public class DocumentAligment
 			hasInstanceHierarchy,
 			hasDomain,
 			hasRange,
-			hasType
+			hasType,
+			hasInstanceHierarchyAttributeName
 			])
 		{
 			
@@ -596,8 +609,9 @@ public class DocumentAligment
 			hasInstanceHierarchy,
 			hasDomain,
 			hasRange,
-			hasType
-		
+			hasType,
+			hasInstanceHierarchyAttributeName
+					
 		] as Set, testObservations)
 
 		populateSimilar(testDB)
@@ -676,7 +690,7 @@ public class DocumentAligment
 			 Iterator<GroundAtom> iga = igk.next().getAtoms().iterator();
 			 while (iga.hasNext()) { //gets predicate
 			  GroundAtom gatom = iga.next();
-			  if(gatom.getValue()>0.5){
+			  if(gatom.getValue()>0.7){
 			  matchResult.append(gatom.getRegisteredGroundKernels() + "\t" 
 				  + gatom.getValue() + "\n \n")
 			  }
@@ -708,7 +722,7 @@ public class DocumentAligment
 			String[] text  =  result.split(",")
 			String result2  =  text[0].trim()  +  "\t"  +  text[1].trim()  + " " + atom.getValue()
 			def symResult2= text[1].trim()  +  ","  +  text[0].trim() + " " + atom.getValue()
-			if(formatter.format(atom.getValue())>"0.5"){
+			if(formatter.format(atom.getValue())>"0.7"){
 				
 		//		println atom.getRegisteredGroundKernels();
 				
@@ -728,7 +742,7 @@ public class DocumentAligment
 		//println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 
 			// only writes if its equal to 1 or u can set the threshold
-			if(formatter.format(atom.getValue())>"0.5"){
+			if(formatter.format(atom.getValue())>"0.7"){
 				// converting to format for evaluation
 				String result  =  atom.toString().replaceAll("SIMILAR","")
 				result  = result.replaceAll("[()]","")
@@ -760,7 +774,7 @@ public class DocumentAligment
 		//	println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 
 			// only writes if its equal to 1 or u can set the threshold
-			if(formatter.format(atom.getValue())>"0.5"){
+			if(formatter.format(atom.getValue())>"0.7"){
 								
 				// converting to format for evaluation
 				String result  =  atom.toString().replaceAll("NOTSIMILAR","")
@@ -805,14 +819,16 @@ public class DocumentAligment
 
 		def insert = data.getInserter(eval, targetsPartition)
 		InserterUtils.loadDelimitedDataTruth(insert, testDir + "similar.txt")
-
+	//	InserterUtils.loadDelimitedDataTruth(insert, testDir + "GoldStandard.txt")
+		
 		insert  =  data.getInserter(eval, truthPartition)
 		
-		def goldStandardFile = new File(testDir + "GoldStandard.txt")
-		assert goldStandardFile.exists() : "file not found"
+		//def goldStandardFile = new File(testDir + "GoldStandard.txt")
+		//assert goldStandardFile.exists() : "file not found"
 		
+		//InserterUtils.loadDelimitedDataTruth(insert, testDir + "similar.txt")
 		InserterUtils.loadDelimitedDataTruth(insert, testDir + "GoldStandard.txt")
-
+		
 		Database resultsDB = data.getDatabase(targetsPartition, [eval] as Set)
 		Database truthDB = data.getDatabase(truthPartition, [eval] as Set)
 		DiscretePredictionComparator dpc = new DiscretePredictionComparator(resultsDB)
