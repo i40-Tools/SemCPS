@@ -12,10 +12,8 @@ import javax.script.ScriptException;
 import org.codehaus.groovy.control.CompilationFailedException;
 
 import Test.ModelRepair;
-import datalogApproach.DeductiveDB;
 import groovy.lang.Script;
 import groovy.util.ResourceException;
-import integration.Integration;
 import integration.XSDValidator;
 import util.ConfigManager;
 
@@ -28,7 +26,6 @@ import util.ConfigManager;
  */
 public class SemCPSMain {
 
-	private Integration integration;
 	private Files2Facts standardFiles = new Files2Facts();
 	private Similar similar = new Similar();
 
@@ -246,43 +243,5 @@ public class SemCPSMain {
 		}
 	}
 
-	/**
-	 * General method to execute the Datalog-based approach
-	 * @throws Throwable
-	 * TODO create more specific exceptions
-	 */
-	public void executeDatalogApproach() throws Throwable {
-		standardFiles.prologFilePath();
-		standardFiles.generateExtensionalDB(ConfigManager.getFilePath());
-		DeductiveDB deductiveDB = new DeductiveDB();
-		// formats the output.txt in java objects
-		deductiveDB.readWorkingDirectory();
-		deductiveDB.executeKB();
-		// formats the output.txt in java objects
-		deductiveDB.readOutput();
-		deductiveDB.consultKB();
-	}
-
-	/**
-	 * Method used to integrate the documents taking the results from the
-	 * inference
-	 * 
-	 * @throws Throwable
-	 *             TODO create more specific exceptions
-	 */
-	public void integrate() throws Throwable {
-		integration = new Integration();
-		integration.integrate();
-		// check for validity
-		File file = new File(ConfigManager.getFilePath() + "integration/integration.aml");
-		if (file.exists()) {
-			if (!new XSDValidator(ConfigManager.getFilePath() + "integration/integration.aml")
-			.schemaValidate()) {
-				System.out.println("Repairing Structure");
-				ModelRepair
-				.testRoundTrip(ConfigManager.getFilePath() + "integration/integration.aml");
-				System.out.println("Schema Validated");
-			}
-		}
-	}
+		
 }
