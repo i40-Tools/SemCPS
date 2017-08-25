@@ -14,7 +14,7 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import util.ConfigManager;
 
 /**
- * 
+ * Converts computed results from object to values by getting there rdf reference.
  * @author Omar Rana
  *
  */
