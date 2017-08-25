@@ -26,7 +26,7 @@ import util.ConfigManager;
  * @author Omar
  * 
  */
-public class AlligatorMain {
+public class SemCPSMain {
 
 	private Integration integration;
 	private Files2Facts standardFiles = new Files2Facts();
@@ -35,7 +35,7 @@ public class AlligatorMain {
 	public static void main(String[] args) throws Throwable {
 
 		getReport(ConfigManager.getExperimentFolder());
-		AlligatorMain main = new AlligatorMain();
+		SemCPSMain main = new SemCPSMain();
 		main.readConvertStandardFiles();
 		main.generatePSLDataModel();
 		main.executePSLAproach();
@@ -60,7 +60,7 @@ public class AlligatorMain {
 				if (k == 1) {
 					System.out.println(root + "M1/M1.1//Testbeds-" + i);
 					ConfigManager.filePath = root + "M1/M1.1//Testbeds-" + i + "/Generated/";
-					AlligatorMain main2 = new AlligatorMain();
+					SemCPSMain main2 = new SemCPSMain();
 					main2.readConvertStandardFiles();
 					main2.generatePSLDataModel();
 					main2.executePSLAproach();
@@ -71,7 +71,7 @@ public class AlligatorMain {
 
 					ConfigManager.filePath = root + "M" + k + "/Testbeds-" + i + "/Generated/";
 
-					AlligatorMain main = new AlligatorMain();
+					SemCPSMain main = new SemCPSMain();
 					main.readConvertStandardFiles();
 					main.generatePSLDataModel();
 					main.executePSLAproach();

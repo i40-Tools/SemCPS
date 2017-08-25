@@ -24,7 +24,7 @@ import edu.umd.cs.psl.model.predicate.type.*
 import edu.umd.cs.psl.ui.functions.textsimilarity.*
 import edu.umd.cs.psl.ui.loading.InserterUtils
 import edu.umd.cs.psl.util.database.Queries
-import main.AlligatorMain
+import main.SemCPSMain
 
 /**
  * @author Omar Rana
@@ -68,7 +68,7 @@ public class DocumentAligment
 		defineNotSimilarRules()
 		setUpData()
 		runInference()
-		AlligatorMain main = new AlligatorMain();
+		SemCPSMain main = new SemCPSMain();
 		main.modelSimilar()
 		evalResults()
 	}
