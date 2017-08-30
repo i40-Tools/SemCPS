@@ -786,7 +786,7 @@ public class DocumentAligment
 		println "INFERENCE DONE"
 		def matchResult  =  new File(testDir  +  'similar.txt')
 		matchResult.write('')
-		String resultss="";		
+		String allResultConfidence="";		
 		def resultConfidence  =  new File(testDir  +  'similarwithConfidence.txt')
 		resultConfidence.write('')
 		DecimalFormat formatter  =  new DecimalFormat("#.##")
@@ -802,21 +802,21 @@ public class DocumentAligment
 		//		println atom.getRegisteredGroundKernels();
 				
 				if(text[0].toString().contains("aml1")){
-						//resultConfidence.append(result2  +  '\n')
-					resultss+=result2  +  '\n';
+				      //resultConfidence.append(result2  +  '\n')
+					allResultConfidence+=result2  +  '\n';
 					}
 					else{
 						//resultConfidence.append(symResult2  +  '\n')
-						resultss+=symResult2  +  '\n';
+						allResultConfidence+=symResult2  +  '\n';
 					}
 				}
 			
 		}
 		
-		resultConfidence.append(resultss  +  '\n')
+		resultConfidence.append(allResultConfidence  +  '\n')
 		
-		String results2="";
-		String results3="";
+		String allResultsPositive="";
+		String allResultsPositiveConf="";
 		for (GroundAtom atom : Queries.getAllAtoms(testDB, similar)){
 		//println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 
@@ -837,26 +837,26 @@ public class DocumentAligment
 				!checkConfidence(resultConfidence,symResult2,atom.getValue())&&
 				!checkConfidence(resultConfidence,result2,atom.getValue())){
 					if(text[0].toString().contains("aml1")){
-						results2+=result+'\n'
-						results3+=result2+ " " + atom.getValue()+'\n';
+						allResultsPositive+=result+'\n'
+						allResultsPositiveConf+=result2+ " " + atom.getValue()+'\n';
 						//matchResult.append(result  +  '\n')
 						//resultConfidence.append(result2+ " " + atom.getValue()	  +  '\n')
 						//println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 					}
 					else{
-						results2+=symResult  +  '\n'
-						results3+=symResult2+ " " + atom.getValue()	  +  '\n';
+						allResultsPositive+=symResult  +  '\n'
+						allResultsPositiveConf+=symResult2+ " " + atom.getValue()	  +  '\n';
 						//matchResult.append(symResult  +  '\n')
 						//resultConfidence.append(symResult2+ " " + atom.getValue()	  +  '\n')
 					//	println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 					}
 				}}
 		}
-		matchResult.append(results2  +  '\n')
-		resultConfidence.append(results3+ '\n')
+		matchResult.append(allResultsPositive  +  '\n')
+		resultConfidence.append(allResultsPositiveConf+ '\n')
 		
 
-		String resultneg="";
+		String allResultNegative="";
 		for (GroundAtom atom : Queries.getAllAtoms(testDB, notSimilar)){
 		//	println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 
@@ -877,13 +877,13 @@ public class DocumentAligment
 				!removeSymetric(matchResult,trueSymResult)&&
 				!removeSymetric(matchResult,trueResult)){
 					if(text[0].toString().contains("aml1")){
-						resultneg+=result  +  '\n'
+						allResultNegative+=result  +  '\n'
 						//matchResult.append(result  +  '\n')
 						//println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 					}
 
 					else{
-						resultneg+=symResult  +  '\n'
+						allResultNegative+=symResult  +  '\n'
 						//matchResult.append(symResult  +  '\n')
 						//println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 					}
@@ -891,7 +891,7 @@ public class DocumentAligment
 			}
 		}
 		
-		matchResult.append(resultneg)
+		matchResult.append(allResultNegative)
 		 //ruleExplaination(notSimilar,"notSimilarRules.txt");
 	    //ruleExplaination(similar,"SimilarRules.txt");
 		
