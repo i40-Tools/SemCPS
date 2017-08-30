@@ -802,12 +802,10 @@ public class DocumentAligment
 		//		println atom.getRegisteredGroundKernels();
 				
 				if(text[0].toString().contains("aml1")){
-				      //resultConfidence.append(result2  +  '\n')
 					allResultConfidence+=result2  +  '\n';
 					}
 					else{
-						//resultConfidence.append(symResult2  +  '\n')
-						allResultConfidence+=symResult2  +  '\n';
+					allResultConfidence+=symResult2  +  '\n';
 					}
 				}
 			
@@ -839,16 +837,10 @@ public class DocumentAligment
 					if(text[0].toString().contains("aml1")){
 						allResultsPositive+=result+'\n'
 						allResultsPositiveConf+=result2+ " " + atom.getValue()+'\n';
-						//matchResult.append(result  +  '\n')
-						//resultConfidence.append(result2+ " " + atom.getValue()	  +  '\n')
-						//println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 					}
 					else{
 						allResultsPositive+=symResult  +  '\n'
 						allResultsPositiveConf+=symResult2+ " " + atom.getValue()	  +  '\n';
-						//matchResult.append(symResult  +  '\n')
-						//resultConfidence.append(symResult2+ " " + atom.getValue()	  +  '\n')
-					//	println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 					}
 				}}
 		}
@@ -878,14 +870,10 @@ public class DocumentAligment
 				!removeSymetric(matchResult,trueResult)){
 					if(text[0].toString().contains("aml1")){
 						allResultNegative+=result  +  '\n'
-						//matchResult.append(result  +  '\n')
-						//println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 					}
 
 					else{
 						allResultNegative+=symResult  +  '\n'
-						//matchResult.append(symResult  +  '\n')
-						//println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 					}
 				}
 			}
