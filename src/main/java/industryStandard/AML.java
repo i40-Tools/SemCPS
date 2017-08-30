@@ -1,7 +1,7 @@
 package industryStandard;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
+
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Statement;
@@ -172,7 +172,8 @@ public class AML extends IndustryStandards {
 	
 
 	/**
-	 * TODO to write comment
+	 * checks if its elcass then ignore it because we only need values with object which 
+	 * can be unique.
 	 * @param object
 	 * @return
 	 */

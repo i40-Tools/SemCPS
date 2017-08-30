@@ -25,6 +25,7 @@ import edu.umd.cs.psl.ui.functions.textsimilarity.*
 import edu.umd.cs.psl.ui.loading.InserterUtils
 import edu.umd.cs.psl.util.database.Queries
 import main.SemCPSMain
+import util.ConfigManager
 
 /**
  * @author Omar Rana

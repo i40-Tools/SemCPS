@@ -190,5 +190,16 @@ public class ConfigManager {
 		String filePath = loadConfig().getProperty(URI_NAMESPACE + "experimentFolder");
 		return filePath;
 	}
-
+	
+	/**
+	 * Reads the configuration of the experiment folder 
+	 * @return true or false
+	 */
+	public static String getNegativeRules() {
+		String filePath = loadConfig().getProperty(URI_NAMESPACE + "NegativeRules");
+		return "false";
+	}
+	
+	
+	
 }
