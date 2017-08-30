@@ -9,15 +9,11 @@ Please read it here : http://psl.linqs.org/
 ## Dependencies
 This tool depends on the following software
 
-* Prolog 7.2.3
 * JDK 1.8
-* Prolog Connector 3.1.2
 * Hermit OWL Reasoner 
 * OWL API
 * Eclipse plugin for Groovy
 
-Download Prolog: http://www.swi-prolog.org/download/stable                                  
-Donwload Prolog Connector: https://sewiki.iai.uni-bonn.de/research/pdt/connector/library                 
 Donwload Hermit OWL Reasoner: http://www.hermit-reasoner.com/download.html                    
 Donwload OWL API: https://sourceforge.net/projects/owlapi/                                                     
 Donwload Eclipse groovy plugin: https://github.com/groovy/groovy-eclipse/wiki           
@@ -29,10 +25,6 @@ The quick and easy way to start compiling, running and coding **SemCPS** is we p
 Thus, you need to install tools:
 * Eclipse IDE: https://www.eclipse.org/downloads/
 
-In windows you need to add the following entries system PATH, e.g.,
-
-    $ C:\Program Files\swipl\bin; C:\Program Files\swipl\lib\jpl.jar; C:\PrologConnectorJarFolder\org.cs3.prolog.connector_3.1.2.201504300958.jar;
-
 Donwload Eclipse groovy plugin: https://github.com/groovy/groovy-eclipse/wiki                                   
 
 Make sure you download correct version of the plugin according to your eclipse otherwise it wont compile.                        
@@ -41,7 +33,7 @@ Import the project in eclipse and click build. The maven dependancies will be do
 
 Add config.ttl to the root of your project. This file configures how the experiments will be run                
 
-Run Main.java                   
+Run SemCPSMain.java                   
 
 ## Install and build from the source code  
 To obtain the latest version of the project please clone the github repository
@@ -79,6 +71,7 @@ To run the AML examples please create a file config.ttl in the main directory of
 aml:conf 
      rdfs:label "General Configuration"@en ;
      uri:path "C:/HeterogeneityExampleData/AutomationML/Single-Heterogeneity/M2/Testbeds-2/";
+	 uri:experimentFolder "E:/ExperimentsToKCAP/Experiment1/run -1/";
      sto:Standard "aml";
      ontosec:Training "false";     
      uri:URI "C:/Users/omar/Desktop/SemCPS-/resources/".     
@@ -98,7 +91,7 @@ To create folders manually before running, you can create and put Goldstandard.t
 .../TestBed1/PSL/test/              
 .../TestBed1/PSL/train/                          
 ```
-If you want to reproduce the results from published paper , please point your path to the generated folder in config.ttl
+If you want to reproduce the results, please point your path to the generated folder in config.ttl
 
 ```@prefix aml:     <http://vocab.cs.uni-bonn.de/aml#> .
 @prefix het:     <http://vocab.cs.uni-bonn.de/het#> .
@@ -137,7 +130,8 @@ C:/HeterogeneityExampleData/AutomationML/Single-Heterogeneity/
 ## Updating Krextor Rules 
 ### What is Krextor?
 
-Krextor is a an extensible XSLT-based framework for extracting RDF from XML.                 
+Krextor is a an extensible XSLT-based framework for extracting RDF from XML.
+Please note that the resources folder should be added to the project in order to run Krextor.
 
 Read more at : https://github.com/EIS-Bonn/krextor
 

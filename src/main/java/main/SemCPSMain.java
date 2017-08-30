@@ -1,4 +1,4 @@
-	package main;
+package main;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,12 +11,8 @@ import javax.script.ScriptException;
 
 import org.codehaus.groovy.control.CompilationFailedException;
 
-import Test.ModelRepair;
-import datalogApproach.DeductiveDB;
 import groovy.lang.Script;
 import groovy.util.ResourceException;
-import integration.Integration;
-import integration.XSDValidator;
 import util.ConfigManager;
 
 /**
@@ -26,31 +22,20 @@ import util.ConfigManager;
  * @author Omar
  * 
  */
-public class AlligatorMain {
+public class SemCPSMain {
 
-	private Integration integration;
 	private Files2Facts standardFiles = new Files2Facts();
 	private Similar similar = new Similar();
 
 	public static void main(String[] args) throws Throwable {
- 
-//	getresults("C:/Users/omar/Desktop/examples/run -6/");
-//     	getresults2("C:/HeterogeneityExampleData/AutomationML/Single-Heterogeneity/"); 
-//	getsize("C:/Users/omar/Desktop/examples/run -6/");
-//		System.exit(0);
-
-  //	getReport("C:/Users/omar/Desktop/examples/run -6/");
-  //     System.exit(0);
-		AlligatorMain main = new AlligatorMain();
+		SemCPSMain main = new SemCPSMain();
 		main.readConvertStandardFiles();
 		main.generatePSLDataModel();
 		main.executePSLAproach();
 
-		// main.executeDatalogApproach();
 		// main.integrate();
 		// main.executePSLAproach();
 		// main.integrate();
-
 	}
 
 	/**
@@ -65,26 +50,20 @@ public class AlligatorMain {
 			int i =7;
 			while (i <=10) {
 				if (k == 1) {
-//					ConfigManager.filePath = root + "M1/M1.1/Testbeds-" + i + "/Generated/";
-//					AlligatorMain main = new AlligatorMain();
-//					main.readConvertStandardFiles();
-//					main.generatePSLDataModel();
-//					main.executePSLAproach();
 					System.out.println(root + "M1/M1.1//Testbeds-" + i);
 					ConfigManager.filePath = root + "M1/M1.1//Testbeds-" + i + "/Generated/";
-					AlligatorMain main2 = new AlligatorMain();
+					SemCPSMain main2 = new SemCPSMain();
 					main2.readConvertStandardFiles();
 					main2.generatePSLDataModel();
 					main2.executePSLAproach();
-
 				}
 
 				else {
 					System.out.println(root + "M" + k + "/Testbeds-" + i);
-					
+
 					ConfigManager.filePath = root + "M" + k + "/Testbeds-" + i + "/Generated/";
 
-					AlligatorMain main = new AlligatorMain();
+					SemCPSMain main = new SemCPSMain();
 					main.readConvertStandardFiles();
 					main.generatePSLDataModel();
 					main.executePSLAproach();
@@ -93,8 +72,6 @@ public class AlligatorMain {
 			}
 			k++;
 		}
-
-//		getresults(root);
 	}
 
 	/**
@@ -102,7 +79,7 @@ public class AlligatorMain {
 	 * @param root
 	 * @throws IOException
 	 */
-	static void getresults(String root) throws IOException {
+	static void getResults(String root) throws IOException {
 		int k = 1;
 		while (k <=1) {
 			int j = 1;
@@ -123,6 +100,7 @@ public class AlligatorMain {
 						new FileReader(new File("C:/Users/omar/Desktop/0.8/run -6/"+"M"+k+"/M1.1/Testbeds-" + j
 								+ "/Generated/PSL//test/Precision/F1NoTraining.txt")));
 				}
+
 				while ((line = br.readLine()) != null) {
 					if (line.contains("Precision :")) {
 						precision += line.replace("Precision :", "")+"\n";
@@ -138,17 +116,14 @@ public class AlligatorMain {
 
 				j++;
 			}
-		//	System.out.println("M" + k);
-		//System.out.print(precision);
-		//System.out.print(recall);
+			System.out.print(precision);
+			System.out.print(recall);
 			System.out.print(fmeasure );
-
 			k++;
 		}
-
 	}
 
-	
+
 	static void getsize(String root) throws IOException {
 		int k = 1;
 		while (k <= 7) {
@@ -156,40 +131,27 @@ public class AlligatorMain {
 
 			String filesize="";
 			while (j <= 10) {
-//				BufferedReader br = new BufferedReader(
-//						new FileReader(new File(root+"M"+k+"/Testbeds-" + j
-//								+ "/Generated/seed.aml")));
-						if(k==1){
-						File f=new File(root+"M"+k+"/M1.1/Testbeds-" + j
-								+ "/Generated/seed.aml");
-						filesize+= new DecimalFormat("#.#").format(((double)f.length()/ 1024))+"\n"; 
-						}
-						
-						else{
-							File f=new File(root+"M"+k+"/Testbeds-" + j
-									+ "/Generated/seed.aml");
-							filesize+= new DecimalFormat("#.#").format(((double)f.length()/ 1024))+"\n"; 
-								
-						}
-						
+				if(k==1){
+					File f=new File(root+"M"+k+"/M1.1/Testbeds-" + j
+							+ "/Generated/seed.aml");
+					filesize+= new DecimalFormat("#.#").format(((double)f.length()/ 1024))+"\n"; 
+				}
 
+				else{
+					File f=new File(root+"M"+k+"/Testbeds-" + j
+							+ "/Generated/seed.aml");
+					filesize+= new DecimalFormat("#.#").format(((double)f.length()/ 1024))+"\n"; 
+
+				}
 				j++;
 			}
-		//	System.out.println("M" + k);
-//			System.out.print(precision);
-		//	System.out.print(recall);
-		//	System.out.print(fmeasure );
 			System.out.print(filesize);
-
 			k++;
 		}
-}
-	
-	
-	
-	
-	
-	static void getresults2(String root) throws IOException {
+	}
+
+
+	static void getResults2(String root) throws IOException {
 		int k = 1;
 		while (k <= 1) {
 			int j = 1;
@@ -203,11 +165,11 @@ public class AlligatorMain {
 				BufferedReader br = new BufferedReader(
 						new FileReader(new File(root+"M1/M1.1/Testbeds-" + j
 								+ "/Generated/PSL//test/Precision/multi.txt")));
-			
+
 				while ((line = br.readLine()) != null) {
-					    precision += line;
-						System.out.print(line+",");
-						
+					precision += line;
+					System.out.print(line+",");
+
 				}
 				System.out.print("\n");
 
@@ -215,10 +177,9 @@ public class AlligatorMain {
 			}
 			k++;
 		}
-
 	}
 
-	
+
 	/**
 	 * Models similar.txt in to GoldStandard format.
 	 * @throws Exception 
@@ -230,9 +191,8 @@ public class AlligatorMain {
 
 	/**
 	 * Method that read standard files and convert then to RDF
-	 * 
-	 * @throws Exception
-	 *             TODO create more specific exceptions
+	 * @throws Exception 
+	 * TODO create more specific exceptions
 	 */
 	public void readConvertStandardFiles() throws Exception {
 		standardFiles.readFiles(ConfigManager.getFilePath(), ".aml", ".opcua", ".xml");
@@ -285,43 +245,5 @@ public class AlligatorMain {
 		}
 	}
 
-	/**
-	 * General method to execute the Datalog-based approach
-	 * @throws Throwable
-	 * TODO create more specific exceptions
-	 */
-	public void executeDatalogApproach() throws Throwable {
-		standardFiles.prologFilePath();
-		standardFiles.generateExtensionalDB(ConfigManager.getFilePath());
-		DeductiveDB deductiveDB = new DeductiveDB();
-		// formats the output.txt in java objects
-		deductiveDB.readWorkingDirectory();
-		deductiveDB.executeKB();
-		// formats the output.txt in java objects
-		deductiveDB.readOutput();
-		deductiveDB.consultKB();
-	}
-
-	/**
-	 * Method used to integrate the documents taking the results from the
-	 * inference
-	 * 
-	 * @throws Throwable
-	 *             TODO create more specific exceptions
-	 */
-	public void integrate() throws Throwable {
-		integration = new Integration();
-		integration.integrate();
-		// check for validity
-		File file = new File(ConfigManager.getFilePath() + "integration/integration.aml");
-		if (file.exists()) {
-			if (!new XSDValidator(ConfigManager.getFilePath() + "integration/integration.aml")
-			.schemaValidate()) {
-				System.out.println("Repairing Structure");
-				ModelRepair
-				.testRoundTrip(ConfigManager.getFilePath() + "integration/integration.aml");
-				System.out.println("Schema Validated");
-			}
-		}
-	}
+		
 }

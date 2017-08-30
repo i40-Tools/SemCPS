@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -171,6 +172,101 @@ public class Files2Facts extends IndustryStandards {
 	}
 
 
+	
+	/**
+	 * Adds aml Values
+	 * @param amlList
+	 * @param amlValue
+	 * @param aml
+	 * @return
+	 */
+	HashMap<String, String> addAmlNegValues(ArrayList<?> amlList,HashMap<String, String> amlValue,String aml,
+			String predicate,ArrayList<?> type,HashMap<String, String>pred){	
+		for(int i = 0;i < amlList.size();i++){	
+			StmtIterator iterator = model.listStatements();
+			while (iterator.hasNext()) {
+				Statement stmt = iterator.nextStatement();
+				subject = stmt.getSubject();
+				
+				if(subject.asResource().getLocalName().equals(amlList.get(i))){
+					String value = getValue(subject,predicate);					
+					if(value != null && !value.contains("eClassIRDI")
+							&&!value.contains("eClassClassificationClass")
+							&&!value.contains("eClassVersion")){
+						amlValue.put(aml + value,type.get(i).toString());
+						pred.put(aml + value,predicate);
+					
+						iterator.close();
+						break;
+					}
+				}
+			}
+		}
+		return amlValue;
+	}
+
+/**
+ * take cartesian product of negative values	
+ * @param amlList
+ * @param amlValue
+ * @param aml
+ * @param predicate
+ * @return
+ */
+	ArrayList<String> cartesianProd(ArrayList<?> amlList,ArrayList<String> amlValue,String aml,
+			String predicate){	
+		for(int i = 0;i < amlList.size();i++){	
+			StmtIterator iterator = model.listStatements();
+			while (iterator.hasNext()) {
+				Statement stmt = iterator.nextStatement();
+				subject = stmt.getSubject();
+				
+				if(subject.asResource().getLocalName().equals(amlList.get(i))){
+					String value = getValue(subject,predicate);					
+					if(value != null && !value.contains("eClassIRDI")
+							&&!value.contains("eClassClassificationClass")
+							&&!value.contains("eClassVersion")){
+						amlValue.add(aml + value);
+						break;
+					}
+				}
+			}
+		}
+		
+		return amlValue;
+	}
+
+	
+	/**
+	 * get predicate Value
+	 * @param name
+	 * @return
+	 */
+	String getType(String value,String ref) {
+		String type="";
+
+		StmtIterator stmts = model.listStatements();
+		while (stmts.hasNext()) {
+			Statement stmte = stmts.nextStatement();
+		    		
+			if(stmte.getObject().isLiteral()){
+				if(stmte.getObject().asLiteral().getLexicalForm().equals(value.trim()))
+					if(ref=="predicate"){
+						type=stmte.getPredicate().getLocalName();	
+					}
+					else
+					type=getType(stmte.getSubject());
+     		}
+	
+		}
+
+		return type;				
+	}
+
+	
+	
+	
+	
 	/**
 	 * Reads the turtle format RDF files and extract the contents for data log
 	 * conversion.
@@ -352,6 +448,7 @@ public class Files2Facts extends IndustryStandards {
 			if (stmte.getPredicate().asNode().getLocalName().toString().equals(predicate)) {
 				type = stmte.getObject().asLiteral().getLexicalForm();
 			}
+						
 		}
 		return type;
 	}

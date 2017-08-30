@@ -24,7 +24,7 @@ import edu.umd.cs.psl.model.predicate.type.*
 import edu.umd.cs.psl.ui.functions.textsimilarity.*
 import edu.umd.cs.psl.ui.loading.InserterUtils
 import edu.umd.cs.psl.util.database.Queries
-import main.AlligatorMain
+import main.SemCPSMain
 
 /**
  * @author Omar Rana
@@ -68,7 +68,7 @@ public class DocumentAligment
 		//defineNotSimilarRules()
 		setUpData()
 		runInference()
-		AlligatorMain main = new AlligatorMain();
+		SemCPSMain main = new SemCPSMain();
 		main.modelSimilar()
 		evalResults()
 	}
@@ -108,6 +108,8 @@ public class DocumentAligment
 
 		model.add predicate: "hasInstanceHierarchyID"     , types: [ArgumentType.UniqueID, ArgumentType.String]
 		
+		model.add predicate: "hasExternalInterfaceID"     , types: [ArgumentType.UniqueID, ArgumentType.String]
+		
 		model.add predicate: "hasAttributeID"     , types: [ArgumentType.UniqueID, ArgumentType.String]
 				
 		model.add predicate: "hasInternalLink"     , types: [ArgumentType.UniqueID, ArgumentType.String]
@@ -123,7 +125,9 @@ public class DocumentAligment
 		model.add predicate: "similarType"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
 
 		model.add predicate: "eval", types: [ArgumentType.String, ArgumentType.String]
-
+		
+		model.add predicate: "hasRoleClassLib"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
+		
 		model.add predicate: "hasRoleClass"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
 
 		model.add predicate: "hasInterfaceClass"     , types: [ArgumentType.UniqueID, ArgumentType.UniqueID]
@@ -139,8 +143,14 @@ public class DocumentAligment
 		model.add predicate: "hasInternalElementAttributeName"     , types: [ArgumentType.UniqueID, ArgumentType.String]
 		
 		model.add predicate: "hasSystemUnitClassAttributeName"     , types: [ArgumentType.UniqueID, ArgumentType.String]
+
+		model.add predicate: "hasSystemUnitClassLibAttributeName"     , types: [ArgumentType.UniqueID, ArgumentType.String]
 		
 		model.add predicate: "hasRoleClassAttributeName"     , types: [ArgumentType.UniqueID, ArgumentType.String]
+		
+		model.add predicate: "hasRoleClassLibAttributeName"     , types: [ArgumentType.UniqueID, ArgumentType.String]
+		
+		model.add predicate: "hasInternalLinkAttributeName"     , types: [ArgumentType.UniqueID, ArgumentType.String]		
 		
 		model.add predicate: "hasAttributeValue"     , types: [ArgumentType.UniqueID, ArgumentType.String]
 		
@@ -193,14 +203,25 @@ public class DocumentAligment
 		model.add rule : (hasInstanceHierarchyAttributeName(A,Z) & hasInstanceHierarchyAttributeName(B,W) & similarValue(Z,W) &
 			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 4
 
-		
-		
+		// Two InternalLink are the same if they have the same name
+		model.add rule : (hasInternalLinkAttributeName(A,Z) & hasInternalLinkAttributeName(B,W) & similarValue(Z,W) &
+			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 4
+
 		// Two InternalElement are the same if they have the same name
 		model.add rule : (hasInternalElementAttributeName(A,Z) & hasInternalElementAttributeName(B,W) & similarValue(Z,W) &
 			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 1
 
+
+		// Two RoleClassLib are the same if they have the same name
+		model.add rule : (hasRoleClassLibAttributeName(A,Z) & hasRoleClassLibAttributeName(B,W) & similarValue(Z,W) &
+			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 4
+
 		// Two RoleClass are the same if they have the same name
 		model.add rule : (hasRoleClassAttributeName(A,Z) & hasRoleClassAttributeName(B,W) & similarValue(Z,W) &
+			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 4
+
+		// Two SystemUnitClassLib are the same if they have the same name
+		model.add rule : (hasSystemUnitClassLibAttributeName(A,Z) & hasSystemUnitClassLibAttributeName(B,W) & similarValue(Z,W) &
 			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 4
 
 		// Two SystemUnitClass are the same if they have the same name
@@ -215,7 +236,13 @@ public class DocumentAligment
 		model.add rule : (hasInternalElementID(A,Z) & hasInternalElementID(B,W)
 		& similarValue(Z,W) &hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
 		weight : 10
+		
+		// Two AMl ExternalElement are the same if they share the same ID
+		model.add rule : (hasExternalInterfaceID(A,Z) & hasExternalInterfaceID(B,W)
+		& similarValue(Z,W) &hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
+		weight : 10
 
+		
 		// Two AMl InstanceHierarchy are the same if they share the same ID
 		model.add rule : (hasInstanceHierarchyID(A,Z) & hasInstanceHierarchyID(B,W)
 		& similarValue(Z,W) &hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
@@ -295,6 +322,14 @@ public class DocumentAligment
 		model.add rule : (hasRoleClassAttributeName(A,Z) & hasRoleClassAttributeName(B,W) & ~similarValue(Z,W) &
 			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notsimilar(A,B) , weight : 4
 
+		// Two RoleClassLib are not the same if they have the same name
+		model.add rule : (hasRoleClassLibAttributeName(A,Z) & hasRoleClassLibAttributeName(B,W) & ~similarValue(Z,W) &
+			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notsimilar(A,B) , weight : 4
+
+		// Two SystemUnitClassLib are the same if they have the same name
+		model.add rule : (hasSystemUnitClassLibAttributeName(A,Z) & hasSystemUnitClassLibAttributeName(B,W) & ~similarValue(Z,W) &
+			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) , weight : 4
+
 		// Two SystemUnitClass are not the same if they have the same name
 		model.add rule : (hasSystemUnitClassAttributeName(A,Z) & hasSystemUnitClassAttributeName(B,W) & ~similarValue(Z,W) &
 			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) , weight : 4
@@ -340,9 +375,24 @@ public class DocumentAligment
 
 		// Two AML InstanceHierarchy are not the same if they do not share the same ID
 		model.add rule : (hasInstanceHierarchyID(A,Z) & hasInstanceHierarchyID(B,W)
-		& ~similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
+		& ~similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) ,
 		weight : 10
-		
+
+		// Two AMl ExternalElement are not the same if they dont share the same ID
+		model.add rule : (hasExternalInterfaceID(A,Z) & hasExternalInterfaceID(B,W)
+		& ~similarValue(Z,W) &hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) ,
+		weight : 10
+
+		// Two InstanceHierarichy  are not the same if they dont have the same name
+		model.add rule : (hasInstanceHierarchyAttributeName(A,Z) & hasInstanceHierarchyAttributeName(B,W) 
+		& ~similarValue(Z,W) &
+		hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) , weight : 4
+
+		// Two InternalLink are not the same if they dont have the same name
+		model.add rule : (hasInternalLinkAttributeName(A,Z) & hasInternalLinkAttributeName(B,W) & 
+		~similarValue(Z,W) &hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) , 
+		weight : 4
+
 		
 	}
 	
@@ -449,7 +499,12 @@ public class DocumentAligment
 				hasDomain,
 				hasRange,
 				hasType,
-				hasInstanceHierarchyAttributeName				
+				hasInstanceHierarchyAttributeName,
+				hasRoleClassLib,
+				hasRoleClassLibAttributeName,
+				hasSystemUnitClassLibAttributeName,
+				hasExternalInterfaceID,
+				hasInternalLinkAttributeName
 				]
 			){
 				createFiles(trainDir + p.getName().toLowerCase() + ".txt")
@@ -487,7 +542,12 @@ public class DocumentAligment
 			hasDomain,
 			hasRange,
 			hasType,
-			hasInstanceHierarchyAttributeName			
+			hasInstanceHierarchyAttributeName,
+			hasRoleClassLib,
+			hasRoleClassLibAttributeName,
+			hasSystemUnitClassLibAttributeName,
+			hasExternalInterfaceID,
+			hasInternalLinkAttributeName
 			]
 			as Set, trainObservations)
 			
@@ -536,7 +596,12 @@ public class DocumentAligment
 			hasDomain,
 			hasRange,
 			hasType,
-			hasInstanceHierarchyAttributeName
+			hasInstanceHierarchyAttributeName,
+			hasRoleClassLib,
+			hasRoleClassLibAttributeName,
+			hasSystemUnitClassLibAttributeName,
+			hasExternalInterfaceID,
+			hasInternalLinkAttributeName
 			
 			])
 		{
@@ -573,7 +638,12 @@ public class DocumentAligment
 			hasDomain,
 			hasRange,
 			hasType,
-			hasInstanceHierarchyAttributeName
+			hasInstanceHierarchyAttributeName,
+			hasRoleClassLib,
+			hasRoleClassLibAttributeName,
+			hasSystemUnitClassLibAttributeName,
+			hasExternalInterfaceID,
+			hasInternalLinkAttributeName
 			])
 		{
 			
@@ -610,7 +680,12 @@ public class DocumentAligment
 			hasDomain,
 			hasRange,
 			hasType,
-			hasInstanceHierarchyAttributeName
+			hasInstanceHierarchyAttributeName,
+			hasRoleClassLib,
+			hasRoleClassLibAttributeName,
+			hasSystemUnitClassLibAttributeName,
+			hasExternalInterfaceID,
+			hasInternalLinkAttributeName
 					
 		] as Set, testObservations)
 
@@ -711,7 +786,7 @@ public class DocumentAligment
 		println "INFERENCE DONE"
 		def matchResult  =  new File(testDir  +  'similar.txt')
 		matchResult.write('')
-				
+		String resultss="";		
 		def resultConfidence  =  new File(testDir  +  'similarwithConfidence.txt')
 		resultConfidence.write('')
 		DecimalFormat formatter  =  new DecimalFormat("#.##")
@@ -727,17 +802,21 @@ public class DocumentAligment
 		//		println atom.getRegisteredGroundKernels();
 				
 				if(text[0].toString().contains("aml1")){
-						resultConfidence.append(result2  +  '\n')
+						//resultConfidence.append(result2  +  '\n')
+					resultss+=result2  +  '\n';
 					}
 					else{
-						resultConfidence.append(symResult2  +  '\n')
+						//resultConfidence.append(symResult2  +  '\n')
+						resultss+=symResult2  +  '\n';
 					}
 				}
 			
 		}
 		
+		resultConfidence.append(resultss  +  '\n')
 		
-			
+		String results2="";
+		String results3="";
 		for (GroundAtom atom : Queries.getAllAtoms(testDB, similar)){
 		//println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 
@@ -758,18 +837,26 @@ public class DocumentAligment
 				!checkConfidence(resultConfidence,symResult2,atom.getValue())&&
 				!checkConfidence(resultConfidence,result2,atom.getValue())){
 					if(text[0].toString().contains("aml1")){
-						matchResult.append(result  +  '\n')
-						resultConfidence.append(result2+ " " + atom.getValue()	  +  '\n')
+						results2+=result+'\n'
+						results3+=result2+ " " + atom.getValue()+'\n';
+						//matchResult.append(result  +  '\n')
+						//resultConfidence.append(result2+ " " + atom.getValue()	  +  '\n')
 						//println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 					}
 					else{
-						matchResult.append(symResult  +  '\n')
-						resultConfidence.append(symResult2+ " " + atom.getValue()	  +  '\n')
+						results2+=symResult  +  '\n'
+						results3+=symResult2+ " " + atom.getValue()	  +  '\n';
+						//matchResult.append(symResult  +  '\n')
+						//resultConfidence.append(symResult2+ " " + atom.getValue()	  +  '\n')
 					//	println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 					}
 				}}
 		}
+		matchResult.append(results2  +  '\n')
+		resultConfidence.append(results3+ '\n')
+		
 
+		String resultneg="";
 		for (GroundAtom atom : Queries.getAllAtoms(testDB, notSimilar)){
 		//	println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 
@@ -790,19 +877,21 @@ public class DocumentAligment
 				!removeSymetric(matchResult,trueSymResult)&&
 				!removeSymetric(matchResult,trueResult)){
 					if(text[0].toString().contains("aml1")){
-						matchResult.append(result  +  '\n')
+						resultneg+=result  +  '\n'
+						//matchResult.append(result  +  '\n')
 						//println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 					}
 
 					else{
-						matchResult.append(symResult  +  '\n')
+						resultneg+=symResult  +  '\n'
+						//matchResult.append(symResult  +  '\n')
 						//println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 					}
 				}
 			}
 		}
 		
-		
+		matchResult.append(resultneg)
 		 //ruleExplaination(notSimilar,"notSimilarRules.txt");
 	    //ruleExplaination(similar,"SimilarRules.txt");
 		
