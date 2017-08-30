@@ -180,4 +180,39 @@ public class IndustryStandards {
 		}
 		return amlValue;
 	}
+	
+	/**
+	 * Adds aml negative Values
+	 * @param amlList
+	 * @param amlValue
+	 * @param aml
+	 * @return
+	 */
+	protected HashMap<String, String> addAmlNegValues(ArrayList<?> amlList,HashMap<String, String> amlValue,String aml,
+			String predicate,ArrayList<?> type,HashMap<String, String>pred){	
+		for(int i = 0;i < amlList.size();i++){	
+			StmtIterator iterator = model.listStatements();
+			while (iterator.hasNext()) {
+				Statement stmt = iterator.nextStatement();
+				subject = stmt.getSubject();
+				
+				if(subject.asResource().getLocalName().equals(amlList.get(i))){
+					String value = getValue(subject,predicate);					
+					if(value != null && !value.contains("eClassIRDI")
+							&&!value.contains("eClassClassificationClass")
+							&&!value.contains("eClassVersion")){
+						amlValue.put(aml + value,type.get(i).toString());
+						pred.put(aml + value,predicate);
+					
+						iterator.close();
+						break;
+					}
+				}
+			}
+		}
+		return amlValue;
+	}
+
+	
+	
 }
