@@ -1,2 +1,0 @@
-aml:eClassIRDI1	wwe
-opcua:eClassIRDI1	wwe

@@ -28,7 +28,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import main.DeductiveDB;
 import util.ConfigManager;
 
 /**
@@ -127,141 +126,6 @@ public class XmlParser {
 			}
 
 		}
-	}
-
-	/**
-	 * looping through the seedNode which will be compared to matching elements
-	 * in output.txt
-	 * 
-	 * @param i
-	 * @return
-	 * @throws DOMException
-	 * @throws XPathExpressionException
-	 * @throws IOException
-	 */
-	int compareConflicts(int i, Document seed, Document integration)
-			throws XPathExpressionException, DOMException, IOException {
-		// flag to check if the attribute value is inside matching
-		int flag = 0;
-		// loops through all its element.
-		if (DeductiveDB.attrName != null) {
-			for (int k = 0; k < DeductiveDB.attrName.size(); k++) {
-				// we find its parent node so we can append it under it.
-				if (flag == 1) {
-					break;
-				}
-
-				if (seedNodes.get(i).getNodeName().equals(DeductiveDB.attrName.get(k).replaceAll("'", ""))) {
-					// flag = 1;
-
-				} else if (seedNodes.get(i).getTextContent().equals(DeductiveDB.attrName.get(k).replaceAll("'", ""))) {
-					// if match is found
-
-					flag = 1;
-
-				}
-
-				else {
-
-					NodeList list = getAttributeNode(seedNodes.get(i).getTextContent(), seed);
-					if (list.getLength() == 0) {
-						list = getAttributeNode(seedNodes.get(i).getTextContent(), integration);
-
-					}
-
-					NodeList list2 = getAttributeNode(DeductiveDB.attrName.get(k).replaceAll("'", ""), seed);
-					NodeList list3 = getAttributeNode(DeductiveDB.attrName.get(k).replaceAll("'", ""), integration);
-
-					if (checkParent2(seedNodes.get(i), list2.item(0))) {
-
-						flag = 1;
-
-					}
-
-					if (checkParent(seedNodes.get(i), list3.item(0))) {
-						if (list.item(0) != null) {
-							NamedNodeMap list4 = list.item(0).getAttributes();
-							for (int j = 0; j < list4.getLength(); j++) {
-								final Attr attribute = (Attr) list4.item(j);
-								@SuppressWarnings("unused")
-								final String name = attribute.getName();
-								final String value = attribute.getValue();
-								@SuppressWarnings("resource")
-								BufferedReader br = new BufferedReader(
-										new FileReader(ConfigManager.getFilePath() + "/output.txt"));
-								String line = br.readLine();
-
-								while (line != null) {
-									if (line.contains(value)) {
-
-										flag = 1;
-
-										break;
-
-									}
-									line = br.readLine();
-								}
-							}
-						}
-					}
-
-					// checks for concatinated string and ignores nested element
-					// if parent elements are matched by refsemantc
-					for (int m = 0; m < list.getLength(); m++) {
-						// matches the parent in the integration document.
-						if (flag == 1) {
-							break;
-						}
-
-						if (list.item(0).getParentNode() != null && list2.item(0) != null && list3.item(0) != null
-								&& list.item(0) != null) {
-
-							if (list.item(0).isEqualNode(list2.item(0)) || list.item(0).isEqualNode(list3.item(0))) {
-
-								flag = 1;
-
-							}
-
-							if (list.item(0).getParentNode().isEqualNode(list2.item(0))
-									|| list.item(0).getParentNode().isEqualNode(list3.item(0))) {
-
-								// flag = 1;
-
-								@SuppressWarnings("resource")
-								BufferedReader br = new BufferedReader(
-										new FileReader(ConfigManager.getFilePath() + "/output.txt"));
-								String line = br.readLine();
-
-								// matches if node parent is in output.txt
-								// according to refsemantic
-								while (line != null) {
-									if (line.contains(
-											"concatString('" + DeductiveDB.attrName.get(k).replaceAll("'", ""))) {
-
-										flag = 1;
-										break;
-
-									}
-									line = br.readLine();
-								}
-							}
-
-						}
-					}
-				}
-
-				// ignore FileName attribute
-				if (seedNodes.get(i).getNodeName().equals("FileName")) {
-
-					// not in output.txt
-					flag = 1;
-				}
-
-			}
-
-		}
-
-		return flag;
 	}
 
 	/**
@@ -364,7 +228,7 @@ public class XmlParser {
 			// matches the parent in the integration document.
 
 			if (!list.item(m).getParentNode().getNodeName().equals("#document")) {
-				Object result = (Object) xpath.evaluate("//*[@*=\"" + seedNodes.get(i).getTextContent() + "\"]",
+				Object result = xpath.evaluate("//*[@*=\"" + seedNodes.get(i).getTextContent() + "\"]",
 						integration, XPathConstants.NODESET);
 				NodeList nodeList = (NodeList) result;
 				NodeList integ = (NodeList) xpath.evaluate("//" + list.item(m).getParentNode().getNodeName(),
@@ -482,7 +346,6 @@ public class XmlParser {
 			}
 
 		} catch (XPathExpressionException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return false;
@@ -503,7 +366,7 @@ public class XmlParser {
 
 		Object result;
 
-		result = (Object) xpath.evaluate("//*[@*=\"" + value + "\"]", seed, XPathConstants.NODESET);
+		result = xpath.evaluate("//*[@*=\"" + value + "\"]", seed, XPathConstants.NODESET);
 		NodeList nodeList = (NodeList) result;
 
 		if (nodeList.getLength() != 0) {

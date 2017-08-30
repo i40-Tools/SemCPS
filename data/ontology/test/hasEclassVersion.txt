@@ -1,2 +1,0 @@
-aml:eClassVersion1	psw
-opcua:eClassVersion1	psw

@@ -4,7 +4,6 @@
 
 package util;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -36,12 +35,17 @@ public class ConfigManager {
 	private static RDFNode predicate;
 	private static ArrayList<RDFNode> literals, predicates;
 	private static Model model;
+	public static String filePath;
 
 	public final static String HET_NAMESPACE = "http://vocab.cs.uni-bonn.de/het#";
 	public final static String URI_NAMESPACE = "http://uri4uri.net/vocab.html/#";
+	public final static String ONTO_NAMESPACE = "http://www.semanticweb.org/ontologies/2008/11/"
+			+ "OntologySecurity.owl#";
+	public final static String STO_NAMESPACE = "https://w3id.org/i40/sto#";
 
 	/**
 	 * Get the instance of manager
+	 * 
 	 * @return manager
 	 */
 	public static ConfigManager getInstance() {
@@ -61,19 +65,18 @@ public class ConfigManager {
 		File configFile = new File(dir + "/config.ttl");
 
 		if (configFile.isFile() == false) {
-			System.out.println("Please especify the configuration file"
-					        + "(config.ttl)");
+			System.out.println("Please especify the configuration file" + "(config.ttl)");
 			System.exit(0);
 		}
-		
+
 		if (configFile.length() == 0) {
-		    System.out.println("The configuration file (config.ttl) is empty");
-		    System.exit(0);
+			System.out.println("The configuration file (config.ttl) is empty");
+			System.exit(0);
 		}
 
 		model = ModelFactory.createDefaultModel();
 		InputStream inputStream = FileManager.get().open(configFile.getPath());
-		model.read(new InputStreamReader(inputStream), null, "TURTLE"); 
+		model.read(new InputStreamReader(inputStream), null, "TURTLE");
 		// parses an InputStream assuming RDF in Turtle format
 
 		literals = new ArrayList<RDFNode>();
@@ -110,10 +113,13 @@ public class ConfigManager {
 	 * @return
 	 */
 	public static String getFilePath() {
+		if(filePath!=null){
+			return filePath;
+		}
 		String filePath = loadConfig().getProperty(URI_NAMESPACE + "path");
 		return filePath;
 	}
-
+	
 	/**
 	 * Get the general file path where all the files are located
 	 * 
@@ -124,5 +130,65 @@ public class ConfigManager {
 		return filePath;
 	}
 
+	/**
+	 * Get the general file path where all the test data files are located
+	 * 
+	 * @return
+	 */
+
+	public static boolean createDataPath() {
+		String filePath = loadConfig().getProperty(URI_NAMESPACE + "path");
+		boolean dir = new File(filePath + "PSL/test/Precision").mkdirs();
+		dir = new File(filePath + "PSL/train/").mkdirs();
+		return dir;
+	}
+
+	public static String getTestDataPath() {
+		String filePath = loadConfig().getProperty(URI_NAMESPACE + "testDataPath");
+		return filePath;
+	}
+
+	/**
+	 * Reads the configuration regarding the existence of a training set or not
+	 * @return true or false
+	 */
+	public static String getExecutionMethod() {
+		String filePath = loadConfig().getProperty(ONTO_NAMESPACE + "Training");
+		return filePath;
+	}
+	
+	/**
+	 * Reads the configuration to check whether the ontological predicates 
+	 * will be used or not
+	 * @return true or false
+	 */
+	public static String getOntoPredicates() {
+		String filePath = loadConfig().getProperty(ONTO_NAMESPACE + "ontoPredicates");
+		return filePath;
+	}
+
+	/**
+	 * Get the general file path where all the test data files are located
+	 * 
+	 * @return
+	 */
+	public static String getTrainDataPath() {
+		String filePath = loadConfig().getProperty(URI_NAMESPACE + "trainDataPath");
+		return filePath;
+	}
+
+	public static String getStandard() {
+		String standard = loadConfig().getProperty(STO_NAMESPACE + "Standard");
+		return standard;
+	}
+	
+	/**
+	 * Reads the configuration of the experiment folder 
+	 * @return true or false
+	 */
+	public static String getExperimentFolder() {
+		String filePath = loadConfig().getProperty(URI_NAMESPACE + "experimentFolder");
+		return filePath;
+	}
 
 }

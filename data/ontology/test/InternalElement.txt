@@ -1,4 +1,0 @@
-aml:InternalElement1	aml:InternalLink
-
-opcua:UAObject	opcua:InternalLink
-

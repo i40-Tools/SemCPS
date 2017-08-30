@@ -19,21 +19,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>edu.umd.cs</groupId>
-	<artifactId>psl-example</artifactId>
-	<name>psl-example</name>
+	<artifactId>SemCPS</artifactId>
+	<name>SemCPS</name>
 	<version>1.2.1</version>
 	<packaging>jar</packaging>
-	<description>Examples of using the PSL software from the University of Maryland.</description>
+	<description>SemCPS. Integration of entities for Industry 4.0 related standard with PSL</description>
 	<dependencies>
 		<dependency>
 			<groupId>edu.umd.cs</groupId>
 			<artifactId>psl-groovy</artifactId>
 			<version>1.2.1</version>
 		</dependency>
-		
-		
-		
-		
 	<dependency>
 			<groupId>com.sun.xsom</groupId>
 			<artifactId>xsom</artifactId>
@@ -47,6 +43,14 @@
 </dependency>
 <!-- https://mvnrepository.com/artifact/org.eclipse.emf.ecore/xmi -->
 <!-- https://mvnrepository.com/artifact/org.eclipse.emf.ecore/xmi -->
+
+<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-collections4 -->
+<dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-collections4</artifactId>
+    <version>4.0</version>
+</dependency>
+
 <dependency>
     <groupId>in.jlibs</groupId>
     <artifactId>jlibs-xmldog</artifactId>
