@@ -53,8 +53,7 @@ You can find Heterogeneity examples at :
 https://github.com/i40-Tools/HeterogeneityExampleData                                
 
 To run the AML examples please create a file config.ttl in the main directory of the project. An example is show below:
-```@prefix aml:     <http://vocab.cs.uni-bonn.de/aml#> .
-@prefix het:     <http://vocab.cs.uni-bonn.de/het#> .
+```
 @prefix owl:     <http://www.w3.org/2002/07/owl#> .
 @prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
@@ -74,7 +73,7 @@ aml:conf
 	 uri:experimentFolder "E:/ExperimentsToKCAP/Experiment1/run -1/";
      sto:Standard "aml";
      ontosec:Training "false";     
-     uri:URI "C:/Users/omar/Desktop/SemCPS-/resources/".     
+     uri:URI "C:/Experiments/SemCPS-/resources/".     
 ```
 Please note:  
 ```
@@ -93,8 +92,7 @@ To create folders manually before running, you can create and put Goldstandard.t
 ```
 If you want to reproduce the results, please point your path to the generated folder in config.ttl
 
-```@prefix aml:     <http://vocab.cs.uni-bonn.de/aml#> .
-@prefix het:     <http://vocab.cs.uni-bonn.de/het#> .
+```
 @prefix owl:     <http://www.w3.org/2002/07/owl#> .
 @prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
@@ -113,7 +111,7 @@ aml:conf
      uri:path "C:/HeterogeneityExampleData/AutomationML/Single-Heterogeneity/M2/Testbeds-1/";
      sto:Standard "aml";
      ontosec:Training "false";
-     uri:URI "C:/Users/omar/Desktop/SemCPS-/resources/".     
+     uri:URI "C:/Experiments/SemCPS-/resources/".     
 ```
 
 

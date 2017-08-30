@@ -174,7 +174,8 @@ public class Files2Facts extends IndustryStandards {
 
 	
 	/**
-	 * Adds aml Values
+	 * Work in progress
+	 * Adds aml Values which are negative by emulation
 	 * @param amlList
 	 * @param amlValue
 	 * @param aml
@@ -354,8 +355,7 @@ public class Files2Facts extends IndustryStandards {
 
 				if(number == 3){
 
-				}
-				// all subjects are added according to ontology e.g aml
+				}// all subjects are added according to ontology e.g aml
 				else{
 					addSubjectURI(subject, "", number, "hasDocument");
 				}
@@ -610,7 +610,7 @@ public class Files2Facts extends IndustryStandards {
 	}
 
 	/**
-	 * Generate PSL predicates
+	 * Generates PSL predicates
 	 * 
 	 * @param path
 	 * @throws Exception

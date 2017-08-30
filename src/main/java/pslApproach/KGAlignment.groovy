@@ -63,9 +63,9 @@ public class DocumentAligment
 		defineSetPredicates()
 		defineFunctions()
 		defineRules()
-		//defineOntoRules()
+		defineOntoRules()
 		defineSetRules()
-		//defineNotSimilarRules()
+		defineNotSimilarRules()
 		setUpData()
 		runInference()
 		SemCPSMain main = new SemCPSMain();
