@@ -67,7 +67,6 @@ public class AML extends IndustryStandards {
 			hasIdentifier();
 		}
 
-		addGenericObject("hasRefSemantic", "hasCorrespondingAttributePath");
 	}
 
 	private void eClassCheck() {
