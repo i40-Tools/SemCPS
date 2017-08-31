@@ -45,6 +45,7 @@ public class DocumentAligment
 	private Partition testPredictions
 	private Partition targetsPartition
 	private Partition truthPartition
+	private String threshold
 	def dir
 	def testDir
 	def trainDir
@@ -55,6 +56,9 @@ public class DocumentAligment
 		docAlign.execute()
 	}
 
+	/**
+	 * TODO to write comments
+	 */
 	public void run()
 	{
 		config()
@@ -68,6 +72,8 @@ public class DocumentAligment
 		if (util.ConfigManager.getNegativeRules().equals("true")){
 			defineNotSimilarRules()
 		}
+		
+		threshold = util.ConfigManager.getThreshold()
 		setUpData()
 		runInference()
 		SemCPSMain main = new SemCPSMain();
@@ -812,7 +818,7 @@ public class DocumentAligment
 			String result2 = text[0].trim() + "\t" + text[1].trim() + " " + atom.getValue()
 			def symResult2 = text[1].trim() + "," + text[0].trim() + " " + atom.getValue()
 			
-			if(formatter.format(atom.getValue()) > "0.7"){
+			if(formatter.format(atom.getValue()) > threshold){
 				if(text[0].toString().contains("aml1")){
 					allResultConfidence += result2 + '\n';
 				}
@@ -830,7 +836,7 @@ public class DocumentAligment
 			//println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 
 			// only writes if its equal to 1 or u can set the threshold
-			if(formatter.format(atom.getValue()) > "0.7"){
+			if(formatter.format(atom.getValue()) > threshold){
 				// converting to format for evaluation
 				String result  =  atom.toString().replaceAll("SIMILAR","")
 				result  = result.replaceAll("[()]","")
@@ -864,27 +870,27 @@ public class DocumentAligment
 			//	println atom.toString()  +  ": "  +  formatter.format(atom.getValue())
 
 			// only writes if its equal to 1 or u can set the threshold
-			if(formatter.format(atom.getValue()) > "0.7"){
+			if(formatter.format(atom.getValue()) > threshold){
 
 				// converting to format for evaluation
-				String result  =  atom.toString().replaceAll("NOTSIMILAR","")
-				result  =  result.replaceAll("[()]","")
+				String result = atom.toString().replaceAll("NOTSIMILAR","")
+				result = result.replaceAll("[()]","")
 				String[] text  =  result.split(",")
-				result =  text[0].trim()  +  ","  +  text[1].trim() +  "," + "0"
-				def symResult= text[1].trim()  +  ","  +  text[0].trim() +  "," + "0"
-				def trueResult= text[0].trim()  +  ","  +  text[1].trim() +  "," + "truth:1"
-				def trueSymResult= text[1].trim()  +  ","  +  text[0].trim() +  "," + "truth:1"
+				result =  text[0].trim() + "," + text[1].trim() + "," + "0"
+				def symResult = text[1].trim() + "," + text[0].trim() + "," + "0"
+				def trueResult = text[0].trim() + "," + text[1].trim() + "," + "truth:1"
+				def trueSymResult = text[1].trim() + "," + text[0].trim() + "," + "truth:1"
 
 				if(!removeSymetric(matchResult,symResult)&&
 				!removeSymetric(matchResult,result)	&&
 				!removeSymetric(matchResult,trueSymResult)&&
 				!removeSymetric(matchResult,trueResult)){
 					if(text[0].toString().contains("aml1")){
-						allResultNegative+=result  +  '\n'
+						allResultNegative += result + '\n'
 					}
 
 					else{
-						allResultNegative+=symResult  +  '\n'
+						allResultNegative += symResult + '\n'
 					}
 				}
 			}
