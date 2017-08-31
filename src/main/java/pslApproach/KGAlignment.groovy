@@ -65,7 +65,9 @@ public class DocumentAligment
 		defineRules()
 		defineOntoRules()
 		defineSetRules()
+		if (util.ConfigManager.getNegativeRules().equals("true")){
 		defineNotSimilarRules()
+		}
 		setUpData()
 		runInference()
 		SemCPSMain main = new SemCPSMain();
@@ -150,7 +152,7 @@ public class DocumentAligment
 		
 		model.add predicate: "hasRoleClassLibAttributeName"     , types: [ArgumentType.UniqueID, ArgumentType.String]
 		
-		model.add predicate: "hasInternalLinkAttributeName"     , types: [ArgumentType.UniqueID, ArgumentType.String]		
+		model.add predicate: "hasInternalLinkAttributeName"     , types: [ArgumentType.UniqueID, ArgumentType.String]
 		
 		model.add predicate: "hasAttributeValue"     , types: [ArgumentType.UniqueID, ArgumentType.String]
 		
@@ -301,8 +303,8 @@ public class DocumentAligment
 		& hasRefSemantic(Y,W) & ~similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) &
 		(O1-O2)) >> notSimilar(A,B) , weight : 10
 
-	    // Two AML Attributes are not the same if they have the same name
-    	model.add rule : (hasAttributeName(A,Z) & hasAttributeName(B,W) & ~similarValue(Z,W) &
+		// Two AML Attributes are not the same if they have the same name
+		model.add rule : (hasAttributeName(A,Z) & hasAttributeName(B,W) & ~similarValue(Z,W) &
 		hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> ~similar(A,B), weight : 10
 
 	
@@ -384,13 +386,13 @@ public class DocumentAligment
 		weight : 10
 
 		// Two InstanceHierarichy  are not the same if they dont have the same name
-		model.add rule : (hasInstanceHierarchyAttributeName(A,Z) & hasInstanceHierarchyAttributeName(B,W) 
+		model.add rule : (hasInstanceHierarchyAttributeName(A,Z) & hasInstanceHierarchyAttributeName(B,W)
 		& ~similarValue(Z,W) &
 		hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) , weight : 4
 
 		// Two InternalLink are not the same if they dont have the same name
-		model.add rule : (hasInternalLinkAttributeName(A,Z) & hasInternalLinkAttributeName(B,W) & 
-		~similarValue(Z,W) &hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) , 
+		model.add rule : (hasInternalLinkAttributeName(A,Z) & hasInternalLinkAttributeName(B,W) &
+		~similarValue(Z,W) &hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> notSimilar(A,B) ,
 		weight : 4
 
 		
@@ -432,21 +434,21 @@ public class DocumentAligment
 	 */
 	public void defineOntoRules(){
 		
-		model.add rule : (hasDomain(R,A) & hasDomain(T,B) & similar(A,B) & 
+		model.add rule : (hasDomain(R,A) & hasDomain(T,B) & similar(A,B) &
 			hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(R,T), weight : 2;
 			
-		model.add rule : (hasRange(R,A) & hasRange(T,B) & similar(A,B) & hasDocument(A,O1) & 
+		model.add rule : (hasRange(R,A) & hasRange(T,B) & similar(A,B) & hasDocument(A,O1) &
 			hasDocument(B,O2) & (O1-O2)) >> similar(R,T), weight : 2;
 			
-	    model.add rule : (hasDomain(R,A) & hasDomain(T,B) & similar(R,T) & hasDocument(A,O1) & 
+		model.add rule : (hasDomain(R,A) & hasDomain(T,B) & similar(R,T) & hasDocument(A,O1) &
 			hasDocument(B,O2) & (O1-O2)) >> similar(A,B), weight : 2;
 			
-		model.add rule : (hasRange(R,A)  & hasRange(T,B) & similar(R,T) & hasDocument(A,O1) & 
+		model.add rule : (hasRange(R,A)  & hasRange(T,B) & similar(R,T) & hasDocument(A,O1) &
 			hasDocument(B,O2) & (O1-O2)) >> similar(A,B), weight : 2;
 			
 		GroundTerm classID = data.getUniqueID("class");
-		model.add rule : (similar(A,B) & hasType(A, classID) & hasType(B, classID) & subclass(A, S1) 
-			& subclass(B, S2)& hasDocument(A,O1) & hasDocument(B,O2) & 
+		model.add rule : (similar(A,B) & hasType(A, classID) & hasType(B, classID) & subclass(A, S1)
+			& subclass(B, S2)& hasDocument(A,O1) & hasDocument(B,O2) &
 			(O1-O2)) >> similar(S1, S2), weight: 3;
 	}
 
@@ -748,7 +750,7 @@ public class DocumentAligment
 	}
 
 /**
- * Adds rules explaination	
+ * Adds rules explaination
  * @param predicate
  * @param filename
  */
@@ -766,7 +768,7 @@ public class DocumentAligment
 			 while (iga.hasNext()) { //gets predicate
 			  GroundAtom gatom = iga.next();
 			  if(gatom.getValue()>0.7){
-			  matchResult.append(gatom.getRegisteredGroundKernels() + "\t" 
+			  matchResult.append(gatom.getRegisteredGroundKernels() + "\t"
 				  + gatom.getValue() + "\n \n")
 			  }
 		  }}}
@@ -786,7 +788,7 @@ public class DocumentAligment
 		println "INFERENCE DONE"
 		def matchResult  =  new File(testDir  +  'similar.txt')
 		matchResult.write('')
-		String allResultConfidence="";		
+		String allResultConfidence="";
 		def resultConfidence  =  new File(testDir  +  'similarwithConfidence.txt')
 		resultConfidence.write('')
 		DecimalFormat formatter  =  new DecimalFormat("#.##")
@@ -827,7 +829,7 @@ public class DocumentAligment
 				result = text[0].trim()  +  ","  +  text[1].trim() +  "," + "truth:1"
 				def symResult = text[1].trim()  +  ","  +  text[0].trim() +  "," + "truth:1"
 				def symResult2 = text[1].trim()  +  "\t"  +  text[0].trim()
-		 		String result2 = text[0].trim()  +  "\t"  +  text[1].trim()
+				 String result2 = text[0].trim()  +  "\t"  +  text[1].trim()
 							
 				// adding elements with aml1: at start for correctness
 				if(!removeSymetric(matchResult,symResult)&&
@@ -881,7 +883,7 @@ public class DocumentAligment
 		
 		matchResult.append(allResultNegative)
 		 //ruleExplaination(notSimilar,"notSimilarRules.txt");
-	    //ruleExplaination(similar,"SimilarRules.txt");
+		//ruleExplaination(similar,"SimilarRules.txt");
 		
 	}
 

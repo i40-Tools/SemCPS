@@ -154,14 +154,15 @@ public class Similar extends Files2Facts {
 		similar.println(results);
 
 		similar.close();
-		
-		
-		//emulateNegativeResults();
+
+		if (ConfigManager.getNegativeRules().equals("false"))
+			emulateNegativeResults();
 	}
-/**
- * This function emulates negatives rules results and updated the orignal file
- * Work in progress
- */
+
+	/**
+	 * This function emulates negatives rules results and updated the orignal
+	 * file Work in progress
+	 */
 	public void emulateNegativeResults() {
 		try {
 			ArrayList<String> aml1negList = new ArrayList<String>();
@@ -245,12 +246,12 @@ public class Similar extends Files2Facts {
 				}
 			}
 
-			
 			try {
 				for (String key : aml1negValues.keySet()) {
 					for (String negkey : aml2negValues.keySet()) {
 
-						// predicate and object type should be same for cartesian product
+						// predicate and object type should be same for
+						// cartesian product
 						String type1 = aml1negValues.get(key);
 						String type2 = aml2negValues.get(negkey);
 						String pred1 = aml1negpred.get(key);
