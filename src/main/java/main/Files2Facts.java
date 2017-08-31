@@ -34,10 +34,7 @@ public class Files2Facts extends IndustryStandards {
 
 	protected ArrayList<File> files;
 
-	private LinkedHashSet<String> subjectsToWrite;
-
 	public Files2Facts() {
-		IndustryStandards industryStandard = new IndustryStandards();
 		files = new ArrayList<File>();
 	}
 
@@ -174,17 +171,14 @@ public class Files2Facts extends IndustryStandards {
 	 */
 	private void writeData(AML aml) throws FileNotFoundException {
 		try {
-			Set<String> predicates = aml.generic.keySet(); // gets predicates to
-															// name the data
-															// files
-
+			Set<String> predicates = aml.generic.keySet(); 
+			// gets predicates to name the data files
 			for (String i : predicates) {
 				// name files as predicates
 				PrintWriter documentwriter = new PrintWriter(
 						ConfigManager.getFilePath() + "PSL/test/" + i + ".txt");
-				Collection<String> values = aml.generic.get(i);// for every
-																// predicate get
-																// its value
+				Collection<String> values = aml.generic.get(i);
+				// for every predicate get its value
 				for (String val : values) {
 
 					// remove annotation to make it a literal value

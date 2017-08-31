@@ -55,17 +55,18 @@ public class AML extends IndustryStandards {
 			}
 
 			hasAttributeName();
-			hasAttribute();
 			addDomainRange();
 			addHasType();
 			hasAttributeValue();
-			hasIdentifier();
+			addGenericObject("hasExternalReference", "refBaseClassPath");
+			addGenericObject("hasInternalLink", "hasRefPartnerSideB");
+			addGenericObject("hasInternalLink", "hasRefPartnerSideA");
+			hasAttribute();
+			addGenericObject("hasRefSemantic", "hasCorrespondingAttributePath");
 			eClassCheck();
+			hasIdentifier();
 		}
 
-		addGenericObject("hasExternalReference", "refBaseClassPath");
-		addGenericObject("hasInternalLink", "hasRefPartnerSideB");
-		addGenericObject("hasInternalLink", "hasRefPartnerSideA");
 		addGenericObject("hasRefSemantic", "hasCorrespondingAttributePath");
 	}
 
@@ -110,6 +111,7 @@ public class AML extends IndustryStandards {
 
 	private void hasIdentifier() {
 		// RefSemantic part starts here
+
 		if (predicate.asNode().getLocalName().equals("identifier")) {
 			// gets the literal ID value and add it to hasID
 			addSubjectURI(subject, ":remove" + object.asLiteral().getLexicalForm(), number,
@@ -132,6 +134,7 @@ public class AML extends IndustryStandards {
 						predicate.asNode().getLocalName());
 			}
 		}
+
 	}
 
 	private void addHasType() {
@@ -140,6 +143,7 @@ public class AML extends IndustryStandards {
 				addSubjectURI(subject, ":" + object.asNode().getLocalName(), number,
 						"has" + predicate.asNode().getLocalName());
 		}
+
 	}
 
 	private void addDomainRange() {
