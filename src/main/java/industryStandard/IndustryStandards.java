@@ -15,8 +15,9 @@ import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 /**
- * This class contains common methods to produce the conversion of Industry 4.0 standards 
- * information models to a canonical model, i.e., RDF
+ * This class contains common methods to produce the conversion of Industry 4.0
+ * standards information models to a canonical model, i.e., RDF
+ * 
  * @author omar
  */
 
@@ -29,8 +30,6 @@ public class IndustryStandards {
 	public RDFNode object;
 	int number;
 
-	
-	
 	public IndustryStandards() {
 		super();
 	}
@@ -41,8 +40,9 @@ public class IndustryStandards {
 	}
 
 	/**
-	 * add subjects with appropriate ontology All the data is added into generic
-	 * Hash map with a key identifying to what it belongs.
+	 * This function add subjects with appropriate ontology. All the data is
+	 * added into generic data structure. The data structure HashMap allows us
+	 * to have 1 key with many values.
 	 * 
 	 * @param subject
 	 * @param subjects
@@ -81,9 +81,9 @@ public class IndustryStandards {
 			}
 		}
 	}
-	
+
 	/**
-	 * Gets the class of object.
+	 * This function gets the type of Element.
 	 * 
 	 * @param name
 	 * @return
@@ -100,9 +100,10 @@ public class IndustryStandards {
 		}
 		return type;
 	}
-	
+
 	/**
-	 * get predicate Value
+	 * This function gets predicate value.
+	 * 
 	 * @param name
 	 * @return
 	 */
@@ -118,60 +119,68 @@ public class IndustryStandards {
 		}
 		return type;
 	}
-	
+
 	/**
-	 * TODO to write comment
+	 * This function takes two predicate which are interlinked with each other.
+	 * It connects two predicates e.g Attribute has RefSemantic , RefSemantic
+	 * has Corresponding Path.
+	 * 
 	 * @param firstPredicate
 	 * @param secondPredicate
 	 * @throws FileNotFoundException
 	 */
-	public void addGenericObject(String firstPredicate, String secondPredicate ) 
-			throws FileNotFoundException{
+	public void addGenericObject(String firstPredicate, String secondPredicate)
+			throws FileNotFoundException {
 		if (predicate.asNode().getLocalName().equals(firstPredicate)) {
 			// adds for attribute
 			addSubjectURI(subject, ":" + object.asNode().getLocalName(), number,
 					"has" + getType(subject));
 			// adds for refsemantic.txt
-			addGenericValue(predicate.asNode().getLocalName(),secondPredicate);
+			addGenericValue(predicate.asNode().getLocalName(), secondPredicate);
 		}
 	}
-	
+
 	/**
-	 * Add refSemantic in the list
+	 * This function adds Elements with literal Value.
 	 * 
+	 * @param type
+	 * @param predicate
 	 * @throws FileNotFoundException
 	 */
 	private void addGenericValue(String type, String predicate) throws FileNotFoundException {
 		StmtIterator stmts = model.listStatements(object.asResource(), null, (RDFNode) null);
 		while (stmts.hasNext()) {
 			Statement stmte = stmts.nextStatement();
-			if(stmte.getPredicate().getLocalName().equals(predicate)){
+			if (stmte.getPredicate().getLocalName().equals(predicate)) {
 				if (stmte.getObject().isLiteral()) {
-					addSubjectURI(object, ":remove" + stmte.getObject().asLiteral().getLexicalForm(),
-							number, type);
+					addSubjectURI(object,
+							":remove" + stmte.getObject().asLiteral().getLexicalForm(), number,
+							type);
 				}
 			}
 		}
 	}
-	
+
 	/**
-	 * Adds AML Values
+	 * This function converts Object into Values reading from Rdf files. The
+	 * values are stored in list.
+	 * 
 	 * @param amlList
 	 * @param amlValue
 	 * @param aml
 	 * @return
 	 */
-	protected ArrayList<String> addAmlValues(ArrayList<?> amlList,ArrayList<String> amlValue,String aml,
-			String predicate){	
-		for(int i = 0;i < amlList.size();i++){	
+	protected ArrayList<String> addAmlValues(ArrayList<?> amlList, ArrayList<String> amlValue,
+			String aml, String predicate) {
+		for (int i = 0; i < amlList.size(); i++) {
 			StmtIterator iterator = model.listStatements();
 			while (iterator.hasNext()) {
 				Statement stmt = iterator.nextStatement();
 				subject = stmt.getSubject();
 
-				if(subject.asResource().getLocalName().equals(amlList.get(i))){
-					String value = getValue(subject, predicate);					
-					if(value != null){
+				if (subject.asResource().getLocalName().equals(amlList.get(i))) {
+					String value = getValue(subject, predicate);
+					if (value != null) {
 						amlValue.add(aml + value);
 						break;
 					}
@@ -180,30 +189,32 @@ public class IndustryStandards {
 		}
 		return amlValue;
 	}
-	
+
 	/**
 	 * Adds aml negative Values
+	 * 
 	 * @param amlList
 	 * @param amlValue
 	 * @param aml
 	 * @return
 	 */
-	protected HashMap<String, String> addAmlNegValues(ArrayList<?> amlList,HashMap<String, String> amlValue,String aml,
-			String predicate,ArrayList<?> type,HashMap<String, String>pred){	
-		for(int i = 0;i < amlList.size();i++){	
+	protected HashMap<String, String> addAmlNegValues(ArrayList<?> amlList,
+			HashMap<String, String> amlValue, String aml, String predicate, ArrayList<?> type,
+			HashMap<String, String> pred) {
+		for (int i = 0; i < amlList.size(); i++) {
 			StmtIterator iterator = model.listStatements();
 			while (iterator.hasNext()) {
 				Statement stmt = iterator.nextStatement();
 				subject = stmt.getSubject();
-				
-				if(subject.asResource().getLocalName().equals(amlList.get(i))){
-					String value = getValue(subject,predicate);					
-					if(value != null && !value.contains("eClassIRDI")
-							&&!value.contains("eClassClassificationClass")
-							&&!value.contains("eClassVersion")){
-						amlValue.put(aml + value,type.get(i).toString());
-						pred.put(aml + value,predicate);
-					
+
+				if (subject.asResource().getLocalName().equals(amlList.get(i))) {
+					String value = getValue(subject, predicate);
+					if (value != null && !value.contains("eClassIRDI")
+							&& !value.contains("eClassClassificationClass")
+							&& !value.contains("eClassVersion")) {
+						amlValue.put(aml + value, type.get(i).toString());
+						pred.put(aml + value, predicate);
+
 						iterator.close();
 						break;
 					}
@@ -213,6 +224,4 @@ public class IndustryStandards {
 		return amlValue;
 	}
 
-	
-	
 }

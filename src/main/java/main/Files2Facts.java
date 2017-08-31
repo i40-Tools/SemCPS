@@ -40,10 +40,9 @@ public class Files2Facts extends IndustryStandards {
 	}
 
 	/**
-	 * Converts files from XML to RDF-based format(turtle) based on Krextor
+	 * This function converts files from XML to RDF-based format(turtle) based
+	 * on Krextor.
 	 * 
-	 * @param input
-	 * @param output
 	 */
 	public void convert2RDF() {
 		int i = 0;
@@ -68,9 +67,13 @@ public class Files2Facts extends IndustryStandards {
 	}
 
 	/**
-	 * Read RDF files of a given path
+	 * This function Reads files in a given folder for the given extension. This
+	 * support several extensions such xml,aml,opcua and ttl.
 	 * 
 	 * @param path
+	 * @param type
+	 * @param type2
+	 * @param type3
 	 * @return
 	 * @throws Exception
 	 */
@@ -115,7 +118,7 @@ public class Files2Facts extends IndustryStandards {
 	}
 
 	/**
-	 * Adds a better turtle format for the obtained RDF files
+	 * This function adds a better turtle format for the obtained RDF files.
 	 * 
 	 * @throws IOException
 	 */
@@ -133,8 +136,8 @@ public class Files2Facts extends IndustryStandards {
 	}
 
 	/**
-	 * Reads the RDF files and extract their contents for creating PSL
-	 * predicates.
+	 * This function reads the RDF files and extract their contents for creating
+	 * PSL predicates.
 	 * 
 	 * @param file
 	 * @param number
@@ -162,17 +165,14 @@ public class Files2Facts extends IndustryStandards {
 	}
 
 	/**
-	 * Reads RDF files with Standards data and create PSL files with this
-	 * content The name of the files match with the list without repetition of
-	 * RDF predicates
-	 * 
-	 * @param collection
-	 * @param documentwriter
+	 * This function create PSL files.
+	 * Files are created based on key in the hashMap.	 * 
+	 * @param aml
 	 * @throws FileNotFoundException
 	 */
 	private void writeData(AML aml) throws FileNotFoundException {
 		try {
-			Set<String> predicates = aml.generic.keySet(); 
+			Set<String> predicates = aml.generic.keySet();
 			// gets predicates to name the data files
 			for (String i : predicates) {
 				// name files as predicates
@@ -202,7 +202,7 @@ public class Files2Facts extends IndustryStandards {
 	}
 
 	/**
-	 * Generates PSL predicates
+	 * This function Generates PSL predicates.
 	 * 
 	 * @param path
 	 * @throws Exception

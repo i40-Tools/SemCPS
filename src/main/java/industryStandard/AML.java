@@ -69,11 +69,11 @@ public class AML extends IndustryStandards {
 
 	}
 
+	/**
+	 * This function checks if the attribute type is of eclass. Adds notation
+	 * :remove marking it as literal value.
+	 */
 	private void eClassCheck() {
-		/***
-		 * Eclass part starts here. TODO refactoring and functions only for test
-		 * purpose now
-		 */
 		if (object.isLiteral()) {
 			if (checkEclass(object)) {
 				StmtIterator stmts = model.listStatements(subject.asResource(), null,
@@ -108,6 +108,9 @@ public class AML extends IndustryStandards {
 		}
 	}
 
+	/**
+	 * This function populates all data for Elements with ID.
+	 */
 	private void hasIdentifier() {
 		// RefSemantic part starts here
 
@@ -118,6 +121,9 @@ public class AML extends IndustryStandards {
 		}
 	}
 
+	/**
+	 * This function populates all data with Attribute.
+	 */
 	private void hasAttribute() {
 		if (predicate.asNode().getLocalName().equals("hasAttribute")) {
 			// gets all classes which hasAttribute relation
@@ -125,6 +131,10 @@ public class AML extends IndustryStandards {
 					"has" + getType(subject));
 		}
 	}
+
+	/**
+	 * This function populates all data with Attribute Value.
+	 */
 
 	private void hasAttributeValue() {
 		if (predicate.asNode().getLocalName().equals("hasAttributeValue")) {
@@ -136,6 +146,10 @@ public class AML extends IndustryStandards {
 
 	}
 
+	/**
+	 * This function populates with type of Element.
+	 */
+
 	private void addHasType() {
 		if (predicate.asNode().getLocalName().equals("type")) {
 			if (number != 3)
@@ -144,6 +158,10 @@ public class AML extends IndustryStandards {
 		}
 
 	}
+
+	/**
+	 * This function adds Domain and Rage.
+	 */
 
 	private void addDomainRange() {
 		// Adds domain and range
@@ -160,6 +178,10 @@ public class AML extends IndustryStandards {
 			addSubjectURI(object, "", 2, "hasDocument");
 		}
 	}
+
+	/**
+	 * This function populates all data with AttributeName.
+	 */
 
 	private void hasAttributeName() {
 		if (predicate.asNode().getLocalName().equals("hasAttributeName")) {

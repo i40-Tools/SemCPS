@@ -32,9 +32,9 @@ public class Similar extends Files2Facts {
 	}
 
 	/**
-	 * This function takes input the computed result and convert it to a format
-	 * which is in 0-1 values. Such format is then used to compute precision and
-	 * recall.
+	 * This function converts computed result into a binary format 1,0.
+	 * 1 represent true and 0 represents false.
+	 * This conversion is required for calculation Precision and Recall.
 	 * 
 	 * @throws FileNotFoundException
 	 * 
@@ -160,8 +160,8 @@ public class Similar extends Files2Facts {
 	}
 
 	/**
-	 * This function emulates negatives rules results and updated the orignal
-	 * file Work in progress
+	 * This function emulates negatives rules results and updated the original
+	 * file. Negative Rules are emulated by take Cartesian product of initial seed.
 	 */
 	public void emulateNegativeResults() {
 		try {
@@ -195,7 +195,7 @@ public class Similar extends Files2Facts {
 
 			}
 
-			// Read all Objects type for the cartesian product
+			// Read all Objects type for the Cartesian product
 			try (BufferedReader br = new BufferedReader(new FileReader(
 					new File(ConfigManager.getFilePath() + "PSL/test/hastype.txt")))) {
 				String line;

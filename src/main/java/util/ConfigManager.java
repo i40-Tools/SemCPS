@@ -37,10 +37,10 @@ public class ConfigManager {
 	private static Model model;
 	public static String filePath;
 
-	public final static String HET_NAMESPACE = "http://vocab.cs.uni-bonn.de/het#";
+	public final static String SEMI_NAMESPACE = "https://w3id.org/i40/semi#";
 	public final static String URI_NAMESPACE = "http://uri4uri.net/vocab.html/#";
 	public final static String ONTO_NAMESPACE = "http://www.semanticweb.org/ontologies/2008/11/"
-			+ "OntologySecurity.owl#";
+			                                    + "OntologySecurity.owl#";
 	public final static String STO_NAMESPACE = "https://w3id.org/i40/sto#";
 
 	/**
@@ -57,7 +57,7 @@ public class ConfigManager {
 	}
 
 	/**
-	 * This method load the Configuration file parameters
+	 * This method loads the Configuration file parameters
 	 */
 	public static Properties loadConfig() {
 		prop = new Properties();
@@ -85,7 +85,6 @@ public class ConfigManager {
 		StmtIterator iterator = model.listStatements();
 
 		while (iterator.hasNext()) {
-
 			Statement stmt = iterator.nextStatement();
 
 			predicate = stmt.getPredicate();
@@ -93,7 +92,6 @@ public class ConfigManager {
 
 			literal = stmt.getLiteral();
 			literals.add(literal);
-
 		}
 
 		for (int i = 0; i < predicates.size(); ++i) {
@@ -108,12 +106,11 @@ public class ConfigManager {
 	}
 
 	/**
-	 * Get the general file path where all the files are located
-	 * 
+	 * Gets the general file path where all the files are located
 	 * @return
 	 */
 	public static String getFilePath() {
-		if(filePath!=null){
+		if(filePath != null){
 			return filePath;
 		}
 		String filePath = loadConfig().getProperty(URI_NAMESPACE + "path");
@@ -121,8 +118,7 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Get the general file path where all the files are located
-	 * 
+	 * Gets the general file path where all the files are located
 	 * @return
 	 */
 	public static String getOntoURIPath() {
@@ -131,11 +127,9 @@ public class ConfigManager {
 	}
 
 	/**
-	 * Get the general file path where all the test data files are located
-	 * 
+	 * Gets the general file path where all the test data files are located
 	 * @return
 	 */
-
 	public static boolean createDataPath() {
 		String filePath = loadConfig().getProperty(URI_NAMESPACE + "path");
 		boolean dir = new File(filePath + "PSL/test/Precision").mkdirs();
@@ -143,6 +137,10 @@ public class ConfigManager {
 		return dir;
 	}
 
+	/**
+	 * Gets the path for Test Data
+	 * @return 
+	 */
 	public static String getTestDataPath() {
 		String filePath = loadConfig().getProperty(URI_NAMESPACE + "testDataPath");
 		return filePath;
@@ -168,8 +166,7 @@ public class ConfigManager {
 	}
 
 	/**
-	 * Get the general file path where all the test data files are located
-	 * 
+	 * Gets the general file path where all the train data files are located
 	 * @return
 	 */
 	public static String getTrainDataPath() {
@@ -177,6 +174,10 @@ public class ConfigManager {
 		return filePath;
 	}
 
+	/**
+	 * Gets the Standard value, e.g., AML
+	 * @return
+	 */
 	public static String getStandard() {
 		String standard = loadConfig().getProperty(STO_NAMESPACE + "Standard");
 		return standard;
@@ -192,16 +193,23 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * Reads the configuration of the experiment folder 
+	 * Reads whether negative rules will be used or not  
 	 * @return true or false
 	 */
 	public static String getNegativeRules() {
 		String filePath = loadConfig().getProperty(URI_NAMESPACE + "NegativeRules");
-		if(filePath==null)
-			return "true";
+		if(filePath == null) return "true";
 		return filePath;
 	}
 	
-	
+	/**
+	 * Gets the threshold value configured to be used in the experiment. The default value is 0.5 
+	 * @return 0.5 or given value
+	 */
+	public static String getThreshold() {
+		String threshold = loadConfig().getProperty(SEMI_NAMESPACE + "threshold");
+		if(threshold == null) return "0.5"; //default 
+		return threshold;
+	}
 	
 }

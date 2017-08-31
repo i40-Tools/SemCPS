@@ -72,13 +72,16 @@ aml:conf
      uri:path "C:/HeterogeneityExampleData/AutomationML/Single-Heterogeneity/M2/Testbeds-2/";
 	 uri:experimentFolder "E:/ExperimentsToKCAP/Experiment1/run -1/";
      sto:Standard "aml";
-     ontosec:Training "false";     
+     ontosec:Training "false";
+     uri:NegativeRules "true";
      uri:URI "C:/Experiments/SemCPS-/resources/".     
 ```
 Please note:  
 ```
 uri:path refers to Heterogeneity path                    
-uri:URI refers to the ontology path                      
+uri:URI refers to the ontology path
+Negative rules true to user orignal.
+false to use emulation.
 ```
 
 Just give path of AML heterogenity and folders will be created automatically.                  

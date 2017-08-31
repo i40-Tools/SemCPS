@@ -27,7 +27,7 @@ public class SemCPSMain {
 
 	public static void main(String[] args) throws Throwable {
 
-		//Report.getReport(ConfigManager.getExperimentFolder());
+		// Report.getReport(ConfigManager.getExperimentFolder());
 		SemCPSMain main = new SemCPSMain();
 		main.readConvertStandardFiles();
 		main.generatePSLDataModel();
@@ -37,10 +37,11 @@ public class SemCPSMain {
 		// main.integrate();
 	}
 
-
 	/**
-	 * Models similar.txt in to GoldStandard format.
-	 * @throws Exception 
+	 * This function Models similar.txt in to GoldStandard format. This modeling
+	 * is required for computation of Precision and Recall.
+	 * 
+	 * @throws Exception
 	 */
 	public void modelSimilar() throws Exception {
 		similar.readFiles(ConfigManager.getFilePath(), ".ttl", ".rdf", ".owl");
@@ -48,9 +49,9 @@ public class SemCPSMain {
 	}
 
 	/**
-	 * Method that read standard files and convert then to RDF
-	 * @throws Exception 
-	 * TODO create more specific exceptions
+	 * This function read standard files and convert then to RDF
+	 * 
+	 * @throws Exception
 	 */
 	public void readConvertStandardFiles() throws Exception {
 		standardFiles.readFiles(ConfigManager.getFilePath(), ".aml", ".opcua", ".xml");
@@ -61,7 +62,8 @@ public class SemCPSMain {
 	}
 
 	/**
-	 * Generate the PSL datamodel out of the existing standard documents
+	 * This function generate the PSL datamodel out of the existing standard
+	 * documents.
 	 * 
 	 * @throws Exception
 	 */
@@ -71,7 +73,7 @@ public class SemCPSMain {
 	}
 
 	/**
-	 * General method to execute the PSL-based approach
+	 * This function is a general method to execute the PSL-based approach.
 	 * 
 	 * @throws CompilationFailedException
 	 * @throws IOException
@@ -86,9 +88,9 @@ public class SemCPSMain {
 	 * @throws ResourceException
 	 */
 	public void executePSLAproach() throws CompilationFailedException, IOException, ScriptException,
-	IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-	NoSuchMethodException, SecurityException, InstantiationException, ResourceException,
-	groovy.util.ScriptException {
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+			NoSuchMethodException, SecurityException, InstantiationException, ResourceException,
+			groovy.util.ScriptException {
 		// Needed to run the PSL rules part
 		Script script = new Script() {
 			@Override
@@ -101,6 +103,5 @@ public class SemCPSMain {
 		} catch (Exception e) {
 		}
 	}
-
 
 }

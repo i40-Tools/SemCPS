@@ -5,19 +5,20 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.DecimalFormat;
+
 import util.ConfigManager;
 
 /**
  * 
- * @author Irlan	
- * This class reports the results of the process
+ * @author Irlan This class reports the results of the process
  */
 
 public class Report {
 
 	/**
-	 * Provides the root of the heterogeneity examples to reproduce result of the
-	 * published paper.
+	 * This function provides the root of the heterogeneity examples to
+	 * reproduce result of the published paper.
+	 * 
 	 * @param root
 	 * @throws Exception
 	 */
@@ -34,7 +35,7 @@ public class Report {
 					main2.generatePSLDataModel();
 					main2.executePSLAproach();
 
-				}else {
+				} else {
 
 					System.out.println(root + "M" + k + "/Testbeds-" + i);
 					ConfigManager.filePath = root + "M" + k + "/Testbeds-" + i + "/Generated/";
@@ -50,7 +51,8 @@ public class Report {
 	}
 
 	/**
-	 * TODO - To write the comment
+	 * This function gets the size of the seeds in kb.
+	 * 
 	 * @param root
 	 * @throws IOException
 	 */
@@ -59,15 +61,17 @@ public class Report {
 		while (k <= 7) {
 			int j = 1;
 
-			String filesize="";
+			String filesize = "";
 			while (j <= 10) {
-				if(k == 1){
-					File f=new File(root+"M"+k+"/M1.1/Testbeds-" + j + "/Generated/seed.aml");
-					filesize += new DecimalFormat("#.#").format(((double)f.length()/ 1024)) + "\n"; 
-				}
-				else{
-					File f=new File(root+"M"+k+"/Testbeds-" + j + "/Generated/seed.aml");
-					filesize+= new DecimalFormat("#.#").format(((double)f.length()/ 1024)) + "\n"; 
+				if (k == 1) {
+					File f = new File(
+							root + "M" + k + "/M1.1/Testbeds-" + j + "/Generated/seed.aml");
+					filesize += new DecimalFormat("#.#").format(((double) f.length() / 1024))
+							+ "\n";
+				} else {
+					File f = new File(root + "M" + k + "/Testbeds-" + j + "/Generated/seed.aml");
+					filesize += new DecimalFormat("#.#").format(((double) f.length() / 1024))
+							+ "\n";
 				}
 				j++;
 			}
@@ -77,7 +81,9 @@ public class Report {
 	}
 
 	/**
-	 * Reads the result.txt and output results.
+	 * This function reads the computed result from a file and outputs the
+	 * Precision, Recall and Fmeasure.
+	 * 
 	 * @param root
 	 * @throws IOException
 	 */
@@ -91,34 +97,36 @@ public class Report {
 			String fmeasure = "";
 
 			while (j <= 10) {
-				BufferedReader br = new BufferedReader(
-						new FileReader(new File(ConfigManager.getExperimentFolder() + "M" + k + 
-								"/Testbeds-" + "/Generated/PSL//test/Precision/F1NoTraining.txt")));
+				BufferedReader br = new BufferedReader(new FileReader(
+						new File(ConfigManager.getExperimentFolder() + "M" + k + "/Testbeds-"
+								+ "/Generated/PSL//test/Precision/F1NoTraining.txt")));
 
 				while ((line = br.readLine()) != null) {
 					if (line.contains("Precision :")) {
-						precision += line.replace("Precision :", "")+"\n";
+						precision += line.replace("Precision :", "") + "\n";
 					}
 					if (line.contains("Recall:")) {
-						recall += line.replace("Recall:", "")+"\n";
+						recall += line.replace("Recall:", "") + "\n";
 					}
 					if (line.contains("Fmeasure:")) {
-						fmeasure += line.replace("Fmeasure:", "")+"\n";
+						fmeasure += line.replace("Fmeasure:", "") + "\n";
 					}
 				}
 
 				j++;
 			}
-			
+
 			System.out.print(precision);
 			System.out.print(recall);
-			System.out.print(fmeasure );
+			System.out.print(fmeasure);
 			k++;
 		}
 	}
 
 	/**
-	 * TODO - To write the comment
+	 * This function outputs the information for number of heterogeneities in a
+	 * testbed.
+	 * 
 	 * @param root
 	 * @throws IOException
 	 */
@@ -127,18 +135,15 @@ public class Report {
 		while (k <= 1) {
 			int j = 1;
 			String line;
-			String precision = "";
-			String recall = "Recall";
-			String fmeasure = "F-Measure";
+			String multi = "";
 			System.out.println("M" + k);
 
 			while (j <= 10) {
-				BufferedReader br = new BufferedReader(
-						new FileReader(new File(root+"M1/M1.1/Testbeds-" + j
-								+ "/Generated/PSL//test/Precision/multi.txt")));
+				BufferedReader br = new BufferedReader(new FileReader(new File(root
+						+ "M1/M1.1/Testbeds-" + j + "/Generated/PSL//test/Precision/multi.txt")));
 
 				while ((line = br.readLine()) != null) {
-					precision += line;
+					multi += line;
 					System.out.print(line + ",");
 
 				}
