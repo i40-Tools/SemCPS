@@ -65,7 +65,9 @@ public class DocumentAligment
 		defineRules()
 		defineOntoRules()
 		defineSetRules()
+		if (util.ConfigManager.getNegativeRules().equals("true")){
 		defineNotSimilarRules()
+		}
 		setUpData()
 		runInference()
 		SemCPSMain main = new SemCPSMain();

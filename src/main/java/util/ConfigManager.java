@@ -197,7 +197,9 @@ public class ConfigManager {
 	 */
 	public static String getNegativeRules() {
 		String filePath = loadConfig().getProperty(URI_NAMESPACE + "NegativeRules");
-		return "false";
+		if(filePath==null)
+			return "true";
+		return filePath;
 	}
 	
 	

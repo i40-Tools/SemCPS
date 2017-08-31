@@ -33,6 +33,7 @@ import util.ConfigManager;
 public class Files2Facts extends IndustryStandards {
 
 	protected ArrayList<File> files;
+	private LinkedHashSet<String> subjectsToWrite;
 
 	public Files2Facts() {
 		files = new ArrayList<File>();
