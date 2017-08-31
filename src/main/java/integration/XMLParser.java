@@ -32,9 +32,9 @@ import util.ConfigManager;
 
 /**
  * @author omar
- *
+ * TODO to write comments
  */
-public class XmlParser {
+public class XMLParser {
 
 	private static XPathFactory xpf;
 	private static XPath xpath;
@@ -44,7 +44,7 @@ public class XmlParser {
 	/*
 	 * Constructor initializes
 	 */
-	public XmlParser() {
+	public XMLParser() {
 		integrationNodes = new ArrayList<Node>();
 		seedNodes = new ArrayList<Node>();
 		xpf = XPathFactory.newInstance();
@@ -459,7 +459,6 @@ public class XmlParser {
 	 * @param integration
 	 * @throws XPathExpressionException
 	 */
-
 	void setNodeValues(Document seed, Document integration) throws XPathExpressionException {
 		seedNodes = new ArrayList<Node>();
 
@@ -482,7 +481,6 @@ public class XmlParser {
 	 * @param doc
 	 * @return
 	 */
-
 	public static ArrayList<Node> getAllNodes(Document doc) {
 
 		ArrayList<Node> node = new ArrayList<Node>();

@@ -10,17 +10,20 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 /**
  * 
  * @author Irlan Grangel
- *
- *         Represents the AutomationML Standard as an RDF graph
+ * Represents the AutomationML(AML) Standard as an RDF Knowledge graph
  */
 public class AML extends IndustryStandards {
 
+	/**
+	 * Constructs the AML object
+	 * @param model RDF Jena model containing all the AML facts in RDF 
+	 * @param newNumber number to identify the AML document
+	 */
 	public AML(Model model, int newNumber) {
 		super(model, newNumber);
 	}
 
 	public AML() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public void setModel(Model model) {
@@ -70,11 +73,12 @@ public class AML extends IndustryStandards {
 		addGenericObject("hasRefSemantic", "hasCorrespondingAttributePath");
 	}
 
+	/***
+	 * Eclass part starts here. 
+	 * TODO refactoring and functions only for test
+	 * purpose now
+	 */
 	private void eClassCheck() {
-		/***
-		 * Eclass part starts here. TODO refactoring and functions only for test
-		 * purpose now
-		 */
 		if (object.isLiteral()) {
 			if (checkEclass(object)) {
 				StmtIterator stmts = model.listStatements(subject.asResource(), null,
@@ -109,6 +113,9 @@ public class AML extends IndustryStandards {
 		}
 	}
 
+	/**
+	 * TODO to write comments
+	 */
 	private void hasIdentifier() {
 		// RefSemantic part starts here
 
@@ -119,6 +126,9 @@ public class AML extends IndustryStandards {
 		}
 	}
 
+	/**
+	 * TODO to write comments
+	 */
 	private void hasAttribute() {
 		if (predicate.asNode().getLocalName().equals("hasAttribute")) {
 			// gets all classes which hasAttribute relation
@@ -127,6 +137,9 @@ public class AML extends IndustryStandards {
 		}
 	}
 
+	/**
+	 * TODO to write comments
+	 */
 	private void hasAttributeValue() {
 		if (predicate.asNode().getLocalName().equals("hasAttributeValue")) {
 			if (!checkEclass(object)) {
@@ -137,6 +150,9 @@ public class AML extends IndustryStandards {
 
 	}
 
+	/**
+	 * TODO to write comments
+	 */
 	private void addHasType() {
 		if (predicate.asNode().getLocalName().equals("type")) {
 			if (number != 3)
@@ -146,6 +162,9 @@ public class AML extends IndustryStandards {
 
 	}
 
+	/**
+	 * TODO to write comments
+	 */
 	private void addDomainRange() {
 		// Adds domain and range
 		if (predicate.asNode().getLocalName().equals("domain")
@@ -162,6 +181,9 @@ public class AML extends IndustryStandards {
 		}
 	}
 
+	/**
+	 * TODO to write comments
+	 */
 	private void hasAttributeName() {
 		if (predicate.asNode().getLocalName().equals("hasAttributeName")) {
 			if (!checkEclass(object)) {
@@ -178,9 +200,8 @@ public class AML extends IndustryStandards {
 	}
 
 	/**
-	 * checks if its elcass then ignore it because we only need values with
+	 * checks if its eClass then ignore it because we only need values with
 	 * object which can be unique.
-	 * 
 	 * @param object
 	 * @return
 	 */
