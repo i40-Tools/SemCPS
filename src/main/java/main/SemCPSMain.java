@@ -22,6 +22,7 @@ import util.ConfigManager;
 
 public class SemCPSMain {
 
+	private Files2Facts standardFiles = new Files2Facts();
 	private Similar similar = new Similar();
 
 	public static void main(String[] args) throws Throwable {
@@ -52,6 +53,12 @@ public class SemCPSMain {
 	 * TODO create more specific exceptions
 	 */
 	public void readConvertStandardFiles() throws Exception {
+			standardFiles.readFiles(ConfigManager.getFilePath(), ".aml", ".opcua", ".xml");
+			standardFiles.convert2RDF();
+			standardFiles = new Files2Facts();
+			standardFiles.improveRDFOutputFormat();
+			similar.readFiles(ConfigManager.getFilePath(), ".ttl", ".rdf", ".owl");
+
 	}
 
 	/**
@@ -93,6 +100,7 @@ public class SemCPSMain {
 		try {
 			script.evaluate(new File("src/main/java/pslApproach/KGAlignment.groovy"));
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 

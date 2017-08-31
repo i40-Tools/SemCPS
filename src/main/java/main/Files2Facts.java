@@ -27,6 +27,7 @@ import util.ConfigManager;
 
 /**
  * Reads the converted RDF files and convert them to PSL facts
+ * 
  * @author Irlan 28.06.2016
  */
 public class Files2Facts extends IndustryStandards {
@@ -34,9 +35,8 @@ public class Files2Facts extends IndustryStandards {
 	protected ArrayList<File> files;
 
 	private LinkedHashSet<String> subjectsToWrite;
-	private PrintWriter documentwriter;
-		
-	public Files2Facts(){
+
+	public Files2Facts() {
 		IndustryStandards industryStandard = new IndustryStandards();
 		files = new ArrayList<File>();
 	}
@@ -51,7 +51,7 @@ public class Files2Facts extends IndustryStandards {
 		int i = 0;
 		Krextor krextor = new Krextor();
 
-		for (File file : files) {			
+		for (File file : files) {
 			if (file.getName().endsWith(".aml")) {
 				if (file.getName().equals("seed.aml")) {
 					krextor.convertRdf(file.getAbsolutePath(), "aml", "turtle",
@@ -71,6 +71,7 @@ public class Files2Facts extends IndustryStandards {
 
 	/**
 	 * Read RDF files of a given path
+	 * 
 	 * @param path
 	 * @return
 	 * @throws Exception
@@ -134,7 +135,8 @@ public class Files2Facts extends IndustryStandards {
 	}
 
 	/**
-	 * Reads the RDF files and extract their contents for creating PSL predicates.
+	 * Reads the RDF files and extract their contents for creating PSL
+	 * predicates.
 	 * 
 	 * @param file
 	 * @param number
@@ -142,53 +144,65 @@ public class Files2Facts extends IndustryStandards {
 	 * @return
 	 * @throws Exception
 	 */
-	public String createPSLPredicate(File file, int number, String standard) throws Exception {
+	public String createPSLPredicate(File file, int number, String standard, AML aml)
+			throws Exception {
 
 		InputStream inputStream = FileManager.get().open(file.getAbsolutePath());
 		Model model = ModelFactory.createDefaultModel();
 		model.read(new InputStreamReader(inputStream), null, "TURTLE");
 		subjectsToWrite = new LinkedHashSet<String>();
-
 		switch (standard) {
 
 		case "aml":
-			AML aml = new AML(model, number);
+			aml.setModel(model);
+			aml.setNumber(number);
 			aml.addsDataforAML(); // process required data for AML
-			writeData();
+
+			writeData(aml);
 		}
 		return "";
 	}
 
 	/**
-	 * Reads RDF files with Standards data and create PSL files with this content
-	 * The name of the files match with the list without repetition of RDF predicates 
+	 * Reads RDF files with Standards data and create PSL files with this
+	 * content The name of the files match with the list without repetition of
+	 * RDF predicates
 	 * 
 	 * @param collection
 	 * @param documentwriter
 	 * @throws FileNotFoundException
 	 */
-	private void writeData() throws FileNotFoundException {
+	private void writeData(AML aml) throws FileNotFoundException {
+		try {
+			Set<String> predicates = aml.generic.keySet(); // gets predicates to
+															// name the data
+															// files
 
-		Set<String> predicates = generic.keySet(); // gets predicates to name the data files
+			for (String i : predicates) {
+				// name files as predicates
+				PrintWriter documentwriter = new PrintWriter(
+						ConfigManager.getFilePath() + "PSL/test/" + i + ".txt");
+				Collection<String> values = aml.generic.get(i);// for every
+																// predicate get
+																// its value
+				for (String val : values) {
 
-		for (String i : predicates) {
-			// name files as predicates
-			documentwriter = new PrintWriter(ConfigManager.getFilePath() + "PSL/test/" + i + ".txt");
+					// remove annotation to make it a literal value
+					if (val.contains("aml:remove")) {
+						val = val.replace("aml:remove", "");
+					}
 
-			Collection<String> values = generic.get(i);// for every predicate get its value
-			for (String val : values) {
-				// remove annotation to make it a literal value
-				if (val.contains("aml:remove")) {
-					val = val.replace("aml:remove", "");
+					if (val.contains(":ConnectionPoint")) {
+						val = val.replace(":ConnectionPoint", "");
+					}
+
+					documentwriter.println(val);
 				}
 
-				if (val.contains(":ConnectionPoint")) {
-					val = val.replace(":ConnectionPoint", "");
-				}
-
-				documentwriter.println(val);
+				documentwriter.close();
 			}
-			documentwriter.close();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -200,10 +214,11 @@ public class Files2Facts extends IndustryStandards {
 	 */
 	public void generatePSLPredicates(String path) throws Exception {
 		int i = 1;
+		AML aml = new AML();
 		for (File file : files) {
 			// pass in the writers
-			if(!file.getName().equals("seed.ttl")){
-				createPSLPredicate(file, i++, ConfigManager.getStandard());
+			if (!file.getName().equals("seed.ttl")) {
+				createPSLPredicate(file, i++, ConfigManager.getStandard(), aml);
 			}
 		}
 	}

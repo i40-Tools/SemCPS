@@ -11,19 +11,30 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
  * 
  * @author Irlan Grangel
  *
- * Represents the AutomationML Standard as an RDF graph
+ *         Represents the AutomationML Standard as an RDF graph
  */
 public class AML extends IndustryStandards {
-	
-	
-	
+
 	public AML(Model model, int newNumber) {
 		super(model, newNumber);
 	}
 
+	public AML() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public void setModel(Model model) {
+		this.model = model;
+	}
+
+	public void setNumber(int newNumber) {
+		this.number = newNumber;
+	}
+
 	/**
 	 * Automation ML part for data population
-	 * @throws FileNotFoundException 
+	 * 
+	 * @throws FileNotFoundException
 	 */
 	public void addsDataforAML() throws FileNotFoundException {
 
@@ -36,10 +47,10 @@ public class AML extends IndustryStandards {
 			predicate = stmt.getPredicate();
 			object = stmt.getObject();
 
-			if(number == 3){
+			if (number == 3) {
 
-			}// all subjects are added according to ontology e.g aml
-			else{
+			} // all subjects are added according to ontology e.g aml
+			else {
 				addSubjectURI(subject, "", number, "hasDocument");
 			}
 
@@ -50,15 +61,13 @@ public class AML extends IndustryStandards {
 			hasAttributeValue();
 			hasIdentifier();
 			eClassCheck();
-
 		}
 
-		addGenericObject("hasExternalReference","refBaseClassPath" );
-		addGenericObject("hasInternalLink","hasRefPartnerSideB" );
-		addGenericObject("hasInternalLink","hasRefPartnerSideA" );
-		addGenericObject("hasRefSemantic","hasCorrespondingAttributePath");
+		addGenericObject("hasExternalReference", "refBaseClassPath");
+		addGenericObject("hasInternalLink", "hasRefPartnerSideB");
+		addGenericObject("hasInternalLink", "hasRefPartnerSideA");
+		addGenericObject("hasRefSemantic", "hasCorrespondingAttributePath");
 	}
-
 
 	private void eClassCheck() {
 		/***
@@ -67,7 +76,8 @@ public class AML extends IndustryStandards {
 		 */
 		if (object.isLiteral()) {
 			if (checkEclass(object)) {
-				StmtIterator stmts = model.listStatements(subject.asResource(), null,(RDFNode) null);
+				StmtIterator stmts = model.listStatements(subject.asResource(), null,
+						(RDFNode) null);
 				while (stmts.hasNext()) {
 					Statement stmte = stmts.nextStatement();
 
@@ -75,20 +85,20 @@ public class AML extends IndustryStandards {
 
 						if (object.asLiteral().getLexicalForm()
 								.equals("eClassClassificationClass")) {
-							addSubjectURI(subject,":remove" + 
-									stmte.getObject().asLiteral().getLexicalForm(),
+							addSubjectURI(subject,
+									":remove" + stmte.getObject().asLiteral().getLexicalForm(),
 									number, "hasEClassClassificationClass");
 						}
 
 						if (object.asLiteral().getLexicalForm().equals("eClassVersion")) {
-							addSubjectURI(subject, ":remove" + 
-									stmte.getObject().asLiteral().getLexicalForm(),
+							addSubjectURI(subject,
+									":remove" + stmte.getObject().asLiteral().getLexicalForm(),
 									number, "hasEclassVersion");
 						}
 
 						if (object.asLiteral().getLexicalForm().equals("eClassIRDI")) {
-							addSubjectURI(subject, ":remove" + 
-									stmte.getObject().asLiteral().getLexicalForm(),
+							addSubjectURI(subject,
+									":remove" + stmte.getObject().asLiteral().getLexicalForm(),
 									number, "hasEclassIRDI");
 						}
 
@@ -98,8 +108,6 @@ public class AML extends IndustryStandards {
 		}
 	}
 
-
-
 	private void hasIdentifier() {
 		// RefSemantic part starts here
 		if (predicate.asNode().getLocalName().equals("identifier")) {
@@ -108,8 +116,6 @@ public class AML extends IndustryStandards {
 					"has" + getType(subject) + "ID");
 		}
 	}
-
-
 
 	private void hasAttribute() {
 		if (predicate.asNode().getLocalName().equals("hasAttribute")) {
@@ -122,7 +128,7 @@ public class AML extends IndustryStandards {
 	private void hasAttributeValue() {
 		if (predicate.asNode().getLocalName().equals("hasAttributeValue")) {
 			if (!checkEclass(object)) {
-				addSubjectURI(subject, ":remove" +object.asLiteral().getLexicalForm(), number,
+				addSubjectURI(subject, ":remove" + object.asLiteral().getLexicalForm(), number,
 						predicate.asNode().getLocalName());
 			}
 		}
@@ -148,7 +154,7 @@ public class AML extends IndustryStandards {
 			addSubjectURI(subject, "", 1, "hasDocument");
 			addSubjectURI(subject, "", 2, "hasDocument");
 			addSubjectURI(object, "", 1, "hasDocument");
-			addSubjectURI(object, "", 2, "hasDocument");			
+			addSubjectURI(object, "", 2, "hasDocument");
 		}
 	}
 
@@ -157,8 +163,8 @@ public class AML extends IndustryStandards {
 			if (!checkEclass(object)) {
 				if (!getType(subject).equals("Attribute")) {
 					addSubjectURI(subject, ":remove" + object.asLiteral().getLexicalForm(), number,
-							"has" + getType(subject) + predicate.asNode().getLocalName()
-							.replace("has", ""));
+							"has" + getType(subject)
+									+ predicate.asNode().getLocalName().replace("has", ""));
 				} else {
 					addSubjectURI(subject, ":remove" + object.asLiteral().getLexicalForm(), number,
 							predicate.asNode().getLocalName());
@@ -167,17 +173,14 @@ public class AML extends IndustryStandards {
 		}
 	}
 
-	
-
-	
-
 	/**
-	 * checks if its elcass then ignore it because we only need values with object which 
-	 * can be unique.
+	 * checks if its elcass then ignore it because we only need values with
+	 * object which can be unique.
+	 * 
 	 * @param object
 	 * @return
 	 */
-	boolean checkEclass(RDFNode object){
+	boolean checkEclass(RDFNode object) {
 		if (object.asLiteral().getLexicalForm().equals("eClassClassificationClass")
 				|| object.asLiteral().getLexicalForm().equals("eClassVersion")
 				|| object.asLiteral().getLexicalForm().equals("eClassIRDI")) {
@@ -185,6 +188,5 @@ public class AML extends IndustryStandards {
 		}
 		return false;
 	}
-
 
 }

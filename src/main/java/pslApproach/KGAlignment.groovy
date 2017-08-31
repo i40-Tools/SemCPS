@@ -25,7 +25,6 @@ import edu.umd.cs.psl.ui.functions.textsimilarity.*
 import edu.umd.cs.psl.ui.loading.InserterUtils
 import edu.umd.cs.psl.util.database.Queries
 import main.SemCPSMain
-import util.ConfigManager
 
 /**
  * @author Omar Rana
@@ -64,7 +63,7 @@ public class DocumentAligment
 		defineSetPredicates()
 		defineFunctions()
 		defineRules()
-		defineOntoRules()
+		//defineOntoRules()
 		defineSetRules()
 		defineNotSimilarRules()
 		setUpData()
@@ -968,7 +967,6 @@ public class DocumentAligment
 		resultsFile.append("False Negative:" + stats.fn + '\n')
 		resultsFile.append("Precision :" + precision.round(2) + '\n')
 		resultsFile.append("Recall: " + recall.round(2) + '\n')
-		resultsFile.close()
 		resultsDB.close()
 		truthDB.close()
 	}
