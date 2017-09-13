@@ -75,9 +75,9 @@ public class Integration {
 	}
 
 	/**
-	 * Algorithm for integrating data for nodes with attributes
-	 * 
-	 * compareConflicts(skips compared one),compareNonConflicts,addNonConflicts
+	 * This function integrates data for nodes with Attributes. It compares
+	 * elements with similar.txt and skips those which are already there.
+	 * Conflicted Elements are added in to the final integration file.
 	 * 
 	 * @param seed
 	 * @param integration
@@ -88,10 +88,10 @@ public class Integration {
 		xml.getAllNodes(seed, integration);
 
 		// looping through the seedNode which will be compared to matching
-		// elements in output.txt
+		// elements in similar.txt
 		for (int i = 0; i < xml.getSeedNodes().size(); i++) {
 
-			// not in the conflicting Element of output.txt
+			// not in the conflicting Element of similar.txt
 			if (xml.compareConflicts(i, seed, integration) == 0) {
 
 				// we run our noConflicting comparision algorithm
@@ -112,7 +112,9 @@ public class Integration {
 	}
 
 	/**
-	 * Algorithm for data integration for nodes with values
+	 * This function integrates data for nodes with values. It compares elements
+	 * with similar.txt and skips those which are already there. Conflicted
+	 * Elements are added in to the final integration file.
 	 * 
 	 * compareConflicts(skips compared one),compareNonConflictsNodes with
 	 * value,addNonConflicts
@@ -127,10 +129,10 @@ public class Integration {
 		xml.setNodeValues(seed, integration);
 
 		// looping through the seedNode which will be compared to matching
-		// elements in output.txt
+		// elements in similar.txt
 		for (int i = 0; i < xml.getSeedNodes().size(); i++) {
 
-			// not in the conflicting Element of output.txt
+			// not in the conflicting Element of similar.txt
 			if (xml.compareConflicts(i, seed, integration) == 0) {
 
 				// we run our noConflicting comparision algorithm
