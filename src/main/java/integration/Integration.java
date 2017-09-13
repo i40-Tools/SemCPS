@@ -21,17 +21,17 @@ public class Integration {
 	public static int count = 0;
 	ArrayList<File> file;
 
-	/**
-	 * This method integrates two AML files.
-	 * 
-	 * @throws Throwable
-	 */
-
 	public Integration() {
 
 		xml = new XMLParser();
 
 	}
+
+	/**
+	 * This method integrates two AML files.
+	 * 
+	 * @throws Throwable
+	 */
 
 	public void integrate() throws Throwable {
 
