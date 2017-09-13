@@ -15,8 +15,10 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 /**
- * @author omar This Class provides XSD schema Validation against generated
- *         AutomationML(ML) files
+ * This Class provides XSD schema Validation against generated AutomationML(ML)
+ * files
+ * 
+ * @author omar
  */
 public class XSDValidator {
 

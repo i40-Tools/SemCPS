@@ -11,8 +11,9 @@ import main.Files2Facts;
 import util.ConfigManager;
 
 /**
+ * Integrates Two AutomationML(ML) files based on PSL Rules.
  * 
- * Integrates Two AML files based on PSL Rules.
+ * @author omar
  */
 public class Integration {
 

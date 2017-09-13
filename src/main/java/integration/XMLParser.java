@@ -32,8 +32,10 @@ import main.Similar;
 import util.ConfigManager;
 
 /**
+ * This class is used for parsing XML files and reading its data.
+ * 
  * @author omar
- *
+ * 
  */
 public class XMLParser {
 
