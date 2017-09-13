@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
@@ -26,15 +27,16 @@ import util.ConfigManager;
 public class Similar extends Files2Facts {
 
 	private ArrayList<String> duplicateCheck;
+	public static ArrayList<String> amlValues = new ArrayList<String>();
 
 	public Similar() {
 
 	}
 
 	/**
-	 * This function converts computed result into a binary format 1,0.
-	 * 1 represent true and 0 represents false.
-	 * This conversion is required for calculation Precision and Recall.
+	 * This function converts computed result into a binary format 1,0. 1
+	 * represent true and 0 represents false. This conversion is required for
+	 * calculation Precision and Recall.
 	 * 
 	 * @throws FileNotFoundException
 	 * 
@@ -155,13 +157,23 @@ public class Similar extends Files2Facts {
 
 		similar.close();
 
+		// Stores aml values in single array
+		// required for integration.
+		for (int i = 0; i < aml1Values.size(); i++) {
+			amlValues.add(aml1Values.get(i).replaceAll("aml1:", ""));
+			amlValues.add(aml2Values.get(i).replaceAll("aml2:", ""));
+		}
+		// removes duplicate
+		amlValues = new ArrayList<String>(new HashSet<String>(amlValues));
+
 		if (ConfigManager.getNegativeRules().equals("false"))
 			emulateNegativeResults();
 	}
 
 	/**
 	 * This function emulates negatives rules results and updated the original
-	 * file. Negative Rules are emulated by take Cartesian product of initial seed.
+	 * file. Negative Rules are emulated by take Cartesian product of initial
+	 * seed.
 	 */
 	public void emulateNegativeResults() {
 		try {

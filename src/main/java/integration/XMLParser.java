@@ -28,11 +28,12 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import main.Similar;
 import util.ConfigManager;
 
 /**
  * @author omar
- * TODO to write comments
+ *
  */
 public class XMLParser {
 
@@ -76,7 +77,8 @@ public class XMLParser {
 
 		Document seed = null;
 		try {
-			seed = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(inputFile));
+			seed = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+					.parse(new InputSource(inputFile));
 		} catch (SAXException | IOException | ParserConfigurationException e) {
 			System.out.println("Error File not Found " + inputFile);
 			System.out.println("Please check configuration file");
@@ -98,7 +100,8 @@ public class XMLParser {
 		try {
 			NodeList nodes = (NodeList) xpath.evaluate("//*/@*", seed, XPathConstants.NODESET);
 
-			NodeList nodes2 = (NodeList) xpath.evaluate("//*/@*", integration, XPathConstants.NODESET);
+			NodeList nodes2 = (NodeList) xpath.evaluate("//*/@*", integration,
+					XPathConstants.NODESET);
 
 			// stores all the attributes results in arrayList
 			setNodes(nodes, 1);
@@ -129,6 +132,147 @@ public class XMLParser {
 	}
 
 	/**
+	 * This function loops through the seedNode which will be compared to
+	 * matching elements in similar.txt
+	 * 
+	 * @param i
+	 * @return
+	 * @throws DOMException
+	 * @throws XPathExpressionException
+	 * @throws IOException
+	 */
+	int compareConflicts(int i, Document seed, Document integration)
+			throws XPathExpressionException, DOMException, IOException {
+		// flag to check if the attribute value is inside matching
+		int flag = 0;
+		// loops through all its element.
+		if (Similar.amlValues != null) {
+			for (int k = 0; k < Similar.amlValues.size(); k++) {
+				// we find its parent node so we can append it under it.
+				if (flag == 1) {
+					break;
+				}
+
+				if (seedNodes.get(i).getNodeName()
+						.equals(Similar.amlValues.get(k).replaceAll("", ""))) {
+					// flag = 1;
+
+				} else if (seedNodes.get(i).getTextContent()
+						.equals(Similar.amlValues.get(k).replaceAll("'", ""))) {
+					// if match is found
+
+					flag = 1;
+
+				}
+
+				else {
+
+					NodeList list = getAttributeNode(seedNodes.get(i).getTextContent(), seed);
+					if (list.getLength() == 0) {
+						list = getAttributeNode(seedNodes.get(i).getTextContent(), integration);
+
+					}
+
+					NodeList list2 = getAttributeNode(Similar.amlValues.get(k).replaceAll("'", ""),
+							seed);
+					NodeList list3 = getAttributeNode(Similar.amlValues.get(k).replaceAll("'", ""),
+							integration);
+
+					if (checkParent2(seedNodes.get(i), list2.item(0))) {
+
+						flag = 1;
+
+					}
+
+					if (checkParent(seedNodes.get(i), list3.item(0))) {
+						if (list.item(0) != null) {
+							NamedNodeMap list4 = list.item(0).getAttributes();
+							for (int j = 0; j < list4.getLength(); j++) {
+								final Attr attribute = (Attr) list4.item(j);
+								@SuppressWarnings("unused")
+								final String name = attribute.getName();
+								final String value = attribute.getValue();
+								@SuppressWarnings("resource")
+								BufferedReader br = new BufferedReader(new FileReader(
+										ConfigManager.getFilePath() + "PSL/test/similar.txt"));
+								String line = br.readLine();
+
+								while (line != null) {
+									if (line.contains(value) && !line.contains("\t" + "0")) {
+
+										flag = 1;
+
+										break;
+
+									}
+									line = br.readLine();
+								}
+							}
+						}
+					}
+
+					// checks for concatinated string and ignores nested element
+					// if parent elements are matched by refsemantc
+					for (int m = 0; m < list.getLength(); m++) {
+						// matches the parent in the integration document.
+						if (flag == 1) {
+							break;
+						}
+
+						if (list.item(0).getParentNode() != null && list2.item(0) != null
+								&& list3.item(0) != null && list.item(0) != null) {
+
+							if (list.item(0).isEqualNode(list2.item(0))
+									|| list.item(0).isEqualNode(list3.item(0))) {
+
+								flag = 1;
+
+							}
+
+							if (list.item(0).getParentNode().isEqualNode(list2.item(0))
+									|| list.item(0).getParentNode().isEqualNode(list3.item(0))) {
+
+								// flag = 1;
+
+								@SuppressWarnings("resource")
+								BufferedReader br = new BufferedReader(new FileReader(
+										ConfigManager.getFilePath() + "PSL/test/similar.txt"));
+								String line = br.readLine();
+
+								// matches if node parent is in output.txt
+								// according to refsemantic
+								while (line != null) {
+									if (line.contains("concatString('"
+											+ Similar.amlValues.get(k).replaceAll("'", ""))
+											&& !line.contains("\t" + "0")) {
+
+										flag = 1;
+										break;
+
+									}
+									line = br.readLine();
+								}
+							}
+
+						}
+					}
+				}
+
+				// ignore FileName attribute
+				if (seedNodes.get(i).getNodeName().equals("FileName")) {
+
+					// not in output.txt
+					flag = 1;
+				}
+
+			}
+
+		}
+
+		return flag;
+	}
+
+	/**
 	 * We are interested if its not in output.txt . We need to add non matching
 	 * elements to the integration file. All matching elements were already
 	 * included when we copied one of the seed files.
@@ -146,7 +290,8 @@ public class XMLParser {
 		for (int j = 0; j < integrationNodes.size(); j++) {
 
 			// compares the attribute Node with its values
-			if (seedNodes.get(i).getTextContent().equals(integrationNodes.get(j).getTextContent())) {
+			if (seedNodes.get(i).getTextContent()
+					.equals(integrationNodes.get(j).getTextContent())) {
 
 				// compares the attribute Node with Node name
 				if (seedNodes.get(i).getNodeName().equals(integrationNodes.get(j).getNodeName())) {
@@ -217,7 +362,8 @@ public class XMLParser {
 	 * @throws XPathExpressionException
 	 * @throws DOMException
 	 */
-	void addNonConflicts(int i, Document seed, Document integration) throws XPathExpressionException, DOMException {
+	void addNonConflicts(int i, Document seed, Document integration)
+			throws XPathExpressionException, DOMException {
 		// we get the Node of the attribute Value which is not
 		// found. i represent that node.
 		NodeList list = getAttributeNode(seedNodes.get(i).getTextContent(), seed);
@@ -228,11 +374,13 @@ public class XMLParser {
 			// matches the parent in the integration document.
 
 			if (!list.item(m).getParentNode().getNodeName().equals("#document")) {
-				Object result = xpath.evaluate("//*[@*=\"" + seedNodes.get(i).getTextContent() + "\"]",
-						integration, XPathConstants.NODESET);
+				Object result = (Object) xpath.evaluate(
+						"//*[@*=\"" + seedNodes.get(i).getTextContent() + "\"]", integration,
+						XPathConstants.NODESET);
 				NodeList nodeList = (NodeList) result;
-				NodeList integ = (NodeList) xpath.evaluate("//" + list.item(m).getParentNode().getNodeName(),
-						integration, XPathConstants.NODESET);
+				NodeList integ = (NodeList) xpath.evaluate(
+						"//" + list.item(m).getParentNode().getNodeName(), integration,
+						XPathConstants.NODESET);
 				// now we have the parent name and the nodes to be
 				// added.we export it to integration.aml file.
 				int index = 0;
@@ -245,8 +393,8 @@ public class XMLParser {
 						NamedNodeMap integ_elem = integ.item(z).getAttributes();
 
 						// needs testng
-						if (orig_elem.getLength() == integ_elem.getLength()
-								&& orig_elem.item(0).getTextContent().equals(integ_elem.item(0).getTextContent()))
+						if (orig_elem.getLength() == integ_elem.getLength() && orig_elem.item(0)
+								.getTextContent().equals(integ_elem.item(0).getTextContent()))
 
 						{
 
@@ -287,8 +435,8 @@ public class XMLParser {
 		// we find its parent node so we can append it under it.
 
 		// matches the parent in the integration document.
-		NodeList integ = (NodeList) xpath.evaluate("//" + node.getParentNode().getNodeName(), integration,
-				XPathConstants.NODESET);
+		NodeList integ = (NodeList) xpath.evaluate("//" + node.getParentNode().getNodeName(),
+				integration, XPathConstants.NODESET);
 		// now we have the parent name and the nodes to be
 		// added.we export it to integration.aml file.
 
@@ -346,6 +494,7 @@ public class XMLParser {
 			}
 
 		} catch (XPathExpressionException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return false;
@@ -366,7 +515,7 @@ public class XMLParser {
 
 		Object result;
 
-		result = xpath.evaluate("//*[@*=\"" + value + "\"]", seed, XPathConstants.NODESET);
+		result = (Object) xpath.evaluate("//*[@*=\"" + value + "\"]", seed, XPathConstants.NODESET);
 		NodeList nodeList = (NodeList) result;
 
 		if (nodeList.getLength() != 0) {
@@ -394,7 +543,8 @@ public class XMLParser {
 			while (seed.getParentNode() != null && integration.getParentNode() != null) {
 
 				// compares parents name
-				if (seed.getParentNode().getNodeName().equals(integration.getParentNode().getNodeName())) {
+				if (seed.getParentNode().getNodeName()
+						.equals(integration.getParentNode().getNodeName())) {
 
 					// if equal puts next parent
 					seed = seed.getParentNode();
@@ -437,16 +587,17 @@ public class XMLParser {
 		return false;
 	}
 
-	void finalizeIntegration(Document integration, String file) throws TransformerFactoryConfigurationError, Throwable {
+	void finalizeIntegration(Document integration, String file)
+			throws TransformerFactoryConfigurationError, Throwable {
 		// finally we update our integration.aml file.
 		Transformer xformer = TransformerFactory.newInstance().newTransformer();
 
 		if (file.endsWith(".aml")) {
-			xformer.transform(new DOMSource(integration),
-					new StreamResult(new File(ConfigManager.getFilePath() + "integration/integration.aml")));
+			xformer.transform(new DOMSource(integration), new StreamResult(
+					new File(ConfigManager.getFilePath() + "integration/integration.aml")));
 		} else {
-			xformer.transform(new DOMSource(integration),
-					new StreamResult(new File(ConfigManager.getFilePath() + "integration/integration.opcua")));
+			xformer.transform(new DOMSource(integration), new StreamResult(
+					new File(ConfigManager.getFilePath() + "integration/integration.opcua")));
 		}
 
 	}
@@ -459,10 +610,12 @@ public class XMLParser {
 	 * @param integration
 	 * @throws XPathExpressionException
 	 */
+
 	void setNodeValues(Document seed, Document integration) throws XPathExpressionException {
 		seedNodes = new ArrayList<Node>();
 
-		NodeList integrationElements = (NodeList) xpath.evaluate("//text()", seed, XPathConstants.NODESET);
+		NodeList integrationElements = (NodeList) xpath.evaluate("//text()", seed,
+				XPathConstants.NODESET);
 		for (int z = 0; z < integrationElements.getLength(); z++) {
 
 			if (!integrationElements.item(z).getNodeValue().toString().trim().equals("")) {
@@ -481,6 +634,7 @@ public class XMLParser {
 	 * @param doc
 	 * @return
 	 */
+
 	public static ArrayList<Node> getAllNodes(Document doc) {
 
 		ArrayList<Node> node = new ArrayList<Node>();
