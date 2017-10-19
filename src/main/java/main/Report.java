@@ -3,6 +3,7 @@ package main;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 
@@ -23,10 +24,11 @@ public class Report {
 	 * @throws Exception
 	 */
 	static void getReport(String root) throws Exception {
-		int k = 5;
-		while (k <= 5) {
-			int i = 6;
-			while (i <= 10) {
+		int k = 7;
+		while (k <= 7) {
+			int i = 1;
+			while (i <= 1) {
+				long startTime = System.currentTimeMillis();
 				if (k == 1) {
 					System.out.println(root + "M1/M1.1//Testbeds-" + i);
 					ConfigManager.filePath = root + "M1/M1.1//Testbeds-" + i + "/Generated/";
@@ -44,6 +46,14 @@ public class Report {
 					main.generatePSLDataModel();
 					main.executePSLAproach();
 				}
+				long endTime   = System.currentTimeMillis();
+				long totalTime = endTime - startTime;
+				
+				
+				FileWriter fw = new FileWriter(ConfigManager.getFilePath()+"PSL/test/Precision/F1NoTraining.txt",true);
+				fw.write("Time:" + totalTime);//appends the string to the file
+			    fw.close();
+				
 				i++;
 			}
 			k++;
@@ -87,19 +97,21 @@ public class Report {
 	 * @param root
 	 * @throws IOException
 	 */
-	static void getResults(String root) throws IOException {
-		int k = 1;
-		while (k <= 1) {
+	static void getResults() throws IOException {
+		int k = 7;
+		while (k <= 7) {
 			int j = 1;
 			String line;
 			String precision = "";
 			String recall = "";
 			String fmeasure = "";
+			String time = "";
+
 
 			while (j <= 10) {
 				BufferedReader br = new BufferedReader(new FileReader(
-						new File(ConfigManager.getExperimentFolder() + "M" + k + "/Testbeds-"
-								+ "/Generated/PSL//test/Precision/F1NoTraining.txt")));
+						new File(ConfigManager.getExperimentFolder() + "M" + k + "/Testbeds-"+j
+								+ "/Generated/PSL/test/Precision/F1NoTraining.txt")));
 
 				while ((line = br.readLine()) != null) {
 					if (line.contains("Precision :")) {
@@ -111,14 +123,20 @@ public class Report {
 					if (line.contains("Fmeasure:")) {
 						fmeasure += line.replace("Fmeasure:", "") + "\n";
 					}
+					
+					if (line.contains("Time:")) {
+						time += line.replace("Time:", "") + "\n";
+					}
 				}
 
 				j++;
 			}
 
 			System.out.print(precision);
-			System.out.print(recall);
-			System.out.print(fmeasure);
+//			System.out.print(recall);
+//			System.out.print(fmeasure);
+//			System.out.print(time);
+
 			k++;
 		}
 	}

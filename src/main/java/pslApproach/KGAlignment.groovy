@@ -784,7 +784,7 @@ public class DocumentAligment
 				Iterator<GroundAtom> iga = igk.next().getAtoms().iterator();
 				while (iga.hasNext()) { //gets predicate
 					GroundAtom gatom = iga.next();
-					if(gatom.getValue() > 0.7){
+					if(gatom.getValue() > 0.5){
 						matchResult.append(gatom.getRegisteredGroundKernels() + "\t"
 								    + gatom.getValue() + "\n \n")
 					}
@@ -908,17 +908,19 @@ public class DocumentAligment
 		targetsPartition = new Partition(5)
 		truthPartition = new Partition(6)
 
+		File file = new File(util.ConfigManager.getFilePath()+"GoldStandard.txt");
+		if (!file.exists()) {
+			System.out.println("Error :: GoldStandard Missing in" + testDir + "model");
+			System.exit(0);
+		}
+
+		
 		def insert = data.getInserter(eval, targetsPartition)
 		InserterUtils.loadDelimitedDataTruth(insert, testDir + "similar.txt")
-		//	InserterUtils.loadDelimitedDataTruth(insert, testDir + "GoldStandard.txt")
 
 		insert  =  data.getInserter(eval, truthPartition)
 
-		//def goldStandardFile = new File(testDir + "GoldStandard.txt")
-		//assert goldStandardFile.exists() : "file not found"
-
-		//InserterUtils.loadDelimitedDataTruth(insert, testDir + "similar.txt")
-		InserterUtils.loadDelimitedDataTruth(insert, testDir + "GoldStandard.txt")
+		InserterUtils.loadDelimitedDataTruth(insert, util.ConfigManager.getFilePath() + "GoldStandard.txt")
 
 		Database resultsDB = data.getDatabase(targetsPartition, [eval] as Set)
 		Database truthDB = data.getDatabase(truthPartition, [eval] as Set)

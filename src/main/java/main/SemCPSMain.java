@@ -31,11 +31,13 @@ public class SemCPSMain {
 	public static void main(String[] args) throws Throwable {
 
 		// Report.getReport(ConfigManager.getExperimentFolder());
+		// Report.getResults();
+		// System.exit(0);
 		SemCPSMain main = new SemCPSMain();
 		main.readConvertStandardFiles();
 		main.generatePSLDataModel();
 		main.executePSLAproach();
-		main.integrate();
+		// main.integrate();
 
 		// main.executePSLAproach();
 		// main.integrate();
@@ -78,25 +80,28 @@ public class SemCPSMain {
 
 	/**
 	 * This function integrates two AML files based on PSL rules.
+	 * 
 	 * @throws Throwable
 	 */
-	
-	public void integrate() throws Throwable{
-		Integration integrate=new Integration();
+
+	public void integrate() throws Throwable {
+		Integration integrate = new Integration();
 		integrate.integrate();
 		// checks valdity and repairs the aml file.
 		File file = new File(ConfigManager.getFilePath() + "integration/integration.aml");
 		if (file.exists()) {
-			if (!new XSDValidator(ConfigManager.getFilePath() + "integration/integration.aml").schemaValidate()) {
+			if (!new XSDValidator(ConfigManager.getFilePath() + "integration/integration.aml")
+					.schemaValidate()) {
 				System.out.println("Repairing Structure");
-				ModelRepair.testRoundTrip(ConfigManager.getFilePath() + "integration/integration.aml");
+				ModelRepair
+						.testRoundTrip(ConfigManager.getFilePath() + "integration/integration.aml");
 				System.out.println("Schema Validated");
 
 			}
 		}
 
 	}
-	
+
 	/**
 	 * This function is a general method to execute the PSL-based approach.
 	 * 
