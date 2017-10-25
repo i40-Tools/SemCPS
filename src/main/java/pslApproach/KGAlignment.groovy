@@ -147,7 +147,9 @@ public class DocumentAligment
 		model.add predicate: "hasInstanceHierarchyAttributeName"     , types: [ArgumentType.UniqueID, ArgumentType.String]
 
 		model.add predicate: "hasInterfaceClassAttributeName"     , types: [ArgumentType.UniqueID, ArgumentType.String]
-
+		
+		model.add predicate: "hasInterfaceClassLibAttributeName"     , types: [ArgumentType.UniqueID, ArgumentType.String]
+		
 		model.add predicate: "hasInternalElementAttributeName"     , types: [ArgumentType.UniqueID, ArgumentType.String]
 
 		model.add predicate: "hasSystemUnitClassAttributeName"     , types: [ArgumentType.UniqueID, ArgumentType.String]
@@ -213,6 +215,10 @@ public class DocumentAligment
 		model.add rule : (hasInterfaceClassAttributeName(A,Z) & hasInterfaceClassAttributeName(B,W) & similarValue(Z,W) &
 		hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 4
 
+    	// Two InterfaceClass are the same if they have the same name
+	    model.add rule : (hasInterfaceClassLibAttributeName(R,T) & hasInterfaceClassLibAttributeName(Z,U) & similarValue(T,U) &
+	    hasDocument(R,O1) & hasDocument(Z,O2) & (O1-O2)) >> similar(R,Z) , weight : 4
+
 		// Two InstanceHierarichy  are the same if they have the same name
 		model.add rule : (hasInstanceHierarchyAttributeName(A,Z) & hasInstanceHierarchyAttributeName(B,W) & similarValue(Z,W) &
 		hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 4
@@ -235,8 +241,8 @@ public class DocumentAligment
 		hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 4
 
 		// Two SystemUnitClassLib are the same if they have the same name
-		model.add rule : (hasSystemUnitClassLibAttributeName(A,Z) & hasSystemUnitClassLibAttributeName(B,W) & similarValue(Z,W) &
-		hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 4
+		model.add rule : (hasSystemUnitClassLibAttributeName(M,P) & hasSystemUnitClassLibAttributeName(D,N) & similarValue(P,N) &
+		hasDocument(M,O1) & hasDocument(D,O2) & (O1-O2)) >> similar(M,D) , weight : 4
 
 		// Two SystemUnitClass are the same if they have the same name
 		model.add rule : (hasSystemUnitClassAttributeName(A,Z) & hasSystemUnitClassAttributeName(B,W) & similarValue(Z,W) &
@@ -256,12 +262,12 @@ public class DocumentAligment
 		& similarValue(Z,W) &hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
 		weight : 10
 
-
 		// Two AMl InstanceHierarchy are the same if they share the same ID
 		model.add rule : (hasInstanceHierarchyID(A,Z) & hasInstanceHierarchyID(B,W)
 		& similarValue(Z,W) &hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
 		weight : 10
-
+		
+		
 		// Two Roles Class are same if its eclass,IRDI and classification class are the same
 		model.add rule :( hasRoleClass(A1,B1) & hasRoleClass(A2,B2)& hasEClassIRDI(B1,Z)
 		& hasEClassIRDI(B2,W) & similarValue(Z,W) & hasRoleClass(A1,C1) & hasRoleClass(A2,D2)
@@ -517,7 +523,8 @@ public class DocumentAligment
 				hasRoleClassLibAttributeName,
 				hasSystemUnitClassLibAttributeName,
 				hasExternalInterfaceID,
-				hasInternalLinkAttributeName
+				hasInternalLinkAttributeName,
+				hasInterfaceClassLibAttributeName
 			]
 			){
 				createFiles(trainDir + p.getName().toLowerCase() + ".txt")
@@ -560,7 +567,8 @@ public class DocumentAligment
 				hasRoleClassLibAttributeName,
 				hasSystemUnitClassLibAttributeName,
 				hasExternalInterfaceID,
-				hasInternalLinkAttributeName
+				hasInternalLinkAttributeName,
+				hasInterfaceClassLibAttributeName
 			]
 			as Set, trainObservations)
 
@@ -614,7 +622,8 @@ public class DocumentAligment
 			hasRoleClassLibAttributeName,
 			hasSystemUnitClassLibAttributeName,
 			hasExternalInterfaceID,
-			hasInternalLinkAttributeName
+			hasInternalLinkAttributeName,
+			hasInterfaceClassLibAttributeName
 
 		])
 		{
@@ -656,7 +665,8 @@ public class DocumentAligment
 			hasRoleClassLibAttributeName,
 			hasSystemUnitClassLibAttributeName,
 			hasExternalInterfaceID,
-			hasInternalLinkAttributeName
+			hasInternalLinkAttributeName,
+			hasInterfaceClassLibAttributeName
 		])
 		{
 
@@ -698,7 +708,8 @@ public class DocumentAligment
 			hasRoleClassLibAttributeName,
 			hasSystemUnitClassLibAttributeName,
 			hasExternalInterfaceID,
-			hasInternalLinkAttributeName
+			hasInternalLinkAttributeName,
+			hasInterfaceClassLibAttributeName
 
 		] as Set, testObservations)
 
@@ -784,7 +795,7 @@ public class DocumentAligment
 				Iterator<GroundAtom> iga = igk.next().getAtoms().iterator();
 				while (iga.hasNext()) { //gets predicate
 					GroundAtom gatom = iga.next();
-					if(gatom.getValue() > 0.5){
+					if(gatom.getValue() > 1.0){
 						matchResult.append(gatom.getRegisteredGroundKernels() + "\t"
 								    + gatom.getValue() + "\n \n")
 					}

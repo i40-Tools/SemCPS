@@ -24,10 +24,10 @@ public class Report {
 	 * @throws Exception
 	 */
 	static void getReport(String root) throws Exception {
-		int k = 7;
-		while (k <= 7) {
+		int k = 2;
+		while (k <= 2) {
 			int i = 1;
-			while (i <= 1) {
+			while (i <= 3) {
 				long startTime = System.currentTimeMillis();
 				if (k == 1) {
 					System.out.println(root + "M1/M1.1//Testbeds-" + i);
@@ -98,7 +98,7 @@ public class Report {
 	 * @throws IOException
 	 */
 	static void getResults() throws IOException {
-		int k = 7;
+		int k = 2;
 		while (k <= 7) {
 			int j = 1;
 			String line;
@@ -132,7 +132,7 @@ public class Report {
 				j++;
 			}
 
-			System.out.print(precision);
+//			System.out.print(precision);
 //			System.out.print(recall);
 //			System.out.print(fmeasure);
 //			System.out.print(time);
