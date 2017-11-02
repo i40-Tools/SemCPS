@@ -193,89 +193,89 @@ public class DocumentAligment
 	public void defineRules()
 	{
 
-		// Two AML CAEX files are the same if they have the same path
+		// Rule:1  Two AML CAEX files are the same if they have the same path
 		model.add rule : (hasCAEXFile(A,X) & hasCAEXFile(B,Y) & hasExternalReference(X,Z)
 		& hasExternalReference(Y,W) & similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) &
 		(O1-O2)) >> similar(X,Y) , weight : 8
 
-		// Two AML hasAttributes are the same if their RefSemantic are the same
+		// Rule:2 Two AML hasAttributes are the same if their RefSemantic are the same
 		model.add rule : (hasAttribute(A,X) & hasAttribute(B,Y) & hasRefSemantic(X,Z)
 		& hasRefSemantic(Y,W) & similarValue(Z,W) & hasDocument(A,O1) & hasDocument(B,O2) &
 		(O1-O2)) >> similar(A,B) , weight : 10
 
-		// Two AMl hasAttributes are the same if they share the same ID
+		// Rule:3 Two AMl hasAttributes are the same if they share the same ID
 		model.add rule : (hasAttributeID(A,Z) & hasAttributeID(B,W) & similarValue(Z,W)
 		& hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B), weight : 10
 
-		// Two AML Attributes are the same if they have the same name
+		// Rule:4 Two AML Attributes are the same if they have the same name
 		model.add rule : (hasAttributeName(A,Z) & hasAttributeName(B,W) & similarValue(Z,W) &
 		hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B), weight : 1
 
-		// Two InterfaceClass are the same if they have the same name
+		// Rule:5 Two InterfaceClass are the same if they have the same name
 		model.add rule : (hasInterfaceClassAttributeName(A,Z) & hasInterfaceClassAttributeName(B,W) & similarValue(Z,W) &
 		hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 4
 
-    	// Two InterfaceClass are the same if they have the same name
-	    model.add rule : (hasInterfaceClassLibAttributeName(R,T) & hasInterfaceClassLibAttributeName(Z,U) & similarValue(T,U) &
-	    hasDocument(R,O1) & hasDocument(Z,O2) & (O1-O2)) >> similar(R,Z) , weight : 4
+    	        // Rule:6 Two InterfaceClassLib are the same if they have the same name
+	        model.add rule : (hasInterfaceClassLibAttributeName(R,T) & hasInterfaceClassLibAttributeName(Z,U) & similarValue(T,U) &
+	        hasDocument(R,O1) & hasDocument(Z,O2) & (O1-O2)) >> similar(R,Z) , weight : 4
 
-		// Two InstanceHierarichy  are the same if they have the same name
+		// Rule:7 Two InstanceHierarichy  are the same if they have the same name
 		model.add rule : (hasInstanceHierarchyAttributeName(A,Z) & hasInstanceHierarchyAttributeName(B,W) & similarValue(Z,W) &
 		hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 4
 
-		// Two InternalLink are the same if they have the same name
+		// Rule:8 Two InternalLink are the same if they have the same name
 		model.add rule : (hasInternalLinkAttributeName(A,Z) & hasInternalLinkAttributeName(B,W) & similarValue(Z,W) &
 		hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 4
 
-		// Two InternalElement are the same if they have the same name
+		// Rule:9 Two InternalElement are the same if they have the same name
 		model.add rule : (hasInternalElementAttributeName(A,Z) & hasInternalElementAttributeName(B,W) & similarValue(Z,W) &
 		hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 1
 
 
-		// Two RoleClassLib are the same if they have the same name
+		// Rule:10 Two RoleClassLib are the same if they have the same name
 		model.add rule : (hasRoleClassLibAttributeName(A,Z) & hasRoleClassLibAttributeName(B,W) & similarValue(Z,W) &
 		hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 4
 
-		// Two RoleClass are the same if they have the same name
+		// Rule:11 Two RoleClass are the same if they have the same name
 		model.add rule : (hasRoleClassAttributeName(A,Z) & hasRoleClassAttributeName(B,W) & similarValue(Z,W) &
 		hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 4
 
-		// Two SystemUnitClassLib are the same if they have the same name
+		// Rule:12 Two SystemUnitClassLib are the same if they have the same name
 		model.add rule : (hasSystemUnitClassLibAttributeName(M,P) & hasSystemUnitClassLibAttributeName(D,N) & similarValue(P,N) &
 		hasDocument(M,O1) & hasDocument(D,O2) & (O1-O2)) >> similar(M,D) , weight : 4
 
-		// Two SystemUnitClass are the same if they have the same name
+		// Rule:13 Two SystemUnitClass are the same if they have the same name
 		model.add rule : (hasSystemUnitClassAttributeName(A,Z) & hasSystemUnitClassAttributeName(B,W) & similarValue(Z,W) &
 		hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 4
 
-		// Two AML Attributes are the same if they have the same values
+		// Rule:14 Two AML Attributes are the same if they have the same values
 		model.add rule : (hasAttributeValue(A,Z) & hasAttributeValue(B,W) & similarValue(Z,W) &
 		hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) , weight : 1
 
-		// Two AMl InternalElement are the same if they share the same ID
+		// Rule:15 Two AMl InternalElement are the same if they share the same ID
 		model.add rule : (hasInternalElementID(A,Z) & hasInternalElementID(B,W)
 		& similarValue(Z,W) &hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
 		weight : 10
 
-		// Two AMl ExternalElement are the same if they share the same ID
+		// Rule:16 Two AMl ExternalElement are the same if they share the same ID
 		model.add rule : (hasExternalInterfaceID(A,Z) & hasExternalInterfaceID(B,W)
 		& similarValue(Z,W) &hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
 		weight : 10
 
-		// Two AMl InstanceHierarchy are the same if they share the same ID
+		// Rule:17 Two AMl InstanceHierarchy are the same if they share the same ID
 		model.add rule : (hasInstanceHierarchyID(A,Z) & hasInstanceHierarchyID(B,W)
 		& similarValue(Z,W) &hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
 		weight : 10
 		
 		
-		// Two Roles Class are same if its eclass,IRDI and classification class are the same
+		// Rule:18 Two Roles Class are same if its eclass,IRDI and classification class are the same
 		model.add rule :( hasRoleClass(A1,B1) & hasRoleClass(A2,B2)& hasEClassIRDI(B1,Z)
 		& hasEClassIRDI(B2,W) & similarValue(Z,W) & hasRoleClass(A1,C1) & hasRoleClass(A2,D2)
 		&hasEClassVersion(C1,M) & hasEClassVersion(D2,N) & similarValue(M,N)& hasRoleClass(A1,E1) &
 		hasRoleClass(A2,F2) & hasEClassVersion(E1,O) &hasEClassVersion(F2,L) & similarValue(O,L)
 		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 10
 
-		// Two Interface Class are same if its eclass,IRDI and classification class are the same
+		// Rule:19 Two Interface Class are same if its eclass,IRDI and classification class are the same
 		model.add rule :( hasInterfaceClass(A1,B1) & hasInterfaceClass(A2,B2)& hasEClassIRDI(B1,Z)
 		& hasEClassIRDI(B2,W) & similarValue(Z,W)& hasInterfaceClass(A1,C1)
 		& hasInterfaceClass(A2,D2)  & hasEClassVersion(C1,M) & hasEClassVersion(D2,N)
@@ -283,7 +283,7 @@ public class DocumentAligment
 		& hasEClassVersion(E1,O) & hasEClassVersion(F2,L) & similarValue(O,L)
 		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 10
 
-		// Two SystemUnit Class are same if its eclass,IRDI and classification class are the same
+		// Rule:20 Two SystemUnit Class are same if its eclass,IRDI and classification class are the same
 		model.add rule :( hasSystemUnitClass(A1,B1) & hasSystemUnitClass(A2,B2) & hasEClassIRDI(B1,Z)
 		& hasEClassIRDI(B2,W) & similarValue(Z,W) & hasSystemUnitClass(A1,C1)
 		& hasSystemUnitClass(A2,D2) & hasEClassVersion(C1,M) & hasEClassVersion(D2,N)
@@ -291,7 +291,7 @@ public class DocumentAligment
 		& hasEClassVersion(E1,O) & hasEClassVersion(F2,L) & similarValue(O,L)
 		& hasDocument(A1,O1) & hasDocument(A2,O2) & (O1-O2)) >> similar(A1,A2) , weight : 10
 
-		// Internal Elements Set is same if it has same InternalLink
+		// Rule:21 1Internal Elements Set is same if it has same InternalLink
 		model.add rule : (hasInternalElement(A,Z) & hasInternalElement(B,W)
 		& hasInternalLink(Z,C) & hasInternalElementID(B,D)  & similarValue(C,D)
 		& hasDocument(A,O1) & hasDocument(B,O2) & (O1-O2)) >> similar(A,B) ,
