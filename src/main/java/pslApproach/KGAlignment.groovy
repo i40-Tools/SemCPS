@@ -70,9 +70,8 @@ public class DocumentAligment
 		defineOntoRules()
 		defineSetRules()
 		if (util.ConfigManager.getNegativeRules().equals("true")){
-			defineNotSimilarRules()
+		defineNotSimilarRules()
 		}
-		
 		threshold = util.ConfigManager.getThreshold()
 		setUpData()
 		runInference()

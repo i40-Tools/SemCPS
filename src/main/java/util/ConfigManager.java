@@ -209,7 +209,7 @@ public class ConfigManager {
 	 */
 	public static String getThreshold() {
 		String threshold = loadConfig().getProperty(SEMI_NAMESPACE + "threshold");
-		if(threshold == null) return "0.5"; //default 
+		if(threshold == null) return "0.8"; //default 
 		return threshold;
 	}
 	
