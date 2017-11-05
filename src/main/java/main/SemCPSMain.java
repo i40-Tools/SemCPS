@@ -31,8 +31,8 @@ public class SemCPSMain {
 	public static void main(String[] args) throws Throwable {
 
 		//Report.getReport(ConfigManager.getExperimentFolder());
-		 Report.getResults();
-		 System.exit(0);
+		// Report.getResults();
+		//System.exit(0);
 		SemCPSMain main = new SemCPSMain();
 		main.readConvertStandardFiles();
 		main.generatePSLDataModel();

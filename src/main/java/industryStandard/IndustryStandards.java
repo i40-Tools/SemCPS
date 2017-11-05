@@ -177,13 +177,10 @@ public class IndustryStandards {
 			while (iterator.hasNext()) {
 				Statement stmt = iterator.nextStatement();
 				subject = stmt.getSubject();
-
-				if (subject.asResource().getLocalName().equals(amlList.get(i))) {
+				if (subject.asResource().getLocalName().equals(amlList.get(i))) {					
 					String value = getValue(subject, predicate);
-					if (value != null) {
 						amlValue.add(aml + value);
 						break;
-					}
 				}
 			}
 		}
