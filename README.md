@@ -1,13 +1,13 @@
 # SemCPS: Integrating Industry 4.0 Standards in Knowledge Graphs
 
-This project contains the PSL Models, i.e., rules to align heterogeneious Industry Standards using Probabilistic Soft logic.         
-The project has now AutomationML as focus but can be extended to other standards, e.g., OPC UA
+This project contains the PSL Models, i.e., rules to align heterogeneous Industry Standards using Probabilistic Soft logic.         
+The project has now AutomationML as focus but can be extended to other standards, e.g., OPC UA.
 
 ## What is Probabilistic Soft logic ?                      
 Please read it here : http://psl.linqs.org/                     
 
 ## Dependencies
-This tool depends on the following software
+This tool depends on the following software:
 
 * JDK 1.8
 * Hermit OWL Reasoner 
@@ -70,7 +70,7 @@ To run the AML examples please create a file config.ttl in the main directory of
 aml:conf 
      rdfs:label "General Configuration"@en ;
      uri:path "C:/HeterogeneityExampleData/AutomationML/Single-Heterogeneity/M2/Testbeds-2/";
-	 uri:experimentFolder "E:/ExperimentsToKCAP/Experiment1/run -1/";
+	uri:experimentFolder "C:/Experiments/Experiment1/run-1/";
      sto:Standard "aml";
      ontosec:Training "false";
      uri:NegativeRules "true";
@@ -78,13 +78,13 @@ aml:conf
 ```
 Please note:  
 ```
-uri:path refers to Heterogeneity path                    
+uri:path refers to the path of the Heterogeneity files                    
 uri:URI refers to the ontology path
-Negative rules true to user orignal.
+Negative rules true to user original.
 false to use emulation.
 ```
 
-Just give path of AML heterogenity and folders will be created automatically.                  
+Just give path of for the AML heterogenity and folders will be created automatically.                  
 
 Then you can add GoldStandard and training data.                           
 
@@ -118,16 +118,6 @@ aml:conf
 ```
 
 
-```
-If you want to get the report in one go you can run the function getReport(String root) in Alligator main.
-
-root is the base of the examples :
-e.g 
-
-C:/HeterogeneityExampleData/AutomationML/Single-Heterogeneity/
-```
-
-
 ## Updating Krextor Rules 
 ### What is Krextor?
 
@@ -143,5 +133,5 @@ Here you can update, remove or add rules for RDF conversion.
 
 ## License
 
-* Copyright (C) 2015-2017 EIS Uni-Bonn
+* Copyright (C) 2015-2018 EIS Uni-Bonn
 * Licensed under the Apache License
